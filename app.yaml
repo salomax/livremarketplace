@@ -1,0 +1,16 @@
+application: salomax-marketplace-api
+version: 1
+runtime: python27
+threadsafe: true
+api_version: 1
+
+handlers:
+# Endpoints handler: Must be /_ah/spi. Apps send requests to /_ah/api, but these are handled at /_ah/spi!!
+- url: /_ah/spi/.*
+  script: marketplace.APPLICATION
+
+libraries:
+- name: pycrypto
+  version: latest
+- name: endpoints
+  version: 1.0
