@@ -7,7 +7,7 @@ api_version: 1
 handlers:
 # Endpoints handler: Must be /_ah/spi. Apps send requests to /_ah/api, but these are handled at /_ah/spi!!
 - url: /_ah/spi/.*
-  script: marketplace.APPLICATION
+  script: marketplace_api.APPLICATION
 
 libraries:
 - name: pycrypto
