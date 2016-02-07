@@ -16,15 +16,55 @@
 # limitations under the License.
 #
 
-""" Usuário modelo e mensagem """
+"""Usuário modelo e mensagem
+"""
 
-from datetime import datetime
+import logging
+import endpoints
+
+from google.appengine.ext import ndb
+
 from protorpc import messages
 from protorpc import message_types
 
-class UserMessage(messages.Message):
-  """Usuário do sistema."""
 
-  user_id = messages.IntegerField(2, required=True)
-  email = messages.StringField(1)
-  date_created = message_types.DateTimeField(3, required=True)
+
+
+class UserModel(ndb.Model):
+	"""Usuário do serviço. Modelo para persistência
+	"""
+
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+
+
+
+class UserMessage(messages.Message):
+	"""Usuário do sistema.
+	"""
+
+	email = messages.StringField(1)
+	created_date = message_types.DateTimeField(2, required=True)
+
+
+
+def get_current_user():
+
+	# Obter usuário logado
+	current_user = endpoints.get_current_user()
+
+	# Validar usuário
+	if current_user is None:
+		logging.error('Ao selecionar o usuário, o mesmo não foi informado.')
+		raise endpoints.NotFoundException('Usuário não informado.')
+
+	logging.debug('Selecionado usuário %s com sucesso!', current_user.email())
+
+	return current_user
+
+
+
+def user_key(email):
+	"""Controi um Datastore key para o UserModel entity.
+    """
+	
+	return ndb.Key('UserModel', email)

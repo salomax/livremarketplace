@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-"""Purchases modelo e métodos"""
+"""Purchase (compras) modelo, mensagens e métodos"""
 
 from datetime import datetime
 from protorpc import messages
@@ -27,7 +27,7 @@ class Purchase(messages.Message):
 
   name = messages.StringField(1)
   quantity = messages.IntegerField(2, required=True)
-  date_purchase = message_types.DateTimeField(3, required=True)
+  create_date = message_types.DateTimeField(3, required=True)
 
 
 class PurchaseCollection(messages.Message):
@@ -36,4 +36,4 @@ class PurchaseCollection(messages.Message):
   items = messages.MessageField(Purchase, 1, repeated=True)
 
 def get_purchases():
-  return PurchaseCollection(items=[Purchase(name='teste', quantity=1, date_purchase=datetime.now())])
+  return PurchaseCollection(items=[Purchase(name='teste', quantity=1, create_date=datetime.now())])

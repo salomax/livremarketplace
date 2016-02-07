@@ -18,16 +18,25 @@
 
 """Python MarketPlace API """
 
+# Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
+import sys  
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
+import logging
 import endpoints
-import app.purchase as purchase
 
 from protorpc import message_types
 from protorpc import remote
 
+import app.user as user
+import app.marketplace as marketplace
+import app.purchase as purchase
+
 
 WEB_CLIENT_ID = '768767255656-sct9bc9j1s9gvphm3o9g4tkifgo4p075.apps.googleusercontent.com'
-ANDROID_CLIENT_ID = 'replace this with your Android client ID'
-IOS_CLIENT_ID = 'replace this with your iOS client ID'
+#ANDROID_CLIENT_ID = 'replace this with your Android client ID'
+#IOS_CLIENT_ID = 'replace this with your iOS client ID'
 ANDROID_AUDIENCE = WEB_CLIENT_ID
 
 @endpoints.api(name='marketplace', 
@@ -40,29 +49,67 @@ ANDROID_AUDIENCE = WEB_CLIENT_ID
                scopes=[endpoints.EMAIL_SCOPE]) # Although you can add other scopes, you must always include the email scope if you use OAuth.
 class MarketPlaceApi(remote.Service):
   """
-  Classe com os métodos de compras (purchases) e vendas (sales).
+  Classe destinada à gerenciar a marketplace (loja) do usuário, suas compras (purchases) e vendas (sales).
   """
 
   @endpoints.method(message_types.VoidMessage, 
-                    purchase.PurchaseCollection,
+                    marketplace.MarketplaceGetMessage,
                     path='marketplace', 
                     http_method='GET',
-                    name='purchase.list')
-  def purchase_list(self, unused_request):
+                    name='get')
+  def get_marketplace(self, unused_request):
     """
-    Método lista as compras realizadas pelo usuário.
+    Retorna a marketplace (loja) do usuário.
     """
 
-    # Obter usuário logado
-    current_user = endpoints.get_current_user()
+    logging.debug('Executando endpoint para obter o marketplace do usuário')
 
-    print current_user.user_id()
+    #obter marketplaces (lojas) do usuário 
+    marketplaceModel = marketplace.get(user.get_current_user().email())
 
-    # Validar usuário
-    #if current_user is None
-    #  raise endpoints.NotFoundException('Usuário %s não encontrado.' % email)
+    #retorna a marketplace (loja) do usuário
+    return marketplace.MarketplaceGetMessage(name=marketplaceModel.name, created_date=marketplaceModel.created_date)
 
-    return purchase.get_purchases()
+
+
+  # Resource Container para POSTs
+  MARKETPLACE_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(marketplace.MarketplacePostMessage)
+
+  @endpoints.method(MARKETPLACE_MESSAGE_RESOURCE_CONTAINER, 
+                    marketplace.MarketplaceGetMessage,
+                    path='marketplace', 
+                    http_method='POST',
+                    name='put')
+  def put_marketplace(self, request):
+    """
+    Atualiza a marketplace (loja) do usuário.
+    """
+
+    # Atualizar marketplace (loja) do usuário
+    marketplaceModel = marketplace.put(email=user.get_current_user().email(), name=request.name)
+
+    #retorna a marketplace (loja) do usuário
+    return marketplace.MarketplaceGetMessage(name=marketplaceModel.name, created_date=marketplaceModel.created_date)   
+
+
+  @endpoints.method(message_types.VoidMessage, 
+                    marketplace.MarketplaceGetMessage,
+                    path='marketplace', 
+                    http_method='GET',
+                    name='get')
+  def get_marketplace(self, unused_request):
+    """
+    Retorna a marketplace (loja) do usuário.
+    """
+
+    logging.debug('Executando endpoint para obter o marketplace do usuário')
+
+    #obter marketplaces (lojas) do usuário 
+    marketplaceModel = marketplace.get(user.get_current_user().email())
+
+    #retorna a marketplace (loja) do usuário
+    return marketplace.MarketplaceGetMessage(name=marketplaceModel.name, created_date=marketplaceModel.created_date)
+
 
 
 # TODO Reports
