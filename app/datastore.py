@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 #coding: utf-8
 #
@@ -20,17 +21,16 @@ __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
-"""Python MarketPlace API """
+class CurrencyProperty(ndb.IntegerProperty):
+	"""http://stackoverflow.com/questions/10035133/ndb-decimal-property
+	"""
 
-import sys  
-import endpoints
-import app.marketplace.services as marketplace
+    def _validate(self, value):
+        if not isinstance(value, (Decimal, float, str, unicode, int, long)):
+            raise TypeError("value can't be converted to a Decimal.")
 
+    def _to_base_type(self, value):
+        return int(round(Decimal(value) * 100))
 
-# Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
-reload(sys)  
-sys.setdefaultencoding('utf8')
-
-
-# Creating api server to bind in app.yaml
-APPLICATION = endpoints.api_server([marketplace.MarketplaceService])
+    def _from_base_type(self, value):
+        return Decimal(value) / 100

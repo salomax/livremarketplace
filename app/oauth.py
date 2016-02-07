@@ -20,17 +20,10 @@ __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
-"""Python MarketPlace API """
-
-import sys  
+import os
 import endpoints
-import app.marketplace.services as marketplace
 
-
-# Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
-reload(sys)  
-sys.setdefaultencoding('utf8')
-
-
-# Creating api server to bind in app.yaml
-APPLICATION = endpoints.api_server([marketplace.MarketplaceService])
+ALLOWED_CLIENT_IDS = [
+    os.environ['WEB_CLIENT_ID'],
+    endpoints.API_EXPLORER_CLIENT_ID, # endpoints.API_EXPLORER_CLIENT_ID is needed for testing against the API Explorer in production.
+]

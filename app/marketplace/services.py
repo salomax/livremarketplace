@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding: utf-8
 #
-# Copyright 2016 Google Inc.
+# Copyright 2016, Marcos Salomão.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+__author__ = "Marcos Salomão"
+__email__ = "salomao.marcos@gmail.com"
+__copyright__ = "Copyright 2016, Marcos Salomão"
+__license__ = "Apache 2.0"
 
 """Marketplace modelo, mensagens e métodos"""
 
@@ -22,17 +26,13 @@ import logging
 import endpoints
 import models
 import messages
-import os
 
 from app import user
+from app import oauth
 
 from protorpc import remote
 from protorpc import message_types
 
-ALLOWED_CLIENT_IDS = [
-    os.environ['WEB_CLIENT_ID'],
-    endpoints.API_EXPLORER_CLIENT_ID, # endpoints.API_EXPLORER_CLIENT_ID is needed for testing against the API Explorer in production.
-]
 
 
 def  get(email):
@@ -87,11 +87,11 @@ def  put(email, name, user_key=None):
 
 @endpoints.api(name='marketplace', 
                version='v1',
-               allowed_client_ids=ALLOWED_CLIENT_IDS, 
-               audiences=ALLOWED_CLIENT_IDS, # ANDROID_AUDIENCE argument is required for Android clients and is not used by other clients
+               allowed_client_ids=oauth.ALLOWED_CLIENT_IDS, 
+               audiences=oauth.ALLOWED_CLIENT_IDS, # ANDROID_AUDIENCE argument is required for Android clients and is not used by other clients
                scopes=[endpoints.EMAIL_SCOPE]) # Although you can add other scopes, you must always include the email scope if you use OAuth.
 class MarketplaceService(remote.Service):
-	"""Classe destinada ao gerenciamento da loja do usuário, suas compras, vendas, produtos, etc...
+	"""Serviço destinado ao gerenciamento da loja.
 	"""
 
 	@endpoints.method(message_types.VoidMessage, 

@@ -20,17 +20,11 @@ __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
-"""Python MarketPlace API """
+from google.appengine.ext import ndb
 
-import sys  
-import endpoints
-import app.marketplace.services as marketplace
+class ProductModel(ndb.Model):
+	"""Entidade representa um produto registrado pela loja"""
 
+	#Nome do produto. Pesquisas poderão ser realizadas pelo nome.
+	name = ndb.StringProperty(required=True)
 
-# Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
-reload(sys)  
-sys.setdefaultencoding('utf8')
-
-
-# Creating api server to bind in app.yaml
-APPLICATION = endpoints.api_server([marketplace.MarketplaceService])
