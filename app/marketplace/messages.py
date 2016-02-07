@@ -16,17 +16,16 @@
 # limitations under the License.
 #
 
-"""Python MarketPlace API """
+from protorpc import messages
+from protorpc import message_types
 
-# Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
-import sys  
-reload(sys)  
-sys.setdefaultencoding('utf8')
+class MarketplaceGetMessage(messages.Message):
+  	"""Marketplace (loja) do usuário. Mensagem a ser trafegada pelo endpoint"""
 
-import endpoints
+  	name = messages.StringField(1, required=True)
+  	created_date = message_types.DateTimeField(2, required=True)
 
-import app.marketplace.services as marketplace
+class MarketplacePostMessage(messages.Message):
+  	"""Marketplace (loja) do usuário. Mensagem a ser trafegada pelo endpoint"""
 
-
-# Creating api server to bind in app.yaml
-APPLICATION = endpoints.api_server([marketplace.MarketplaceService])
+  	name = messages.StringField(1, required=True)

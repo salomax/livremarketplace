@@ -16,24 +16,48 @@
 # limitations under the License.
 #
 
-"""Purchase (compras) modelo, mensagens e métodos"""
+"""Purchase (compras) modelo, mensagens e métodos
+"""
 
-from datetime import datetime
+import logging
+import datetime
+
+from google.appengine.ext import ndb
+
 from protorpc import messages
 from protorpc import message_types
 
-class Purchase(messages.Message):
-  """Compra, entrada no estoque"""
-
-  name = messages.StringField(1)
-  quantity = messages.IntegerField(2, required=True)
-  create_date = message_types.DateTimeField(3, required=True)
+import user
 
 
-class PurchaseCollection(messages.Message):
-  """Lista das compras cadastradas"""
 
-  items = messages.MessageField(Purchase, 1, repeated=True)
+class PurchasePostMessage(messages.Message):
+  	"""Purchase (compra) de produto no estoque. Mensagem a ser trafegada pelo endpoint
+  	"""
+
+  	name = messages.StringField(1)
+  	quantity = messages.IntegerField(2, required=True)
+
+
+class PurchaseGetMessage(messages.Message):
+  	"""Purchase (compra) de produto no estoque. Mensagem a ser trafegada pelo endpoint
+  	"""
+
+  	name = messages.StringField(1)
+  	quantity = messages.IntegerField(2, required=True)
+  	create_date = message_types.DateTimeField(3, required=True)
+
+
+class PurchaseCollectionGetMessage(messages.Message):
+  	"""Lista de Purchases (compras) de produto no estoque. Mensagem a ser trafegada pelo endpoint
+  	"""
+
+  	items = messages.MessageField(PurchaseGetMessage, 1, repeated=True)
+
+
 
 def get_purchases():
-  return PurchaseCollection(items=[Purchase(name='teste', quantity=1, create_date=datetime.now())])
+	"""Retorna Purchases (compras) já cadastradas pelo usuário no Datastore.
+	"""
+	
+	return PurchaseCollectionGetMessage(items=[PurchaseGetMessage(name='teste', quantity=1, create_date=datetime.now())])

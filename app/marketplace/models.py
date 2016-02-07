@@ -16,17 +16,10 @@
 # limitations under the License.
 #
 
-"""Python MarketPlace API """
+from google.appengine.ext import ndb
 
-# Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
-import sys  
-reload(sys)  
-sys.setdefaultencoding('utf8')
+class MarketplaceModel(ndb.Model):
+	"""Marketplace (loja) do usuário"""
 
-import endpoints
-
-import app.marketplace.services as marketplace
-
-
-# Creating api server to bind in app.yaml
-APPLICATION = endpoints.api_server([marketplace.MarketplaceService])
+	name = ndb.StringProperty(required=True, indexed=False)
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
