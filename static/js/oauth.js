@@ -88,6 +88,4 @@ function getInfo() {
 
   }); // Fim do gapi.client.load
 
-  alert(gapi.auth.getToken());
-
 }
