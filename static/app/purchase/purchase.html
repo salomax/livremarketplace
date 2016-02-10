@@ -1,1 +1,141 @@
-<table class="table-purchases table table-bordered table-hover dataTable"></table>
+<!-- Custom Tabs -->
+<div class="nav-tabs-custom">
+	<ul class="nav nav-tabs">
+	  <li class="active"><a href="#tab_1" data-toggle="tab"><span class="fa fa-table"/> Lista de Compras</a></li>
+	  <li><a href="#tab_2" data-toggle="tab"><span class="fa fa-plus"/> Cadastro</a></li>
+	</ul>
+	<div class="tab-content">
+	  <div class="tab-pane active" id="tab_1">
+		<div class="box-body">
+			<table class="table-purchases table table-striped table-hover dataTable">
+				<thead>
+					<tr>
+						<th>Produto</th>
+						<th>Quantidade</th>
+						<th>Custo</th>
+						<th>Data Compra</th>
+					</tr>
+					<tbody>
+						<tr>	
+							<td colspan="4">Nenhum registro encontrado</td>						
+						</tr>
+					</tbody>
+				</thead>				
+			</table>	
+		</div>
+	  </div><!-- /.tab-pane -->
+	  <div class="tab-pane" id="tab_2">
+
+	  	<form class="purchase-form">
+
+          <!-- general form elements -->
+          <div class="box box-primary">
+
+	        <!-- box-header -->
+            <div class="box-header with-border">
+              <h3 class="box-title">Dados da Compra <small>Informe os dados da compra</small></h3>
+            </div><!-- /.box-header -->
+
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+
+                <div class="form-group">
+                  <label for="product">Produto</label>
+                  <input type="text" class="form-control" name="product" placeholder="Entre com o nome do produto">
+                </div>
+
+                <div class="form-group">
+                  <label for="suppier">Fornecedor</label>
+                  <input type="text" class="form-control" name="supplier" placeholder="Entre com o nome do fornecedor">
+                </div>
+
+                <div class="row">
+
+                	<div class="col-md-6">
+
+                		<div class="box-header box box-info">
+
+							<div class="form-group">
+			                  <label for="quantity">Quantidade</label>
+			                  <input type="text" class="form-control" name="quantity" placeholder="Entre com a quantidade de itens comprados">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="purchase_date">Data da Compra</label>
+			                  <input type="text" class="form-control" name="purchase_date" placeholder="Entre com a data da compra">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="received_date">Data de Recebimento</label>
+			                  <input type="text" class="form-control" name="received_date" placeholder="Entre com a data do recebimento">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="shipping_cost">Custo de Postagem</label>
+			                  <input type="text" class="form-control" name="shipping_cost" placeholder="Entre com o custo de postagem">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="track_code">Código de Rastreamento</label>
+			                  <input type="text" class="form-control" name="track_code" placeholder="Entre com o código de rastreamento da postagem">
+			                </div>
+
+                		</div> <!-- /.box -->
+                	</div><!-- /.col-md-6 -->
+
+                	<div class="col-md-6">
+						<div class="box-header box box-info">
+
+			                <div class="form-group">
+			                  <label for="cost">Custo por Unidade</label>
+			                  <input type="text" class="form-control" name="cost" placeholder="Entre com o custo por unidade">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="total_cost">Custo Total da Compra</label>
+			                  <input type="text" class="form-control" name="total_cost" placeholder="Entre com o custo total da compra">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="cost_dollar">Custo por Unidade (US$) </label>
+			                  <input type="text" class="form-control" name="cost_dollar" placeholder="Entre com o custo por unidade em dólares (US$)">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="total_cost_dollar">Custo Total da Compra (US$)</label>
+			                  <input type="text" class="form-control" name="total_cost_dollar" placeholder="Entre com o custo total da compra em dólares">
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="exchange_dollar">Valor do Câmbio</label>
+			                  <input type="text" class="form-control" name="exchange_dollar" placeholder="Entre com o valor do câmbio">
+			                </div>
+
+						</div><!-- /.box -->
+                	</div><!-- /.col-md-6 -->
+
+                </div><!-- /.row -->
+
+                <div class="form-group">
+                  <label for="invoice">Dados da Fatura</label>
+                  <input type="text" class="form-control" name="invoice" placeholder="Entre com dados sobre a fatura da compra">
+                </div>
+
+              </div><!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+              </div>
+            </form>
+          </div><!-- /.box -->	  		
+
+	  	</form>
+
+	  </div><!-- /.tab-pane -->
+	</div><!-- /.tab-content -->
+</div><!-- nav-tabs-custom -->
+
+
+
+
