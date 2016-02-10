@@ -20,14 +20,17 @@ __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
+
 from protorpc import messages
 from protorpc import message_types
+
 
 class MarketplaceGetMessage(messages.Message):
   	"""Marketplace (loja) do usuário. Mensagem a ser trafegada pelo endpoint"""
 
   	name = messages.StringField(1, required=True)
   	created_date = message_types.DateTimeField(2, required=True)
+
 
 class MarketplacePostMessage(messages.Message):
   	"""Marketplace (loja) do usuário. Mensagem a ser trafegada pelo endpoint"""

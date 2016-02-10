@@ -9,11 +9,27 @@ handlers:
 - url: /_ah/spi/.*
   script: marketplace_api.APPLICATION
 
+# The following three handlers route requests to static resources: JS, CSS,
+# and HTML.
+- url: /js
+  static_dir: static/js
+- url: /css
+  static_dir: static/css  
+- url: /img
+  static_dir: static/img  
+- url: /
+  static_files: static/index.html
+  upload: static/index\.html
+- url: /main
+  static_files: static/index2.html
+  upload: static/index2\.html
+
+
 libraries:
 - name: pycrypto
   version: latest
 - name: endpoints
-  version: 1.0
+  version: latest
 
 env_variables:
   WEB_CLIENT_ID: '768767255656-sct9bc9j1s9gvphm3o9g4tkifgo4p075.apps.googleusercontent.com'

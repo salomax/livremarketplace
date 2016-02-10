@@ -25,7 +25,8 @@ __license__ = "Apache 2.0"
 import sys  
 import endpoints
 import app.marketplace.services as marketplace
-
+import app.purchase.services as purchase
+import app.user as user
 
 # Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
 reload(sys)  
@@ -33,4 +34,4 @@ sys.setdefaultencoding('utf8')
 
 
 # Creating api server to bind in app.yaml
-APPLICATION = endpoints.api_server([marketplace.MarketplaceService])
+APPLICATION = endpoints.api_server([marketplace.MarketplaceService, purchase.PurchaseService, user.UserService])

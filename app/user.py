@@ -20,36 +20,30 @@ __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
-
-"""Usuário modelo e mensagem
-"""
-
 import logging
 import endpoints
+import oauth
 
 from google.appengine.ext import ndb
 
+from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
 
-
+from oauth2client.appengine import AppAssertionCredentials
+from httplib2 import Http
+from apiclient.discovery import build
 
 
 class UserModel(ndb.Model):
-	"""Usuário do serviço. Modelo para persistência
+	"""Usuário do sistema (model).
 	"""
-
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-
 
 
 class UserMessage(messages.Message):
-	"""Usuário do sistema.
+	"""Usuário do sistema (message).
 	"""
-
 	email = messages.StringField(1)
-	created_date = message_types.DateTimeField(2, required=True)
-
 
 
 def get_current_user():
@@ -67,9 +61,33 @@ def get_current_user():
 	return current_user
 
 
+def get_current_user_key():
+	"""Controi um Datastore key para o UserModel entity a partir do usuário atual.
+    """
+
+	return user_key(get_current_user().email())
+
 
 def user_key(email):
-	"""Controi um Datastore key para o UserModel entity.
+	"""Controi um Datastore key para o UserModel entity a partir do email.
     """
 	
 	return ndb.Key('UserModel', email)
+
+
+@endpoints.api(name='user', 
+               version='v1',
+               allowed_client_ids=oauth.ALLOWED_CLIENT_IDS, 
+               audiences=oauth.ALLOWED_CLIENT_IDS, # ANDROID_AUDIENCE argument is required for Android clients and is not used by other clients
+               scopes=[endpoints.EMAIL_SCOPE, 'https://www.googleapis.com/auth/plus.me']) # Although you can add other scopes, you must always include the email scope if you use OAuth.
+class UserService(remote.Service):
+	"""Serviço destinado à obter os dados do usuário.
+	"""
+
+	@endpoints.method(message_types.VoidMessage, 
+                    UserMessage,
+                    http_method='GET',
+                    name='get')
+	def get(self, request):
+
+		return UserMessage(email = get_current_user().email())

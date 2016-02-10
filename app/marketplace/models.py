@@ -20,10 +20,64 @@ __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
+import logging
+from app import user
+
 from google.appengine.ext import ndb
 
+
 class MarketplaceModel(ndb.Model):
-	"""Marketplace (loja) do usuário"""
+	"""Entidade marketplace (loja) do usuário"""
 
 	name = ndb.StringProperty(required=True, indexed=False)
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
+
+
+def  get(email):
+	"""Método retorna um marketplace para o usuário informado através do email. Caso o mesmo não exista, um novo é criado."""
+
+	# Selecionando key do usuário
+	user_key = user.user_key(email)
+
+	# Selecionando a marketplace (loja) do usuário
+	marketplaceModel = MarketplaceModel.query(ancestor=user_key).get()
+
+	# Caso ainda não exista, uma nova marketplace (loja) é criada para o usuário
+	if marketplaceModel is None:
+		marketplaceModel = put(email=email, name='Nova Loja', user_key=user_key)
+
+	logging.debug(marketplaceModel)	
+		
+	# Criando mensagem de retorno para o endpoint
+	return marketplaceModel
+
+
+
+def  put(email, name, user_key=None):
+	"""Método atualiza um marketplace para o usuário informado através do email."""
+
+	# Selecionando key do usuário
+	if user_key is None:
+		user_key = user.user_key(email)
+
+	logging.debug('Criando/atualizando marketplace (loja) para o usuário %s', email)
+
+	# Selecionando a marketplace (loja) do usuário
+	marketplaceModel = MarketplaceModel.query(ancestor=user_key).get()
+
+	# Caso exista, obter o atual
+	if marketplaceModel is None:
+		marketplaceModel = MarketplaceModel(parent=user_key)
+	
+	# Atualizar o nome
+	marketplaceModel.name = name
+
+	logging.debug('Persistindo no Datastore...')
+
+	# Persistir a entity
+	marketplaceModel.put()
+
+	logging.debug('Persistido com sucesso!')	
+
+	# Retornando marketplace (loja) persistida
+	return marketplaceModel
