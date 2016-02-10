@@ -7,9 +7,6 @@
  * https://github.com/mkhatib/googleplus-signin-appengine-endpoints-python
  */
 
-var API_ROOT = '//' + document.location.host + '/_ah/api';
-
-
 /*
  * Triggered when the user accepts the the sign in, cancels, or closes the
  * authorization dialog.
@@ -63,19 +60,27 @@ function getInfo() {
         context: document.body
       }).done(function(response) {
 
-        // Importar HTML do main     
+        // Importar main html    
         $('#wrapper').html(response);  
 
-        // Attach dropdowns
-        $('.dropdown-toggle').dropdown();
+        // Cria os links do menu
+        menu.bind();
 
-        // Definir imagem do usuário
-        $('img.user-image').attr('src', obj.image.url);
-        $('img.user-image-lg').attr('src', obj.image.url + '&sz=160');
+        // Importar script do bootstratp template vendor (AdminLTE)
+        // E atachar os componentes necessários após carregado
+        $.getScript('/js/vendor.min.js', function() {
 
-        // Definir nome do usuário
-        $('span.user-display-name').html(obj.displayName);
+          // Attach dropdowns
+          $('.dropdown-toggle').dropdown();
 
+          // Definir imagem do usuário
+          $('img.user-image').attr('src', obj.image.url);
+          $('img.user-image-lg').attr('src', obj.image.url + '&sz=160');
+
+          // Definir nome do usuário
+          $('span.user-display-name').html(obj.displayName);
+
+        });
 
       }); // Fim do ajax()
 
@@ -83,14 +88,6 @@ function getInfo() {
 
   }); // Fim do gapi.client.load
 
-  // TODO Logout
-  // https://mail.google.com/mail/u/0/?logout&hl=en
+  alert(gapi.auth.getToken());
 
-  // Make an authenticated call to our own Greeting API Backend.
-  // gapi.client.load('greetings', 'v1', function() {
-  //   var request = gapi.client.greetings.get();
-  //   request.execute(function(response) {
-  //     $('#greeting').text(response.msg).show();
-  //   });
-  // }, API_ROOT);
 }

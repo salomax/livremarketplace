@@ -1,5 +1,8 @@
 # marketplace
 
+## Dev server
+
+dev_appserver.py . --log_level=debug [--clear_datastore]
 
 ## Upload Application (Example)
 

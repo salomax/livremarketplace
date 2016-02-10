@@ -21,9 +21,10 @@ handlers:
   static_files: static/index.html
   upload: static/index\.html
 - url: /main
-  static_files: static/index2.html
-  upload: static/index2\.html
-
+  static_files: static/app/main.html
+  upload: static/app/main\.html
+- url: /purchase
+  static_dir: static/app/purchase
 
 libraries:
 - name: pycrypto
@@ -32,4 +33,4 @@ libraries:
   version: latest
 
 env_variables:
-  WEB_CLIENT_ID: '768767255656-sct9bc9j1s9gvphm3o9g4tkifgo4p075.apps.googleusercontent.com'
+  WEB_CLIENT_ID: '768767255656-cs88prcq2s6olvb4dhsjdf2r7br50uej.apps.googleusercontent.com'                    
