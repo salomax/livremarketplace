@@ -1,5 +1,5 @@
 # MarketPlace 
-light ERP for web stores management
+Light ERP for webstores
 
 ### Git
 
