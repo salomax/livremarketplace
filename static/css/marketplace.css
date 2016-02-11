@@ -12,3 +12,8 @@ html,body{min-height:100%}.layout-boxed html,.layout-boxed body{height:100%}body
 label.error {
     color : #d9534f;
 }
+
+.form-group.required label:after { 
+	content:"*"; 
+	color:red; 
+}

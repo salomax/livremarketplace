@@ -7,7 +7,9 @@ purchase = {
 
 	bindList : function(_data) {
 
+		// Construir tabela
 		$('table.table-purchases').bootstrapTable({
+				uniqueId : 'id',
 				columns : [
 					{
 						field: 'id',
@@ -48,10 +50,7 @@ purchase = {
 						formatter : function(value, row, index) {
 							return  [
 									'<div class="btn-group">',
-									'<button class="btn btn-secundary btn-sm" data-title="Edit" data-toggle="modal" data-target="#edit">',
-									'<span class="glyphicon glyphicon-download-alt"></span>',
-									'</button>',
-									'<button class="btn btn-secundary btn-sm" data-title="Edit" data-toggle="modal" data-target="#edit">',
+									'<button class="btn btn-secundary btn-sm update" data-title="Edit" data-toggle="modal" data-target="#edit">',
 									'<span class="glyphicon glyphicon-pencil"></span>',
 									'</button>',
 									'<button class="btn btn-danger btn-sm delete" data-title="Delete" data-toggle="modal" data-target="#delete">',
@@ -62,17 +61,23 @@ purchase = {
 						events : {
 							'click button.delete' : function(e, value, row, index) {
 								purchase.delete(row.id).then(
-										function() {
+									function() {
 											$('table.table-purchases').bootstrapTable('remove', {
 											                field: 'id',
 											                values: [row.id]
 											            });
-										}
-									);
+										});
+							},
+							'click button.update' : function(e, value, row, index) {
+								// mostar tab do form
+								$('.nav-tabs a[href="#tab_2"]').tab('show');
+								// Preencher form
+								$('form.purchase-form').populate(row);
 							}
 						}				
 					}
 				],
+				pageList : [15],
 				data : _data.items,
 				pagination : true,
 				search : true,
@@ -123,23 +128,23 @@ purchase = {
 	},
 
 	load : function() {
-
-		$('.progress-bar-table').progress(20, 'Aguardo resposta do servidor');
-
+		// atualizar barra de progresso
+		$('.progress-bar-table').progress(50, 'Aguardo resposta do servidor');
+		// Load API e  executar serviço
 		gapi.client.load('purchase', 'v1', function() {
 			var request = gapi.client.purchase.list();
 			request.then(
 				function(response) {
-
+					// atualizar barra de progresso
 					$('.progress-bar-table').progress(60, 'Construindo tabela');
-
 					// Atachar a lista de compras na tabela
 					purchase.bindList(response.result);
-
+					// atualizar barra de progresso					
 					$('.progress-bar-table').progress(100, 'Concluído');
-
 				}, function(reason) {
-
+					// atualizar barra de progresso					
+					$('.progress-bar-table').progress(100, 'Concluído');
+					// apresentar mensagem ao usuário
 					$('.modal-dialog-message').modalDialog({
 							title : 'Cadastro Compras',
 							message : 'Ocorreu um erro ao tentar cadastar uma compra. Motivo: ' + reason.result.error.message
@@ -150,71 +155,79 @@ purchase = {
 	},
 
 	put : function(_data) {
-
+		// atualizar barra de progresso
 		$('.progress-bar-form').progress(50, 'Aguardo resposta do servidor');
-
+		// Criar controle promise
+		var deferred = $.Deferred();
+		// fn sucesso
+		var success = function(response) {
+			// atualizar barra de progresso
+			$('.progress-bar-form').progress(100, 'Concluído');
+			// apresentar mensagem ao usuário
+			$('.modal-dialog-message').modalDialog({
+					title : 'Cadastro Compras',
+					message : 'Compra cadastrada com sucesso!'
+				}).success();
+				// promisse
+				deferred.resolve(response);
+		}; 
+		// fn erro
+		var failure = function(reason) {
+			// atualizar barra de progresso
+			$('.progress-bar-form').progress(100, 'Concluído');
+			// apresentar mensagem ao usuário
+			$('.modal-dialog-message').modalDialog({
+					title : 'Cadastro Compras',
+					message : 'Ocorreu um erro ao tentar cadastar uma compra. Motivo: ' + reason.result.error.message
+				}).danger();
+			// promisse
+			resolve.reject();
+		};
+		// Load API e  executar serviço
 		gapi.client.load('purchase', 'v1', function() {
-
 			var request = gapi.client.purchase.put(_data);
-			request.then(
-				function(response) {
-					
-					$('.progress-bar-form').progress(100, 'Concluído');
-
-					$('.modal-dialog-message').modalDialog({
-							title : 'Cadastro Compras',
-							message : 'Compra cadastrada com sucesso!'
-						}).success();
-
-				}, 
-				function(reason) {
-
-					$('.progress-bar-form').progress(100, 'Concluído');
-
-					$('.modal-dialog-message').modalDialog({
-							title : 'Cadastro Compras',
-							message : 'Ocorreu um erro ao tentar cadastar uma compra. Motivo: ' + reason.result.error.message
-						}).danger();
-
-				});
-
+			request.then(success, failure);
 		}, API_ROOT);
-
-		return false;
+		// retornar promise
+		return deferred.promise();
 	},
 
 	delete : function(_id) {
-
-		var _p = {
-			then : function(success, failure) {
-				if (success) this.success = success;
-				if (failure) this.failure = failure;
-			}
-		}
-
+		// atualizar barra de progresso
+		$('.progress-bar-table').progress(50, 'Aguardo resposta do servidor');
+		// Criar controle promise
+		var deferred = $.Deferred();
+		// fn sucesso
 		var success = function(response) {
-					$('.modal-dialog-message').modalDialog({
-							title : 'Exclusão Compras',
-							message : 'Compra removida com sucesso!'
-						}).success();
-					_p.success();
-				};
-
+			// atualizar barra de progresso
+			$('.progress-bar-table').progress(100, 'Concluído');
+			// apresentar mensagem ao usuário
+			$('.modal-dialog-message').modalDialog({
+					title : 'Exclusão Compras',
+					message : 'Compra removida com sucesso!'
+				}).success();
+			// Executar promise
+			deferred.resolve();
+		};
+		// fn erro
 		var failure = function(reason) {
-					$('.modal-dialog-message').modalDialog({
-							title : 'Exclusão Compras',
-							message : 'Ocorreu um erro ao tentar remover uma compra. Motivo: ' + reason.result.error.message
-						}).danger();
-					_p.failure();
-				};
-
+			// atualizar barra de progresso
+			$('.progress-bar-table').progress(100, 'Concluído');
+			// apresentar mensagem ao usuário
+			$('.modal-dialog-message').modalDialog({
+					title : 'Exclusão Compras',
+					message : 'Ocorreu um erro ao tentar remover uma compra. Motivo: ' + reason.result.error.message
+				}).danger();
+			// Executar promise
+			resolve.reject();
+		};
+		// Load API e  executar serviço
 		gapi.client.load('purchase', 'v1', function() {
 			var request = gapi.client.purchase.delete({id:_id});
 			request.then(success, failure);
 		}, API_ROOT);
-
-		return _p;
-
+		// retornar promise
+		return deferred.promise();
 	}
 
 };
@@ -255,9 +268,35 @@ $('form.purchase-form').validate({ // initialize the plugin
     	cost : 'Custo por unidade é numérico e obrigatório!'
     },
     submitHandler: function(form) {
-	    purchase.put($(form).serializeObject());
+    	// Convert form to JSON Object
+    	var data = $(form).serializeObject();
+    	// Para se adequar ao padrão RFC3339 os campos data são convertidos
+    	data.purchase_date = toRFC3339(data.purchase_date);
+    	data.received_date = toRFC3339(data.received_date);
+
+    	// Submeter ao endpoint
+	    purchase.put(data).then(function(_data) {
+	    	// Zerar o form qdo houver sucesso
+	    	$(form).trigger('reset');
+	    	// Atualizar lista
+			var row = $('table.table-purchases').bootstrapTable(
+				'getRowByUniqueId', _data.result.id);
+			// Insere se não existe ou atualiza caso já esteja inserida
+			if (row == null) {
+		    	$('table.table-purchases').bootstrapTable('insertRow', {
+	                index: 0,
+	                row: _data.result
+	            });
+			} else {
+		    	$('table.table-purchases').bootstrapTable('updateByUniqueId', {
+	                id: _data.result.id,
+	                row: _data.result
+	            });
+			}
+	    });
 	}
 });
+
 
 
 

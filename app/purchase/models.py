@@ -94,9 +94,11 @@ def list():
 	marketplaceModel = marketplace.get(email)
 
 	#Realizando query, listando as compras
-	purchases = PurchaseModel.query(ancestor=marketplaceModel.key).fetch()
+	purchases = PurchaseModel.query(ancestor=marketplaceModel.key).order(
+		-PurchaseModel.purchase_date).fetch()
 
-	logging.debug("Foram selecionada(s) %d compra(s) para a loja do usuário %s", len(purchases), email)
+	logging.debug("Foram selecionada(s) %d compra(s) para a loja do usuário %s", 
+		len(purchases), email)
 
 	#Retornando
 	return purchases
@@ -121,7 +123,8 @@ def put(purchase):
 	logging.debug("Criando model para a compra ou selecionando o existente para atualizá-lo")
 
 	if purchase.id is not None:
-		purchaseModel = ndb.Key('PurchaseModel', purchase.id).get()
+		purchaseModel = ndb.Key('PurchaseModel', int(purchase.id), 
+			parent=marketplaceModel.key).get() 
 	else:
 		purchaseModel = PurchaseModel(parent=marketplaceModel.key)
 
