@@ -10,6 +10,10 @@ purchase = {
 		$('table.table-purchases').bootstrapTable({
 				columns : [
 					{
+						field: 'id',
+						visible : false
+					},
+					{
 						field : 'product',
 						title : 'Produto',
 						searchable : true
@@ -50,11 +54,23 @@ purchase = {
 									'<button class="btn btn-secundary btn-sm" data-title="Edit" data-toggle="modal" data-target="#edit">',
 									'<span class="glyphicon glyphicon-pencil"></span>',
 									'</button>',
-									'<button class="btn btn-danger btn-sm" data-title="Delete" data-toggle="modal" data-target="#delete">',
+									'<button class="btn btn-danger btn-sm delete" data-title="Delete" data-toggle="modal" data-target="#delete">',
 									'<span class="glyphicon glyphicon-trash"></span>',
 									'</button>',
 									'</div>'].join('');
-						}					
+						},
+						events : {
+							'click button.delete' : function(e, value, row, index) {
+								purchase.delete(row.id).then(
+										function() {
+											$('table.table-purchases').bootstrapTable('remove', {
+											                field: 'id',
+											                values: [row.id]
+											            });
+										}
+									);
+							}
+						}				
 					}
 				],
 				data : _data.items,
@@ -165,6 +181,40 @@ purchase = {
 		}, API_ROOT);
 
 		return false;
+	},
+
+	delete : function(_id) {
+
+		var _p = {
+			then : function(success, failure) {
+				if (success) this.success = success;
+				if (failure) this.failure = failure;
+			}
+		}
+
+		var success = function(response) {
+					$('.modal-dialog-message').modalDialog({
+							title : 'Exclusão Compras',
+							message : 'Compra removida com sucesso!'
+						}).success();
+					_p.success();
+				};
+
+		var failure = function(reason) {
+					$('.modal-dialog-message').modalDialog({
+							title : 'Exclusão Compras',
+							message : 'Ocorreu um erro ao tentar remover uma compra. Motivo: ' + reason.result.error.message
+						}).danger();
+					_p.failure();
+				};
+
+		gapi.client.load('purchase', 'v1', function() {
+			var request = gapi.client.purchase.delete({id:_id});
+			request.then(success, failure);
+		}, API_ROOT);
+
+		return _p;
+
 	}
 
 };

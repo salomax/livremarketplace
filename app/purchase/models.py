@@ -149,3 +149,31 @@ def put(purchase):
 		purchaseModel.key.id(), marketplaceModel.name)
 
 	return purchaseModel
+
+def delete(id):
+	"""Remove uma compra cadastrada.
+	"""
+
+	logging.debug("Removendo a compra %d persistida na loja", id)
+
+	#Identificando usuário da requisição
+	email = user.get_current_user().email()
+
+	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
+
+	#Obtendo marketplace como parent
+	marketplaceModel = marketplace.get(email)
+
+	logging.debug("Loja encontrada com sucesso")
+
+	#Realizando query, selecionando a compra pelo pai e id
+	purchase = ndb.Key('PurchaseModel', int(id), parent=marketplaceModel.key).get() 
+
+	if purchase is None:
+		raise IndexError("Compra não encontrada!")
+
+	logging.debug("Compra encontrada com sucesso")
+
+	purchase.key.delete()
+
+	logging.debug("Compra removida com sucesso")

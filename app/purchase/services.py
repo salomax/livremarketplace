@@ -33,6 +33,7 @@ from app import user
 from app import oauth
 
 from protorpc import remote
+from protorpc import messages
 from protorpc import message_types
 
 
@@ -91,7 +92,7 @@ class PurchaseService(remote.Service):
                       http_method='PUT',
                       name='put')
 	def put(self, request):
-		"""Retornar a loja do usuário.
+		"""Inclui ou atualiza a loja do usuário.
 		"""
 
 		logging.debug('Executando endpoint para incluir/atualizar uma compra de produto no estoque da loja')
@@ -116,3 +117,20 @@ class PurchaseService(remote.Service):
 					track_code = purchaseModel.track_code,
 					invoice = purchaseModel.invoice,
 					created_date = purchaseModel.created_date)
+
+	ID_RESOURCE = endpoints.ResourceContainer(
+		message_types.VoidMessage, id=messages.IntegerField(1, variant=messages.Variant.INT32))
+
+	@endpoints.method(ID_RESOURCE,
+					  message_types.VoidMessage,
+					  path='{id}',
+                      http_method='DELETE',
+                      name='delete')
+	def delete(self, request):
+		"""Retornar a loja do usuário.
+		"""
+
+		#Removendo purchase
+		models.delete(request.id)
+
+		return message_types.VoidMessage()
