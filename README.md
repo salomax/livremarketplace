@@ -1,5 +1,8 @@
 # MarketPlace 
-Light ERP for webstores
+Light ERP for e-commerce
+
+### Modules in development
+- Inventory Management
 
 ### Git
 

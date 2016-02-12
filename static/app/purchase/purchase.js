@@ -1,5 +1,3 @@
-var API_ROOT = '//' + document.location.host + '/_ah/api';
-
 /**
  * Objeto pertinente às funcionalidades da feature de compras (purchase).
  */
@@ -16,7 +14,7 @@ purchase = {
 						visible : false
 					},
 					{
-						field : 'product',
+						field : 'product.name',
 						title : 'Produto',
 						searchable : true
 					},
@@ -98,10 +96,11 @@ purchase = {
 						$(element).append(table);
 
 						_columns = [
-							{field : 'product', title : 'Produto'},
+							{field : 'product.name', title : 'Produto'},
 							{field : 'supplier', title : 'Fornecedor'},
 							{field : 'quantity', title : 'Quantidade'},
 							{field : 'purchase_date', title : 'Data da Compra'},
+							{field : 'payment_date', title : 'Data do Pagamento'},
 							{field : 'received_date', title : 'Data de Recebimento'},
 							{field : 'shipping_cost', title : 'Custo de Postagem'},
 							{field : 'cost', title : 'Custo por Unidade'},
@@ -110,9 +109,14 @@ purchase = {
 							{field : 'total_cost_dollar', title : 'Custo Total da Compra (US$)'},
 							{field : 'exchange_dollar', title : 'Valor do Câmbio'},
 							{field : 'invoice', title : 'Dados da Fatura'},
+							{field : 'purchase_link', title : 'Link da Compra',
+								formatter : function(value, row, index) {
+									return ['<a href="', value ,'" target="_blank">', value, "</a>"].join('');
+								}
+							},
 							{field : 'track_code', title : 'Código de Rastreamento'},
 							{field : 'created_date', title : 'Data de Criação'}
-						];
+							];
 
 						table.bootstrapTable({
 							columns : _columns,
@@ -137,6 +141,16 @@ purchase = {
 				function(response) {
 					// atualizar barra de progresso
 					$('.progress-bar-table').progress(60, 'Construindo tabela');
+					// Formatar os campos para a view
+					response.result.items = formatter.format({
+							data : response.result.items,
+							format : [
+								{'purchase_date' : formatter.dateFormat},
+								{'received_date' : formatter.dateFormat},
+								{'payment_date' : formatter.dateFormat},
+								{'created_date' : formatter.dateTimeFormat},
+							]
+							});
 					// Atachar a lista de compras na tabela
 					purchase.bindList(response.result);
 					// atualizar barra de progresso					
@@ -168,8 +182,18 @@ purchase = {
 					title : 'Cadastro Compras',
 					message : 'Compra cadastrada com sucesso!'
 				}).success();
-				// promisse
-				deferred.resolve(response);
+			// Formatar valores
+			response.result = formatter.format({
+							data : [response.result],
+							format : [
+								{'purchase_date' : formatter.dateFormat},
+								{'received_date' : formatter.dateFormat},
+								{'payment_date' : formatter.dateFormat},
+								{'created_date' : formatter.dateTimeFormat},
+							]
+						})[0];
+			// promisse
+			deferred.resolve(response);
 		}; 
 		// fn erro
 		var failure = function(reason) {
@@ -235,6 +259,7 @@ purchase = {
 // Carregar a lista de compras asinc
 purchase.load();
 
+// Validação do formulário
 $('form.purchase-form').validate({ // initialize the plugin
     rules: {
         product : {
@@ -273,7 +298,8 @@ $('form.purchase-form').validate({ // initialize the plugin
     	// Para se adequar ao padrão RFC3339 os campos data são convertidos
     	data.purchase_date = toRFC3339(data.purchase_date);
     	data.received_date = toRFC3339(data.received_date);
-
+    	data.payment_date = toRFC3339(data.payment_date);
+    	console.log(data);
     	// Submeter ao endpoint
 	    purchase.put(data).then(function(_data) {
 	    	// Zerar o form qdo houver sucesso
@@ -297,6 +323,14 @@ $('form.purchase-form').validate({ // initialize the plugin
 	}
 });
 
+// Autocomplete para produtos e fornecedores
+var products = [
+   { value: 'Cílios 123', data: 342342 },
+   { value: 'Cílios ABC', data: 123456 },
+   { value: 'Batom', data: 123987654 }
+];
 
-
+$('input[name="product[name]"]').autocomplete({
+    source: products
+});
 

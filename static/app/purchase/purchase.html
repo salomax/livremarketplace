@@ -42,7 +42,8 @@
 
                 <div class="form-group required">
                   <label for="product">Produto</label>
-                  <input type="text" class="form-control" name="product" placeholder="Entre com o nome do produto">
+                  <input type="text" name="product[id]" style="display: none;" />
+                  <input type="text" class="form-control" name="product[name]" placeholder="Entre com o nome do produto">
                 </div>
 
                 <div class="form-group required">
@@ -80,6 +81,16 @@
 								    <i class="fa fa-calendar"></i>
 								  </div>
 				                  <input type="text" class="form-control pull-right datepicker" name="received_date" placeholder="Entre com a data do recebimento">
+			                	</div>
+			                </div>
+
+			                <div class="form-group">
+			                  <label for="received_date">Data do Pagamento</label>
+							  <div class="input-group">
+								  <div class="input-group-addon">
+								    <i class="fa fa-calendar"></i>
+								  </div>
+				                  <input type="text" class="form-control pull-right datepicker" name="payment_date" placeholder="Entre com a data do pagamento">
 			                	</div>
 			                </div>
 
@@ -143,14 +154,19 @@
 								</div>
 			                </div>
 
+			                <div class="form-group">
+			                  <label for="invoice">Dados da Fatura</label>
+			                  <input type="text" class="form-control" name="invoice" placeholder="Entre com dados sobre a fatura da compra">
+			                </div>
+
 						</div><!-- /.box -->
                 	</div><!-- /.col-md-6 -->
 
                 </div><!-- /.row -->
 
                 <div class="form-group">
-                  <label for="invoice">Dados da Fatura</label>
-                  <input type="text" class="form-control" name="invoice" placeholder="Entre com dados sobre a fatura da compra">
+                  <label for="invoice">Link da Compra</label>
+                  <input type="text" class="form-control" name="purchase_link" placeholder="Entre com o link da compra no site de origem">
                 </div>
 
               </div><!-- /.box-body -->

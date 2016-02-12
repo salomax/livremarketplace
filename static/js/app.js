@@ -1,3 +1,5 @@
+var API_ROOT = '//' + document.location.host + '/_ah/api';
+
 /**
  * Objeto referente ao menu.
  */
@@ -7,6 +9,7 @@ menu = {
 	 */
 	bind : function() {
 		$('a.menu-purchase').bind('click', menu.openPurchase);
+		$('a.menu-product').bind('click', menu.openProduct);
 	}, // Fim do bind
 	/**
 	 * Abre um menu no <section class="content">.
@@ -36,9 +39,7 @@ menu = {
 			});
 		});
 	}, // Fim open()
-	/**
-	 * Abre o menu de compras.
-	 */
+	// Abre o menu de compras.
 	openPurchase : function() {
 		menu.openMenu({
 			title : 'Compras',
@@ -46,28 +47,17 @@ menu = {
 			html : '/purchase/purchase.html', 
 			script : '/purchase/purchase.js'
 		});
-	}  // Fim openPurchase()
+	}, // Fim openPurchase()
+	// Abre o menu de compras.
+	openProduct : function() {
+		menu.openMenu({
+			title : 'Produtos',
+			subtitle : 'Gerencie os produtos da loja',
+			html : '/product/product.html', 
+			script : '/product/product.js'
+		});
+	}  // Fim openProduct()
 }; // Fim menu
-
-/**
- * Método utilitário que transforma um form e um objeto JSON.
- * Caso o campo esteja vazio é atribuído valor NULO.
- */
-$.fn.serializeObject = function() {
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(value || null);
-        } else {
-            o[this.name] = this.value || null;
-        }
-    });
-    return o;
-};
 
 /**
  * Using jQuery and JSON to populate forms
@@ -75,8 +65,8 @@ $.fn.serializeObject = function() {
  */
 $.fn.populate = function(data) {
 	var _form = $(this);
-    $.each(data, function(key, value) {
-	    var $ctrl = $('[name='+key+']', _form);  
+	$.each(json2html_name_list(data), function(key, value) {
+	    var $ctrl = $('[name="'+key+'"]', _form);  
 	    switch($ctrl.attr("type")) {  
 	        case "text" :   
 	        case "hidden":  
@@ -90,6 +80,22 @@ $.fn.populate = function(data) {
 	        $ctrl.val(value); 
 	    }  
     });  
+}
+
+function json2html_name_list(json, result, parent){
+    if(!result)result = {};
+    if(!parent)parent = '';
+    if((typeof json)!='object'){
+        result[parent] = json;
+    } else {
+        for(var key in json){
+            var value = json[key];
+            if(parent=='')var subparent = key;
+            else var subparent = parent+'['+key+']';
+            result = json2html_name_list(value, result, subparent);
+        }
+    }
+    return result;
 }
 
 /**
@@ -139,7 +145,7 @@ $.fn.progress = function(percent, message) {
 	// verificar se conclui o processo
 	if (percent == 100) {
 		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
-		$(this).fadeOut(600);
+		$(this).fadeOut(200);
 	} else {
 		// Mostrar progress
 		$(this).show();
@@ -153,7 +159,7 @@ $.fn.progress = function(percent, message) {
  */
 function toRFC3339(str) {
 
-	if (str == undefined || str ==  null) return null;
+	if (str == undefined || str ==  null || str.trim() == '') return null;
 
 	var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
 	var date = new Date(str.replace(pattern,'$3-$2-$1'));
@@ -167,3 +173,35 @@ function toRFC3339(str) {
 	      + pad(date.getUTCMinutes())+':'
 	      + pad(date.getUTCSeconds())
 }
+
+/**
+ * Definir o locale padrão brasileiro para o momentjs.
+ */
+moment.locale('pt-br'); 
+
+
+formatter = {
+
+	format : function(options) {
+		data = options.data;
+		$.each(data, function(index, row) {
+			$.each(row, function(key, value) {
+				$.each(options.format, function(_index, format) {
+					if (format[key] != undefined) {
+						row[key] = format[key](value);
+					}
+				});
+			}); // Fim each
+		}); // Fim for
+		return data;
+	}, // Fim format()
+
+	dateFormat : function(value) {
+		return moment(value).format('L');
+	},
+
+	dateTimeFormat : function(value) {
+		return moment(value).format('LLL');
+	}
+
+};

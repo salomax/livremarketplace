@@ -29,6 +29,8 @@ from messages import PurchasePostMessage
 from messages import PurchaseGetMessage
 from messages import PurchaseCollectionMessage
 
+from app.product import messages as product
+
 from app import user
 from app import oauth
 
@@ -66,7 +68,12 @@ class PurchaseService(remote.Service):
 				PurchaseGetMessage(
 					id = purchaseModel.key.id(),
 					supplier = purchaseModel.supplier,
-					product = purchaseModel.product,
+					product = product.ProductGetMessage(
+							id = purchaseModel.product.key.id(),
+							code = purchaseModel.product.code,
+							name = purchaseModel.product.name,
+							created_date = purchaseModel.product.created_date
+						),
 					quantity = purchaseModel.quantity,
 					purchase_date = purchaseModel.purchase_date,
 					received_date = purchaseModel.received_date,
@@ -78,6 +85,8 @@ class PurchaseService(remote.Service):
 					shipping_cost = purchaseModel.shipping_cost,
 					track_code = purchaseModel.track_code,
 					invoice = purchaseModel.invoice,
+					payment_date = purchaseModel.payment_date, 
+					purchase_link = purchaseModel.purchase_link, 
 					created_date = purchaseModel.created_date))
 
 		#Retornando compras
@@ -104,7 +113,12 @@ class PurchaseService(remote.Service):
 		return PurchaseGetMessage(
 					id = purchaseModel.key.id(),
 					supplier = purchaseModel.supplier,
-					product = purchaseModel.product,
+					product = product.ProductGetMessage(
+							id = purchaseModel.product.key.id(),
+							code = purchaseModel.product.code,
+							name = purchaseModel.product.name,
+							created_date = purchaseModel.product.created_date
+						),
 					quantity = purchaseModel.quantity,
 					purchase_date = purchaseModel.purchase_date,
 					received_date = purchaseModel.received_date,
@@ -116,6 +130,8 @@ class PurchaseService(remote.Service):
 					shipping_cost = purchaseModel.shipping_cost,
 					track_code = purchaseModel.track_code,
 					invoice = purchaseModel.invoice,
+					payment_date = purchaseModel.payment_date, 
+					purchase_link = purchaseModel.purchase_link, 
 					created_date = purchaseModel.created_date)
 
 	ID_RESOURCE = endpoints.ResourceContainer(
@@ -127,7 +143,7 @@ class PurchaseService(remote.Service):
                       http_method='DELETE',
                       name='delete')
 	def delete(self, request):
-		"""Retornar a loja do usuário.
+		"""Remove uma compra relaizada.
 		"""
 
 		#Removendo purchase

@@ -25,11 +25,12 @@ import datetime
 
 from app import user
 from app.marketplace import models as marketplace
+from app.product import models as  product
 
 from google.appengine.ext import ndb
 
+
 #from app.supplier import models
-#from app.product import models
 
 
 class PurchaseModel(ndb.Model):
@@ -40,8 +41,8 @@ class PurchaseModel(ndb.Model):
 	#ndb.StructuredProperty(SupplierModel, required=True, repeated=False)
 	
 	#Produto 
-	product = ndb.StringProperty(required=True, indexed=False)
-	#ndb.StructuredProperty(ProductModel, required=True, repeated=False)
+	#product = ndb.StringProperty(required=True, indexed=False)
+	product = ndb.LocalStructuredProperty(product.ProductModel, keep_keys=True, required=True, repeated=False)
 
 	#Qtidade	
 	quantity = ndb.IntegerProperty(required=True, default=1)
@@ -51,6 +52,9 @@ class PurchaseModel(ndb.Model):
 
 	#Data Recebimento 	
 	received_date = ndb.DateTimeProperty()
+
+	#Data Recebimento 	
+	payment_date = ndb.DateTimeProperty()
 
 	#Valor Unidade 	
 	cost = ndb.FloatProperty(required=True)
@@ -75,6 +79,9 @@ class PurchaseModel(ndb.Model):
 
 	#Descrição Fatura Cartão 
 	invoice = ndb.StringProperty(indexed=False)
+
+	# Link da compra
+	purchase_link = ndb.StringProperty(indexed=False)
 
 	#Data criação
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
@@ -128,9 +135,15 @@ def put(purchase):
 	else:
 		purchaseModel = PurchaseModel(parent=marketplaceModel.key)
 
+	#Selecionando models filhas
+	productModel = ndb.Key('ProductModel', int(purchase.product.id), 
+			parent=marketplaceModel.key).get() 
+	if productModel is None:
+		raise IndexError("Produto com o id %d não encontrado!", purchase.product.id)
+	purchaseModel.product = productModel
+
 	#Criando model
 	purchaseModel.supplier = purchase.supplier
-	purchaseModel.product = purchase.product
 	purchaseModel.quantity = purchase.quantity
 	purchaseModel.purchase_date = purchase.purchase_date
 	purchaseModel.received_date = purchase.received_date
@@ -142,6 +155,8 @@ def put(purchase):
 	purchaseModel.shipping_cost = purchase.shipping_cost
 	purchaseModel.track_code = purchase.track_code
 	purchaseModel.invoice = purchase.invoice
+	purchaseModel.payment_date = purchase.payment_date
+	purchaseModel.purchase_link = purchase.purchase_link
 
 	logging.debug("Persistindo compra...")
 

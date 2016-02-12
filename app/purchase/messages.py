@@ -24,6 +24,8 @@ __license__ = "Apache 2.0"
 from protorpc import messages
 from protorpc import message_types
 
+from app.product import messages as product
+
 
 class PurchaseGetMessage(messages.Message):
   	"""Compras de produtos no estoque. Mensagem a ser trafegada pelo endpoint"""
@@ -35,7 +37,8 @@ class PurchaseGetMessage(messages.Message):
 	supplier = messages.StringField(2, required=True)
 
 	#Produto 
-	product = messages.StringField(3, required=True)
+	# product = messages.StringField(3, required=True)
+	product = messages.MessageField(product.ProductGetMessage, 3, required=True)
 
 	#Qtidade	
 	quantity = messages.IntegerField(4, required=True)
@@ -43,8 +46,8 @@ class PurchaseGetMessage(messages.Message):
 	#Data Compra 	
 	purchase_date = message_types.DateTimeField(5, required=True)
 
-	#Data Recebimento 	
-	received_date = message_types.DateTimeField(6)
+	#Data Pagamento 	
+	payment_date = message_types.DateTimeField(6)
 
 	#Valor Unidade 	
 	cost = messages.FloatField(7)
@@ -70,9 +73,14 @@ class PurchaseGetMessage(messages.Message):
 	#Descrição Fatura Cartão 
 	invoice = messages.StringField(14)
 
-	#Data criação
-  	created_date = message_types.DateTimeField(15, required=True)
+	#Data Recebimento 	
+	received_date = message_types.DateTimeField(15)
 
+	#Link da compra
+	purchase_link = messages.StringField(16)
+
+	#Data criação
+  	created_date = message_types.DateTimeField(17, required=True)
 
 class PurchasePostMessage(messages.Message):
   	"""Compras de produtos para o estoque da loja. Mensagem a ser trafegada pelo endpoint"""
@@ -84,7 +92,8 @@ class PurchasePostMessage(messages.Message):
 	supplier = messages.StringField(2, required=True)
 
 	#Produto 
-	product = messages.StringField(3, required=True)
+	# product = messages.StringField(3, required=True)
+	product = messages.MessageField(product.ProductKeyMessage, 3, required=True)
 
 	#Qtidade	
 	quantity = messages.IntegerField(4, required=True)
@@ -119,8 +128,14 @@ class PurchasePostMessage(messages.Message):
 	#Descrição Fatura Cartão 
 	invoice = messages.StringField(14)
 
+	#Data Pagamento 	
+	payment_date = message_types.DateTimeField(15)
+	
+	#Link da compra
+	purchase_link = messages.StringField(16)
+
 
 class PurchaseCollectionMessage(messages.Message):
-	"""Collection of Greetings."""
+	"""Coleção de compras."""
 
 	items = messages.MessageField(PurchaseGetMessage, 1, repeated=True)
