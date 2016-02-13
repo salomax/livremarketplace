@@ -25,6 +25,8 @@ handlers:
   upload: static/app/main\.html
 - url: /purchase
   static_dir: static/app/purchase
+- url: /product
+  static_dir: static/app/product
 
 libraries:
 - name: pycrypto

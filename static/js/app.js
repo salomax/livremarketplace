@@ -1,15 +1,21 @@
+/**
+ * Constante global para link da API.
+ */
 var API_ROOT = '//' + document.location.host + '/_ah/api';
-
+/**
+ * Definir o locale padrão brasileiro para o momentjs.
+ */
+moment.locale('pt-br'); 
 /**
  * Objeto referente ao menu.
  */
-menu = {
+$.menu = {
 	/**
 	 * Atacha os menus.
 	 */
 	bind : function() {
-		$('a.menu-purchase').bind('click', menu.openPurchase);
-		$('a.menu-product').bind('click', menu.openProduct);
+		$('a.menu-purchase').bind('click', $.menu.openPurchase);
+		$('a.menu-product').bind('click', $.menu.openProduct);
 	}, // Fim do bind
 	/**
 	 * Abre um menu no <section class="content">.
@@ -41,7 +47,7 @@ menu = {
 	}, // Fim open()
 	// Abre o menu de compras.
 	openPurchase : function() {
-		menu.openMenu({
+		$.menu.openMenu({
 			title : 'Compras',
 			subtitle : 'Gerencie as compras da loja',
 			html : '/purchase/purchase.html', 
@@ -50,7 +56,7 @@ menu = {
 	}, // Fim openPurchase()
 	// Abre o menu de compras.
 	openProduct : function() {
-		menu.openMenu({
+		$.menu.openMenu({
 			title : 'Produtos',
 			subtitle : 'Gerencie os produtos da loja',
 			html : '/product/product.html', 
@@ -81,8 +87,7 @@ $.fn.populate = function(data) {
 	    }  
     });  
 }
-
-function json2html_name_list(json, result, parent){
+json2html_name_list = function (json, result, parent){
     if(!result)result = {};
     if(!parent)parent = '';
     if((typeof json)!='object'){
@@ -152,14 +157,13 @@ $.fn.progress = function(percent, message) {
 		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
 	}
 };
-
 /**
  * Método utilizado para se adequar ao padrão 
   * RFC3339 os campos data são convertidos.
  */
-function toRFC3339(str) {
-
-	if (str == undefined || str ==  null || str.trim() == '') return null;
+$.toRFC3339 = function (str) {
+	// Validação
+	if (!str || !str.length) return null;
 
 	var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
 	var date = new Date(str.replace(pattern,'$3-$2-$1'));
@@ -173,16 +177,18 @@ function toRFC3339(str) {
 	      + pad(date.getUTCMinutes())+':'
 	      + pad(date.getUTCSeconds())
 }
-
 /**
- * Definir o locale padrão brasileiro para o momentjs.
+ * Objeto auxiliar para formatação de dados.
  */
-moment.locale('pt-br'); 
-
-
-formatter = {
-
+$.dataFormatter = {
+	// Método para definir a formatação.
 	format : function(options) {
+		// Validar informação
+		if (!(options 
+			&& options.data 
+			&& options.data instanceof Array 
+			&& options.data.length > 0)) return;
+		// Realizar formatação do array
 		data = options.data;
 		$.each(data, function(index, row) {
 			$.each(row, function(key, value) {
@@ -195,13 +201,12 @@ formatter = {
 		}); // Fim for
 		return data;
 	}, // Fim format()
-
+	// Formatação padrão para data.
 	dateFormat : function(value) {
 		return moment(value).format('L');
 	},
-
+	// Formatação padrão para data e hora.
 	dateTimeFormat : function(value) {
 		return moment(value).format('LLL');
 	}
-
 };

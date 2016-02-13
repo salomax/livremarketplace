@@ -142,13 +142,13 @@ purchase = {
 					// atualizar barra de progresso
 					$('.progress-bar-table').progress(60, 'Construindo tabela');
 					// Formatar os campos para a view
-					response.result.items = formatter.format({
+					response.result.items = $.dataFormatter.format({
 							data : response.result.items,
 							format : [
-								{'purchase_date' : formatter.dateFormat},
-								{'received_date' : formatter.dateFormat},
-								{'payment_date' : formatter.dateFormat},
-								{'created_date' : formatter.dateTimeFormat},
+								{'purchase_date' : $.dataFormatter.dateFormat},
+								{'received_date' : $.dataFormatter.dateFormat},
+								{'payment_date' : $.dataFormatter.dateFormat},
+								{'created_date' : $.dataFormatter.dateTimeFormat},
 							]
 							});
 					// Atachar a lista de compras na tabela
@@ -192,7 +192,7 @@ purchase = {
 								{'created_date' : formatter.dateTimeFormat},
 							]
 						})[0];
-			// promisse
+			// resolve promise
 			deferred.resolve(response);
 		}; 
 		// fn erro
@@ -296,9 +296,9 @@ $('form.purchase-form').validate({ // initialize the plugin
     	// Convert form to JSON Object
     	var data = $(form).serializeObject();
     	// Para se adequar ao padrão RFC3339 os campos data são convertidos
-    	data.purchase_date = toRFC3339(data.purchase_date);
-    	data.received_date = toRFC3339(data.received_date);
-    	data.payment_date = toRFC3339(data.payment_date);
+    	data.purchase_date = $.toRFC3339(data.purchase_date);
+    	data.received_date = $.toRFC3339(data.received_date);
+    	data.payment_date = $.toRFC3339(data.payment_date);
     	console.log(data);
     	// Submeter ao endpoint
 	    purchase.put(data).then(function(_data) {
@@ -324,13 +324,39 @@ $('form.purchase-form').validate({ // initialize the plugin
 });
 
 // Autocomplete para produtos e fornecedores
-var products = [
-   { value: 'Cílios 123', data: 342342 },
-   { value: 'Cílios ABC', data: 123456 },
-   { value: 'Batom', data: 123987654 }
-];
-
+// Importar script de produtos
+$.getScript('/product/product.js');
+var productsSearchSource = function(request, response) {
+	var success = function(_data) {
+		// Aplicar resultado da pesquisa no autocomplete	
+		response($.map(_data.result.items, function (_item) {
+	                    return { 
+	                        label: _item.name,
+	                        value: _item.code,
+	                        id: _item.id
+	                    }
+	                })
+		);
+	};
+	// Realizar pesquisa 
+	$.product.api.search(request.term).then(success);
+};
 $('input[name="product[name]"]').autocomplete({
-    source: products
-});
+    source: productsSearchSource,
+	create: function () {
+        $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+        	var code = $('<span>').addClass('badge').append(item.value)
+	        return   $( "<li>" )
+	        		.append(code)
+				    .append(item.label)
+				    .appendTo(ul);
+        };
+    },
+    select: function(event, ui) {
+    	event.preventDefault();
+    	$('input[name="product[name]"]').val(ui.item.label);
+    	$('input[name="product[id]"]').val(ui.item.id);
+    	return false;
+    }
+}).data("ui-autocomplete")._renderItem;
 
