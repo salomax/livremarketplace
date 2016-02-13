@@ -28,6 +28,7 @@ import models
 from messages import ProductPostMessage
 from messages import ProductGetMessage
 from messages import ProductCollectionMessage
+from messages import ProductSearchMessage
 
 from app import user
 from app import oauth
@@ -45,6 +46,10 @@ from protorpc import message_types
 class ProductService(remote.Service):
 	"""Serviço destinado ao gerenciamento dos produtos comercializados pela loja.
 	"""
+
+	# Resource Container para POSTs
+	Product_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(ProductPostMessage)
+	Product_Search_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(ProductSearchMessage)
 
 	@endpoints.method(message_types.VoidMessage, 
                     ProductCollectionMessage,
@@ -72,9 +77,32 @@ class ProductService(remote.Service):
 		#Retornando produtos
 		return ProductCollectionMessage(items=items)
 
+	@endpoints.method(Product_Search_MESSAGE_RESOURCE_CONTAINER,
+					  ProductCollectionMessage,
+                      http_method='PUT',
+                      name='search')
+	def search(self, request):
 
-	# Resource Container para POSTs
-	Product_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(ProductPostMessage)
+		"""Realiza uma pesquisa dos produtos cadastrados.
+		"""
+		logging.debug('Executando endpoint de pesquisa de produtos')
+
+		#Obter a lista de produtos cadastrados
+		products = models.search(request)
+
+		#Declarando lista e convertendo model para message
+		items = []
+		for ProductModel in products:
+			items.append(
+				ProductGetMessage(
+					id = ProductModel.key.id(),
+					code = ProductModel.code,
+					name = ProductModel.name,
+					created_date = ProductModel.created_date))
+
+		#Retornando produtos
+		return ProductCollectionMessage(items=items)
+
 
 	@endpoints.method(Product_MESSAGE_RESOURCE_CONTAINER,
 					  ProductGetMessage,

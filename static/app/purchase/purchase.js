@@ -96,7 +96,11 @@ purchase = {
 						$(element).append(table);
 
 						_columns = [
-							{field : 'product.name', title : 'Produto'},
+							{field : 'product.name', title : 'Produto',
+								formatter : function(value, row, index) {
+									return  ['<span class="badge">', row.product.code, "</span>", value].join(' ');
+								}
+							},
 							{field : 'supplier', title : 'Fornecedor'},
 							{field : 'quantity', title : 'Quantidade'},
 							{field : 'purchase_date', title : 'Data da Compra'},
@@ -183,13 +187,13 @@ purchase = {
 					message : 'Compra cadastrada com sucesso!'
 				}).success();
 			// Formatar valores
-			response.result = formatter.format({
+			response.result = $.dataFormatter.format({
 							data : [response.result],
 							format : [
-								{'purchase_date' : formatter.dateFormat},
-								{'received_date' : formatter.dateFormat},
-								{'payment_date' : formatter.dateFormat},
-								{'created_date' : formatter.dateTimeFormat},
+								{'purchase_date' : $.dataFormatter.dateFormat},
+								{'received_date' : $.dataFormatter.dateFormat},
+								{'payment_date' : $.dataFormatter.dateFormat},
+								{'created_date' : $.dataFormatter.dateFormat},
 							]
 						})[0];
 			// resolve promise
@@ -262,9 +266,8 @@ purchase.load();
 // Validação do formulário
 $('form.purchase-form').validate({ // initialize the plugin
     rules: {
-        product : {
+        'product[name]' : {
         	required: true,
-			minlength: 3
         },
         supplier : {
 			required: true,
@@ -286,7 +289,7 @@ $('form.purchase-form').validate({ // initialize the plugin
 
     },
     messages : {
-    	product : 'Produto é uma informação obrigatória!',
+    	'product[name]' : 'Produto é uma informação obrigatória!',
     	supplier : 'Fornecedor é uma informação obrigatória!',
     	quantity : 'Quantidade é numérico obrigatória e maior que zero!',
     	purchase_date : 'Data da Compra é obrigatória!',
@@ -339,7 +342,7 @@ var productsSearchSource = function(request, response) {
 		);
 	};
 	// Realizar pesquisa 
-	$.product.api.search(request.term).then(success);
+	$.product.api.search({code : request.term, name : request.term}).then(success);
 };
 $('input[name="product[name]"]').autocomplete({
     source: productsSearchSource,

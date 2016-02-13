@@ -26,7 +26,7 @@ $.product.api = {
 		} // Fim fn error
 		// Load API e executar serviço
 		gapi.client.load('product', 'v1', function() {
-			var request = gapi.client.product.list(_data);
+			var request = gapi.client.product.search(_data);
 			request.then(success, error);
 		}, API_ROOT);
 		// retornar promise

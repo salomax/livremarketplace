@@ -60,6 +60,16 @@ class ProductPostMessage(messages.Message):
 	name = messages.StringField(3, required=True)
 
 
+class ProductSearchMessage(messages.Message):
+  	"""Produto comercializado na loja. Mensagem POST de pesquisa a ser trafegada pelo endpoint"""
+ 
+	#Código de referência	
+	code = messages.StringField(1, required=False)
+
+	#Nome 
+	name = messages.StringField(2, required=False)
+
+
 class ProductCollectionMessage(messages.Message):
 	"""Coleção de produtos."""
 

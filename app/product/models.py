@@ -24,22 +24,69 @@ import logging
 import datetime
 
 from app import user
+from app import util
 from app.marketplace import models as marketplace
 
 from google.appengine.ext import ndb
+from google.appengine.api import search as search_api
 
+# Index autocomplete produto
+PRODUCT_AUTOCOMPLETE_INDEX_NAME = 'product_autocomplete_index'
+AUTOCOMPLETE_SEARCH_LIMIT = 5
+def get_autocomplete_index():
+	return search_api.Index(name=PRODUCT_AUTOCOMPLETE_INDEX_NAME)
 
 class ProductModel(ndb.Model):
 	"""Entidade representa um produto comercializado pela loja"""
 
 	#Código de referência do Produto	
-	code = ndb.StringProperty(required=False)
+	code = ndb.StringProperty(required=True)
 
 	#Nome do Produto	
 	name = ndb.StringProperty(required=True)
 
 	#Data criação	
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
+
+#http://stackoverflow.com/questions/12899083/partial-matching-gae-search-api
+def update_index(product):
+	name = ','.join(util.tokenize_autocomplete(product.name))
+	code = ','.join(util.tokenize_autocomplete(product.code))
+	document = search_api.Document(
+		doc_id=str(product.key.id()),
+		fields=[search_api.TextField(name='code', value=code),
+	            search_api.TextField(name='name', value=name)])
+	get_autocomplete_index().put(document)
+
+
+def remove_index(_id):
+	get_autocomplete_index().remove(str(_id))
+
+
+def get(id):
+	"""Selecionar um produto cadastrado pelo id.
+	"""
+
+	#Identificando usuário da requisição
+	email = user.get_current_user().email()
+
+	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
+
+	#Obtendo marketplace como parent
+	marketplaceModel = marketplace.get(email)
+
+	logging.debug("Loja encontrada com sucesso")
+
+	#Realizando query, selecionando o produto pelo pai e id
+	product = ndb.Key('ProductModel', int(id), parent=marketplaceModel.key).get() 
+
+	if product is None:
+		raise IndexError("Produto não encontrado!")
+
+	logging.debug("Produto encontrado com sucesso")
+
+	return product
+
 
 def list():
 	"""Listar os produtos cadastrados na loja do usuário.
@@ -66,6 +113,30 @@ def list():
 	return products
 
 
+def search(product):
+	"""Pesquisa dos produtos cadastrados na loja.
+	"""
+
+	# Listando os produtos cadastrados	
+	items = list()
+
+	logging.debug("Realizando a pesquisa indexada de produtos")
+
+	# Realizando a pesquisa
+	search_results = get_autocomplete_index().search(search_api.Query(
+			query_string="code:{code} OR name:{name}".format(
+				code=product.code, name=product.name),
+			options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
+
+	# Convertendo docs para model
+	results = []
+	for doc in search_results:
+		results.append(get(int(doc.doc_id)))
+
+	# Retornando resultado
+	return results
+
+@ndb.transactional
 def put(product):
 	"""Inclui ou atualiza um produto.
 	"""
@@ -94,16 +165,24 @@ def put(product):
 	productModel.code = product.code
 	productModel.name = product.name
 
+	#Persistindo produto
 	logging.debug("Persistindo produto...")
 
-	#Persistindo
 	productModel.put()
 
 	logging.debug("Persistido produto %d com sucesso na loja %s", 
 		productModel.key.id(), marketplaceModel.name)
 
+	#Atualizando índice
+	update_index(productModel)
+	logging.debug("Índice atualizado com sucesso para o produto %s", 
+		productModel.key.id())
+
+	#Retornando produto cadastrado com o id
 	return productModel
 
+
+@ndb.transactional
 def delete(id):
 	"""Remove um produto cadastrado.
 	"""

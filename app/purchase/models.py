@@ -86,6 +86,7 @@ class PurchaseModel(ndb.Model):
 	#Data criação
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
 
+
 def list():
 	"""Listar compras cadastradas para a loja do usuário.
 	"""
@@ -110,7 +111,7 @@ def list():
 	#Retornando
 	return purchases
 
-
+@ndb.transactional
 def put(purchase):
 	"""Inclui ou atualiza uma compra.
 	"""
@@ -168,6 +169,8 @@ def put(purchase):
 
 	return purchaseModel
 
+
+@ndb.transactional
 def delete(id):
 	"""Remove uma compra cadastrada.
 	"""
