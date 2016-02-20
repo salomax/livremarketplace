@@ -1,11 +1,41 @@
+/******************************************************************************
+ * app.js
+ *
+ * Copyright 2016 Marcos Salomão
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @version     1.0
+ * @author      Marcos Salomão (salomao.marcos@gmail.com)
+ *****************************************************************************/
+
 /**
  * Constante global para link da API.
  */
 var API_ROOT = '//' + document.location.host + '/_ah/api';
 /**
- * Definir o locale padrão brasileiro para o momentjs.
+ * Definir o locale padrão brasileiro para os plugins.
  */
 moment.locale('pt-br'); 
+jQuery.i18n.properties({
+    name:'messages', 
+    path:'bundle/', 
+    mode:'both',
+    language:'pt_BR',
+    checkAvailableLanguages: true,
+    async: true
+});
+
 /**
  * Objeto referente ao menu.
  */
@@ -17,16 +47,24 @@ $.menu = {
 		$('a.menu-purchase').bind('click', $.menu.openPurchase);
 		$('a.menu-product').bind('click', $.menu.openProduct);
 	}, // Fim do bind
+
 	/**
 	 * Abre um menu no <section class="content">.
 	 */
 	openMenu : function(menu) {
+
+		// Definir o icon
+		$('i.icon-title').attr('class', 'icon-title ion ' + menu.icon);
+
 		// Definir título
 		$('span.content-header-title').text(menu.title);
+
 		// Definir subtítulo
 		$('small.content-header-title').text(menu.subtitle);
+
 		// Mensagem carregando
 		$('section.content').html('Carregando ' + menu.title + ' ...');
+
 		// Executar ajax
 		$.ajax({
 			url: menu.html,
@@ -43,26 +81,41 @@ $.menu = {
 			$('input.datepicker').datepicker({
 				language: 'pt-BR'
 			});
+
 		});
+
 	}, // Fim open()
-	// Abre o menu de compras.
+
+	/**
+	 * Abre o menu de compras.
+	 */
 	openPurchase : function() {
+
 		$.menu.openMenu({
+			icon : 'ion-ios-cart-outline',
 			title : 'Compras',
 			subtitle : 'Gerencie as compras da loja',
 			html : '/purchase/purchase.html', 
 			script : '/purchase/purchase.js'
 		});
+
 	}, // Fim openPurchase()
-	// Abre o menu de compras.
+
+	/**
+	 * Abre o menu de compras.
+	 */
 	openProduct : function() {
+
 		$.menu.openMenu({
+			icon : 'ion-cube',
 			title : 'Produtos',
 			subtitle : 'Gerencie os produtos da loja',
 			html : '/product/product.html', 
 			script : '/product/product.js'
 		});
+
 	}  // Fim openProduct()
+
 }; // Fim menu
 
 /**
@@ -210,3 +263,36 @@ $.dataFormatter = {
 		return moment(value).format('LLL');
 	}
 };
+
+
+/**
+ * Carregar todos os elementos que são genéricos 
+ * ou comnuns na aplicação.
+ */
+!function($) {
+
+	// Namespace common (comunm)
+	$.common = {};
+
+	// Variáveis e funções comuns inerentes à view.
+	$.common.view = {
+
+		/**
+		 * Função que retorna os botões de ação update 
+		 * e delete de uma tabela de dados.
+		 */
+		tableactionbuttons : function(value, row, index) {
+				return  [
+						'<div class="btn-group">',
+						'<button class="btn btn-secundary btn-sm update" data-title="Edit" data-toggle="modal" data-target="#edit">',
+						'<span class="glyphicon glyphicon-pencil"></span>',
+						'</button>',
+						'<button class="btn btn-danger btn-sm delete" data-title="Delete" data-toggle="modal" data-target="#delete">',
+						'<span class="glyphicon glyphicon-trash"></span>',
+						'</button>',
+						'</div>'].join('');
+			}
+
+	}; 
+
+}(jQuery);

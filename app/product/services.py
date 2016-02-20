@@ -79,7 +79,7 @@ class ProductService(remote.Service):
 
 	@endpoints.method(Product_Search_MESSAGE_RESOURCE_CONTAINER,
 					  ProductCollectionMessage,
-                      http_method='PUT',
+                      http_method='POST',
                       name='search')
 	def search(self, request):
 
@@ -106,9 +106,9 @@ class ProductService(remote.Service):
 
 	@endpoints.method(Product_MESSAGE_RESOURCE_CONTAINER,
 					  ProductGetMessage,
-                      http_method='PUT',
-                      name='put')
-	def put(self, request):
+                      http_method='POST',
+                      name='save')
+	def save(self, request):
 		"""Inclui ou atualiza um produto.
 		"""
 

@@ -1,0 +1,439 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ta",
+				"target	Attr"
+			],
+			[
+				"wi",
+				"width"
+			],
+			[
+				"de",
+				"debug"
+			],
+			[
+				"pro",
+				"product"
+			],
+			[
+				"pa",
+				"payment_date"
+			],
+			[
+				"pur",
+				"purchase_date"
+			],
+			[
+				"purchase",
+				"purchase_date"
+			],
+			[
+				"mar",
+				"marketplaceModel"
+			],
+			[
+				"Pur",
+				"PurchaseModel"
+			],
+			[
+				"model",
+				"models"
+			],
+			[
+				"m",
+				"marketplaceModel"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 138.0,
+		"last_filter": "Package Control: In",
+		"selected_items":
+		[
+			[
+				"Package Control: In",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Install Pac",
+				"Package Control: Install Package"
+			],
+			[
+				"Pac",
+				"Package Control: Install Local Dependency"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 139.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/mnt/dados/projetos/resume/style.css",
+		"/home/salomax/Downloads/MarkUps-MU-Material/MU-Material/index.html",
+		"/mnt/dados/projetos/resume/img/experience/rgmlogo.jpg",
+		"/home/salomax/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/product/models.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/README.md",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/purchase/models.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/util.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/product/messages.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/index.yaml",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/app/main.html",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/product/services.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/app/purchase/purchase.html",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/app/purchase/purchase.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/app/product/product.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app.yaml",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/app.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/oauth.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/jquery.serialize-object.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/index.html",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/purchase/services.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/purchase/messages.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/marketplace_api.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/app/product/product.html",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/moment.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/bootstrap-datepicker.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/css/plugins/bootstrap-datepicker.min.css",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/jquery.inputmask.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/jquery.inputmask.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/css/marketplace.css",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/vendor.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/jquery.dataTables.min.js",
+		"/mnt/dados/projetos/software/AdminLTE-2.3.0/pages/tables/data.html",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/css/plugins/dataTables.bootstrap.css",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/dataTables.bootstrap.css",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/fastclick.min.js",
+		"/mnt/dados/projetos/software/AdminLTE-2.3.0/plugins/fastclick/fastclick.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/plugins/jquery.slimscroll.min.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/index2.html",
+		"/mnt/dados/projetos/software/AdminLTE-2.3.0/index.html",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/dev_appserver.sh",
+		"/mnt/dados/projetos/software/AdminLTE-2.3.0/index.html.bkp",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/css/skins/skin-blue-light.min.css",
+		"/mnt/dados/projetos/software/AdminLTE-2.3.0/dist/img/avatar.png",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/redirect.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/marketplace.js",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/user.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/discovery.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/mimeparse.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/model.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/schema.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/oauth2client/_helpers.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/http.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/oauth2client/client.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/oauth2client/clientsecrets.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/oauth2client/gce.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/oauth2client/util.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/appengine_config.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/six.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/teste.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/six.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/googleapiclient/channel.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/six.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/lib/__init__.py",
+		"/home/salomax/Downloads/six.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/requirements.txt",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/static/js/app.min.js",
+		"/mnt/dados/projetos/software/AdminLTE-2.3.0/dist/css/AdminLTE.min.css",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/sale/models.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/marketplace/services.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/datastore.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/marketplace/models.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/marketplace/messages.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/oauth.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/supplier/models.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/app/purchase.py",
+		"/mnt/dev/web/nippovac/index.html",
+		"/mnt/dev/web/nippovac/css/agency.css",
+		"/mnt/dev/web/nippovac/app.yaml",
+		"/mnt/dev/web/nippovac/js/bootstrap.js",
+		"/mnt/dev/web/nippovac/js/agency.js",
+		"/mnt/dev/web/nippovac/css/bootstrap.css",
+		"/mnt/dev/web/nippovac/img/map-image.png",
+		"/mnt/dev/web/nippovac/font-awesome/css/font-awesome.css",
+		"/mnt/dev/web/nippovac/img/nippovac-logo.png",
+		"/mnt/dev/web/nippovac/README.md",
+		"/home/salomax/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api-bkp/app.yaml",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api-bkp/helloworld_api.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/purchases.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/marketplace.py",
+		"/mnt/dados/projetos/software/python/appengine-marketplace-api/helloworld_api.py",
+		"/home/salomax/.config/sublime-text-3/Packages/Package Control/Package Control.sublime-settings",
+		"/home/salomax/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/salomax/.config/sublime-text-3/Packages/User/Package Control.sublime-settings"
+	],
+	"find":
+	{
+		"height": 25.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/mnt/dados/projetos/resume",
+			"/mnt/dados/projetos/software/python/appengine-marketplace-api",
+			"/mnt/dados/projetos/software/AdminLTE-2.3.0",
+			"/mnt/dados/projetos/software/python/appengine-marketplace-api"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"education",
+			"experience",
+			"resume",
+			"education",
+			"img",
+			"activator",
+			"img",
+			"                              ",
+			"insert_snippet",
+			"update_index",
+			"Query",
+			"Index",
+			"search",
+			"formatter",
+			"length",
+			"''",
+			"\"\"",
+			"'",
+			"''",
+			"root.replace",
+			"incrementPush",
+			"serializ",
+			">>>",
+			"Purch",
+			"Purchase",
+			"purc",
+			"purcha",
+			"formatter",
+			"uniqueId",
+			"delete",
+			"put",
+			"bindList",
+			"load",
+			"serializeObject",
+			"daterange",
+			"reservation",
+			"Data",
+			"date",
+			"alias",
+			"delete",
+			"processing",
+			"modal-dialog-message",
+			"modal",
+			"modalWait",
+			"pleaseWaitDiv",
+			"div",
+			"Quick",
+			"\"Previ:",
+			"Search:",
+			"fixed-table-loading",
+			"Loading",
+			"please wait...",
+			"Loading, please wait...",
+			"css",
+			"wrapper",
+			"});\n",
+			"http",
+			"build",
+			"lib.six",
+			"absolute_import",
+			"disco",
+			"						",
+			"datastore.CurrencyProperty",
+			"marketplaceEntity",
+			"messages",
+			"MarketplaceEntity",
+			"	\n",
+			"UserModel",
+			"DateField",
+			"marketplaceModel",
+			"            \n",
+			"                \n",
+			"img",
+			"#fed136",
+			"act",
+			"  ",
+			"h4",
+			";\n",
+			"img",
+			"droid",
+			"9E9E9E",
+			"BDBDBD",
+			"fa-stack",
+			"#fed136",
+			"background-image",
+			"Kaus",
+			"displa",
+			"Kaus",
+			"kaus",
+			">\n",
+			"1",
+			"API",
+			"Greeting",
+			"HelloWorldApi"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"",
+			"Product",
+			"six",
+			"	purchaseModel.",
+			"ndb.FloatProperty",
+			"marketplaceModel",
+			"MarketplaceModel",
+			"UserEntity",
+			"DateTimeField",
+			"marketplaceEntity",
+			"#F44336",
+			"757575",
+			"E0E0E0"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "index.sublime-project",
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"app",
+				"appengine-marketplace-api/static/js/app.js"
+			],
+			[
+				"",
+				"app.yaml"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 683.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 330.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

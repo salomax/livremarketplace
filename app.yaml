@@ -13,6 +13,8 @@ handlers:
 # and HTML.
 - url: /js
   static_dir: static/js
+- url: /bundle
+  static_dir: static/bundle
 - url: /css
   static_dir: static/css  
 - url: /img
