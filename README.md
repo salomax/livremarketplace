@@ -1,8 +1,26 @@
 # MarketPlace 
-Light ERP for e-commerce
+Open source light ERP for e-commerce
+
+Last dev version in https://salomax-marketplace.appspot.com
+
+### Enviroment
+
+- Google Appengine (Endpoints API) and Datastore
+- Python
+- Bootstrap and JQuery
 
 ### Modules in development
-- Inventory Management
+- Products
+- Suppliers
+- Purchases
+- Sales
+- Cash Flow
+- Dashboard
+- Reports
+
+### To Do Features
+- i18n
+- Android and iOS clients
 
 ### Git
 
@@ -20,7 +38,7 @@ Light ERP for e-commerce
 
 ### WebClient
 
-	https://salomax-marketplace.appspot.com/
+	https://your-app-id.appspot.com/
 
 ### Endpoints API
 
