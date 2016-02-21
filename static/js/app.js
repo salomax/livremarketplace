@@ -23,100 +23,290 @@
  * Constante global para link da API.
  */
 var API_ROOT = '//' + document.location.host + '/_ah/api';
-/**
- * Definir o locale padrão brasileiro para os plugins.
- */
-moment.locale('pt-br'); 
-jQuery.i18n.properties({
-    name:'messages', 
-    path:'bundle/', 
-    mode:'both',
-    language:'pt_BR',
-    checkAvailableLanguages: true,
-    async: true
-});
+
+var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 
 /**
- * Objeto referente ao menu.
+ * Funções para serem carregadas no load da página main.
  */
-$.menu = {
-	/**
-	 * Atacha os menus.
-	 */
-	bind : function() {
-		$('a.menu-purchase').bind('click', $.menu.openPurchase);
-		$('a.menu-product').bind('click', $.menu.openProduct);
-	}, // Fim do bind
+ !function($) {
 
-	/**
-	 * Abre um menu no <section class="content">.
-	 */
-	openMenu : function(menu) {
+ 	$.main = {};
 
-		// Definir o icon
-		$('i.icon-title').attr('class', 'icon-title ion ' + menu.icon);
+ 	$.main.load = function() {
 
-		// Definir título
-		$('span.content-header-title').text(menu.title);
+ 		// Definir o locale padrão brasileiro para os plugins.
+		moment.locale('pt-br'); 
+		$.i18n.properties({
+		    name:'messages', 
+		    path:'bundle/', 
+		    mode:'both',
+		    language:'pt_BR',
+		    checkAvailableLanguages: true,
+		    async: true,
+		    callback : function() {
+		    	// Construir menu
+		    	$.menu.build();	
+		    }
+		});
+	}
 
-		// Definir subtítulo
-		$('small.content-header-title').text(menu.subtitle);
+}(jQuery);
 
-		// Mensagem carregando
-		$('section.content').html('Carregando ' + menu.title + ' ...');
+/**
+ * Carregar menus.
+ */
+ !function($) {
 
-		// Executar ajax
-		$.ajax({
-			url: menu.html,
-			context: document.body
-		}).done(function(response) {
-			// Inserir content
-			$('section.content').html(response);
-			// Inserir script
-			$.getScript(menu.script);
-			// Aplicar máscaras (inputmask)
-			$('input[data-inputmask]').inputmask();
-			// Aplicar datepicker
-			//Date range picker
-			$('input.datepicker').datepicker({
-				language: 'pt-BR'
+ 	$.menu = {
+
+ 		getMenus : function() {
+ 			return [
+		 			{
+		 				header : messages.menu.header.commercial
+		 			}, 
+					{
+						icon : 'ion-ios-cart-outline',
+						title : messages.menu.purchase.title,
+						subtitle : messages.menu.purchase.subtitle,
+						html : '/purchase/purchase.html', 
+						script : '/purchase/purchase.js'
+					}, 
+		 			{
+		 				header : messages.menu.header.registration
+		 			},
+					{
+						icon : 'ion-cube',
+						title : messages.menu.product.title,
+						subtitle : messages.menu.product.subtitle,
+						html : '/product/product.html', 
+						script : '/product/product.js'
+					},
+					{
+						icon : 'ion-ios-people',
+						title : messages.menu.supplier.title,
+						subtitle : messages.menu.supplier.subtitle,
+						html : '/supplier/supplier.html', 
+						script : '/supplier/supplier.js'
+					}					
+ 					];
+ 		},
+
+		/**
+		 * Atacha os menus.
+		 */
+		build : function() {
+
+			// Renderizar todos os menus
+			$.each($.menu.getMenus(), function(index, menu) {
+
+				if (menu.header) {
+
+					// Renderizar header (agrupador de menus)
+					$.menu.appendHeader(menu.header);
+
+				} else {
+
+					// Renderizar item de menu
+					$.menu.appendMenuItem(menu);
+
+				}
+	
 			});
 
-		});
+		}, // Fim do bind
 
-	}, // Fim open()
+		appendHeader : function(name) {
+
+			var header = $('<li>').addClass('header').appendTo($('ul.top-menu'));
+			header.text(name);
+
+		},
+
+		appendMenuItem : function(menu) {
+
+			var itemMenu = $('<li>').appendTo($('ul.top-menu'));
+			var link = $('<a>').attr('href', '#').appendTo(itemMenu);
+
+			link.bind('click', function() {
+				$.menu.openMenu(menu);
+			});
+
+			$('<i>').addClass('ion ' + menu.icon).appendTo(link);
+			$('<span>').text(menu.title).appendTo(link);
+
+		},
+
+		/**
+		 * Abre um menu no <section class="content">.
+		 */
+		openMenu : function(menu) {
+
+			// Definir o icon
+			$('i.icon-title').attr('class', 'icon-title ion ' + menu.icon);
+
+			// Definir título
+			$('span.content-header-title').text(menu.title);
+
+			// Definir subtítulo
+			$('small.content-header-title').text(menu.subtitle);
+
+			// Mensagem carregando
+			$('section.content').html('Carregando ' + menu.title + ' ...');
+
+			// Executar ajax
+			$.ajax({
+				url: menu.html,
+				context: document.body
+			}).done(function(response) {
+
+				// Inserir content
+				$('section.content').html(response);
+
+				// Inserir script
+				$.getScript(menu.script);
+
+				// Aplicar máscaras (inputmask)
+				$('input[data-inputmask]').inputmask();
+
+				// Aplicar datepicker
+				//Date range picker
+				$('input.datepicker').datepicker({
+					language: 'pt-BR'
+				});
+
+			});
+
+		} // Fim open()
+
+	}; // Fim menu
+
+ }(jQuery);
+
+ /**
+  * Handling google maps API.
+  */
+!function($) {
 
 	/**
-	 * Abre o menu de compras.
+	 * Bind autocomplete search no input.
 	 */
-	openPurchase : function() {
+	bindAutocompleteMap = function(map, autocomplete) {
 
-		$.menu.openMenu({
-			icon : 'ion-ios-cart-outline',
-			title : 'Compras',
-			subtitle : 'Gerencie as compras da loja',
-			html : '/purchase/purchase.html', 
-			script : '/purchase/purchase.js'
-		});
+		// Validar se é um input
+		if (!autocomplete.is('input')) { 
+			console.warning('Autocomplete object not is an input HTML element!'); 
+			return; 
+		}
 
-	}, // Fim openPurchase()
+		// Obter input
+	    var input = autocomplete.get(0);
+
+	    // Criar pesquisa
+	    var searchBox = new google.maps.places.SearchBox(input);
+	    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+	    // Bias the SearchBox results towards current map's viewport.
+	    map.addListener('bounds_changed', function() {
+	        searchBox.setBounds(map.getBounds());
+	    });
+
+	    var markers = [];
+
+	    searchBox.addListener('places_changed', function() {
+	        var places = searchBox.getPlaces();
+
+	        if (places.length == 0) {
+	            return;
+	        }
+
+	        // Clear out the old markers.
+	        markers.forEach(function(marker) {
+	            marker.setMap(null);
+	        });
+	        markers = [];
+
+	        // For each place, get the icon, name and location.
+	        var bounds = new google.maps.LatLngBounds();
+	        places.forEach(function(place) {
+	            var icon = {
+	                url: place.icon,
+	                size: new google.maps.Size(71, 71),
+	                origin: new google.maps.Point(0, 0),
+	                anchor: new google.maps.Point(17, 34),
+	                scaledSize: new google.maps.Size(25, 25)
+	            };
+
+	            // Create a marker for each place.
+	            markers.push(new google.maps.Marker({
+	                map: map,
+	                icon: icon,
+	                title: place.name,
+	                position: place.geometry.location
+	            }));
+
+	            if (place.geometry.viewport) {
+	                // Only geocodes have viewport.
+	                bounds.union(place.geometry.viewport);
+	            } else {
+	                bounds.extend(place.geometry.location);
+	            }
+	        });
+
+	        // Definir bounds
+	        map.fitBounds(bounds);
+
+	        // Melhor zoom
+	        if (markers.length == 1) map.setZoom(17);
+	    });
+	};
 
 	/**
-	 * Abre o menu de compras.
+	 * Bind mapa no elemento.
+	 * @see https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
 	 */
-	openProduct : function() {
+	$.fn.maps = function(options) {
 
-		$.menu.openMenu({
-			icon : 'ion-cube',
-			title : 'Produtos',
-			subtitle : 'Gerencie os produtos da loja',
-			html : '/product/product.html', 
-			script : '/product/product.js'
-		});
+	    var element = $(this);
 
-	}  // Fim openProduct()
+	    // Verificar se o elemento já não está carregado
+	    // Isto pode lançar exceções no console caso esteja
+	    if (element.html() != '') return;
 
-}; // Fim menu
+	    // Criar o objeto mapa
+	    var map = new google.maps.Map(
+	        element.get(0), {
+	            mapTypeControl: false,
+	            streetViewControl: false,
+	            zoom: 2,
+	            center: new google.maps.LatLng(32.5468, -23.203),
+	            mapTypeId: google.maps.MapTypeId.ROADMAP
+	        });
+	
+		// Definir a posição inicial perto do usuário, caso o browser permita
+		// https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
+	    if (navigator.geolocation) {
+	        navigator.geolocation.getCurrentPosition(function(position) {
+	            var pos = {
+	                lat: position.coords.latitude,
+	                lng: position.coords.longitude
+	            };
+	            map.setCenter(pos);
+	            map.setZoom(14);
+	        });
+	    }
+
+	    // Caso haja autocomplete para o mapa
+	    if (options.autocomplete) {
+
+	    	// Bind autocomplete
+	        bindAutocompleteMap(map, options.autocomplete);
+
+	    }
+
+	};
+
+}(jQuery);
 
 /**
  * Using jQuery and JSON to populate forms
@@ -210,60 +400,6 @@ $.fn.progress = function(percent, message) {
 		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
 	}
 };
-/**
- * Método utilizado para se adequar ao padrão 
-  * RFC3339 os campos data são convertidos.
- */
-$.toRFC3339 = function (str) {
-	// Validação
-	if (!str || !str.length) return null;
-
-	var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
-	var date = new Date(str.replace(pattern,'$3-$2-$1'));
-
-	pad = function(n) {return n<10 ? '0'+n : n}
-
-	return date.getUTCFullYear()+'-'
-	      + pad(date.getUTCMonth()+1)+'-'
-	      + pad(date.getUTCDate())+'T'
-	      + pad(date.getUTCHours())+':'
-	      + pad(date.getUTCMinutes())+':'
-	      + pad(date.getUTCSeconds())
-}
-/**
- * Objeto auxiliar para formatação de dados.
- */
-$.dataFormatter = {
-	// Método para definir a formatação.
-	format : function(options) {
-		// Validar informação
-		if (!(options 
-			&& options.data 
-			&& options.data instanceof Array 
-			&& options.data.length > 0)) return;
-		// Realizar formatação do array
-		data = options.data;
-		$.each(data, function(index, row) {
-			$.each(row, function(key, value) {
-				$.each(options.format, function(_index, format) {
-					if (format[key] != undefined) {
-						row[key] = format[key](value);
-					}
-				});
-			}); // Fim each
-		}); // Fim for
-		return data;
-	}, // Fim format()
-	// Formatação padrão para data.
-	dateFormat : function(value) {
-		return moment(value).format('L');
-	},
-	// Formatação padrão para data e hora.
-	dateTimeFormat : function(value) {
-		return moment(value).format('LLL');
-	}
-};
-
 
 /**
  * Carregar todos os elementos que são genéricos 
@@ -296,3 +432,59 @@ $.dataFormatter = {
 	}; 
 
 }(jQuery);
+
+/**
+ * TODO colocar no common.
+ * Método utilizado para se adequar ao padrão 
+ * RFC3339 os campos data são convertidos.
+ */
+$.toRFC3339 = function (str) {
+	// Validação
+	if (!str || !str.length) return null;
+
+	var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+	var date = new Date(str.replace(pattern,'$3-$2-$1'));
+
+	pad = function(n) {return n<10 ? '0'+n : n}
+
+	return date.getUTCFullYear()+'-'
+	      + pad(date.getUTCMonth()+1)+'-'
+	      + pad(date.getUTCDate())+'T'
+	      + pad(date.getUTCHours())+':'
+	      + pad(date.getUTCMinutes())+':'
+	      + pad(date.getUTCSeconds())
+}
+/**
+ * TODO colocar no common. 
+ * Objeto auxiliar para formatação de dados.
+ */
+$.dataFormatter = {
+	// Método para definir a formatação.
+	format : function(options) {
+		// Validar informação
+		if (!(options 
+			&& options.data 
+			&& options.data instanceof Array 
+			&& options.data.length > 0)) return;
+		// Realizar formatação do array
+		data = options.data;
+		$.each(data, function(index, row) {
+			$.each(row, function(key, value) {
+				$.each(options.format, function(_index, format) {
+					if (format[key] != undefined) {
+						row[key] = format[key](value);
+					}
+				});
+			}); // Fim each
+		}); // Fim for
+		return data;
+	}, // Fim format()
+	// Formatação padrão para data.
+	dateFormat : function(value) {
+		return moment(value).format('L');
+	},
+	// Formatação padrão para data e hora.
+	dateTimeFormat : function(value) {
+		return moment(value).format('LLL');
+	}
+};

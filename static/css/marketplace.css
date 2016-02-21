@@ -17,3 +17,8 @@ label.error {
 	content:"*"; 
 	color:red; 
 }
+
+.map-canvas {
+  	height: 300px;
+  	width: 100%;
+}
