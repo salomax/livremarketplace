@@ -49,7 +49,7 @@ class SupplierModel(ndb.Model):
 	phone = ndb.StringProperty(required=False)
 
 	# Localização
-	location = ndb.GeoPtProperty(required=False)
+	location = ndb.StringProperty(required=False)
 
 	#Data criação	
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
@@ -140,7 +140,7 @@ def search(supplier):
 	return results
 
 @ndb.transactional
-def put(supplier):
+def save(supplier):
 	"""Inclui ou atualiza um fornecedor.
 	"""
 
@@ -166,6 +166,9 @@ def put(supplier):
 
 	#Criando model
 	supplierModel.name = supplier.name
+	supplierModel.email = supplier.email
+	supplierModel.phone = supplier.phone
+	supplierModel.location = supplier.location
 
 	#Persistindo fornecedor
 	logging.debug("Persistindo fornecedor...")

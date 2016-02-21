@@ -71,6 +71,7 @@ class SupplierService(remote.Service):
 				SupplierGetMessage(
 					id = supplierModel.key.id(),
 					name = supplierModel.name,
+					email = supplierModel.email,
 					phone = supplierModel.phone,
 					location = supplierModel.location,
 					created_date = supplierModel.created_date))
@@ -98,6 +99,7 @@ class SupplierService(remote.Service):
 				SupplierGetMessage(
 					id = supplierModel.key.id(),
 					name = supplierModel.name,
+					email = supplierModel.email,
 					phone = supplierModel.phone,
 					location = supplierModel.location,
 					created_date = supplierModel.created_date))
@@ -117,12 +119,13 @@ class SupplierService(remote.Service):
 		logging.debug('Executando endpoint para incluir/atualizar um fornecedor')
 
 		#Cadastrar/atualizar a compra de um fornecedor
-		supplierModel = models.put(request)
+		supplierModel = models.save(request)
 
 		#Retornando compra persistida
 		return SupplierGetMessage(
 					id = supplierModel.key.id(),
 					name = supplierModel.name,
+					email = supplierModel.email,
 					phone = supplierModel.phone,
 					location = supplierModel.location,
 					created_date = supplierModel.created_date)

@@ -40,14 +40,17 @@ class SupplierGetMessage(messages.Message):
 	#Nome 
 	name = messages.StringField(2, required=True)
 
+	# Email de contato do fornecedor
+	email = messages.StringField(3, required=False)
+
 	# Telefone de contato do fornecedor
-	phone = messages.StringField(3, required=False)
+	phone = messages.StringField(4, required=False)
 
 	# Localização
-	location = messages.StringField(4, required=False)
+	location = messages.StringField(5, required=False)
 
 	#Data criação
-  	created_date = message_types.DateTimeField(5, required=True)
+  	created_date = message_types.DateTimeField(6, required=True)
 
 
 class SupplierPostMessage(messages.Message):
@@ -59,11 +62,14 @@ class SupplierPostMessage(messages.Message):
 	#Nome 
 	name = messages.StringField(2, required=True)
 
+	# Email de contato do fornecedor
+	email = messages.StringField(3, required=False)
+
 	# Telefone de contato do fornecedor
-	phone = messages.StringField(3, required=False)
+	phone = messages.StringField(4, required=False)
 
 	# Localização
-	location = messages.StringField(4, required=False)
+	location = messages.StringField(5, required=False)
 
 
 class SupplierSearchMessage(messages.Message):

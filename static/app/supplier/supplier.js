@@ -234,8 +234,10 @@
                                 });
                         },
                         'click button.update': function(e, value, row, index) {
+
                             // mostar tab do form
                             $('.nav-tabs a[href="#tab_2"]').tab('show');
+
                             // Preencher form
                             $('form.supplier-form').populate(row);
                         }
@@ -313,6 +315,8 @@
 
     $('label.name').text(messages.supplier.name);
     $('input[name="name"]').attr('placeholder', messages.supplier.form.name.placeholder);
+    $('label.email').text(messages.supplier.email);
+    $('input[name="email"]').attr('placeholder', messages.supplier.form.email.placeholder);
     $('label.phone').text(messages.supplier.phone);
     $('input[name="phone"]').attr('placeholder', messages.supplier.form.phone.placeholder);
     $('label.location').text(messages.supplier.location);
@@ -329,10 +333,14 @@
             name: {
                 required: true,
                 minlength: 3
+            },
+            email : {
+                email: true
             }
         },
         messages: {
-            name: messages.supplier.form.name.required
+            name: messages.supplier.form.name.required,
+            email: messages.supplier.form.email.valid
         },
 
         /**
