@@ -20,7 +20,6 @@
 - Reports
 
 ### To Do Features
-- i18n
 - Android and iOS clients
 
 ### Git
