@@ -1,5 +1,8 @@
-# MarketPlace 
+# openMarketplace
 Open source light ERP for e-commerce
+
+[![Test Coverage](https://codeclimate.com/github/salomax/openMarketplace/badges/coverage.svg)][coverage]
+[![Code Climate](https://codeclimate.com/github/salomax/openMarketplace/badges/gpa.svg)][codeclimate]
 
 Last dev version in https://salomax-marketplace.appspot.com
 
