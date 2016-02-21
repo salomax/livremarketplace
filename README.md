@@ -1,7 +1,8 @@
-# MarketPlace 
-Open source light ERP for e-commerce
+# [openMarketplace](https://salomax-marketplace.appspot.com) 
+<sup>open source light ERP for e-commerces</sup>
 
-Last dev version in https://salomax-marketplace.appspot.com
+![Code Climate](https://codeclimate.com/github/salomax/openMarketplace/badges/gpa.svg)
+![Test Coverage](https://codeclimate.com/github/salomax/openMarketplace/badges/coverage.svg)
 
 ### Enviroment
 
@@ -19,7 +20,6 @@ Last dev version in https://salomax-marketplace.appspot.com
 - Reports
 
 ### To Do Features
-- i18n
 - Android and iOS clients
 
 ### Git
@@ -43,4 +43,8 @@ Last dev version in https://salomax-marketplace.appspot.com
 ### Endpoints API
 
 	http://your-app-id.appspot.com/_ah/api/explorer
+	
+## License
+
+See [LICENSE](https://github.com/salomax/openMarketplace/blob/master/LICENSE).	
 
