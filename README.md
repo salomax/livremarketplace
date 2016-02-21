@@ -1,8 +1,8 @@
 # [openMarketplace](https://salomax-marketplace.appspot.com) 
-<sub><sup>open source light ERP for e-commerces</sup></sub>
+<sup>open source light ERP for e-commerces</sup>
 
-![Test Coverage](https://codeclimate.com/github/salomax/openMarketplace/badges/coverage.svg)
 ![Code Climate](https://codeclimate.com/github/salomax/openMarketplace/badges/gpa.svg)
+![Test Coverage](https://codeclimate.com/github/salomax/openMarketplace/badges/coverage.svg)
 
 ### Enviroment
 
