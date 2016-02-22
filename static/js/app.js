@@ -88,7 +88,14 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 						subtitle : messages.menu.supplier.subtitle,
 						html : '/supplier/supplier.html', 
 						script : '/supplier/supplier.js'
-					}					
+					},					
+					{
+						icon : 'ion-happy-outline',
+						title : messages.menu.customer.title,
+						subtitle : messages.menu.customer.subtitle,
+						html : '/customer/customer.html', 
+						script : '/customer/customer.js'
+					}	
  					];
  		},
 
@@ -200,6 +207,12 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 				anchor: new google.maps.Point(17, 34),
 				scaledSize: new google.maps.Size(25, 25)
 			};
+		},
+		getStartLocation : function() {
+			return new google.maps.LatLng(32.5468, -23.203);
+		},
+		getStartZoom : function() {
+			return 2;
 		}
 	};
 
@@ -223,6 +236,13 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 		// Obter input
 	    var input = autocomplete.get(0);
 
+	    // Criar listener para qdo houver um reset
+	    // no form do input o mapa tb deve ser "zerado" 
+	    $(input.form).bind('reset', function() {
+            map.setDefaultLocation();
+			map.clearMarkers();    
+	    });
+
 	    // Criar pesquisa
 	    var searchBox = new google.maps.places.SearchBox(input);
 	    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -232,8 +252,6 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 	        searchBox.setBounds(map.getBounds());
 	    });
 
-	    var markers = [];
-
 	    searchBox.addListener('places_changed', function() {
 	        var places = searchBox.getPlaces();
 
@@ -242,17 +260,14 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 	        }
 
 	        // Clear out the old markers.
-	        markers.forEach(function(marker) {
-	            marker.setMap(null);
-	        });
-	        markers = [];
+	        map.clearMarkers();
 
 	        // For each place, get the icon, name and location.
 	        var bounds = new google.maps.LatLngBounds();
 	        places.forEach(function(place) {
 
 	            // Create a marker for each place.
-	            markers.push(new google.maps.Marker({
+	            map.markers.push(new google.maps.Marker({
 	                map: map,
 	                icon: $.maps.icon,
 	                title: place.name,
@@ -271,7 +286,7 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 	        map.fitBounds(bounds);
 
 	        // Melhor zoom
-	        if (markers.length == 1) map.setZoom($.maps.getZoom());
+	        if (map.markers.length == 1) map.setZoom(map.getZoom());
 	    });
 	};
 
@@ -287,21 +302,46 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 	    // Isto pode lançar exceções no console caso esteja
 	    if (element.html() == '') {
 
+	      	// Incluir array dos marcadores ao tipo map
+			google.maps.Map.prototype.markers = new Array();
+			google.maps.Map.prototype.clearMarkers = function() {
+		        this.markers.forEach(function(marker) {
+		            marker.setMap(null);
+		        });
+		        this.markers = [];   
+			};
+
+			// Definir a posição inicial perto do usuário, caso o browser permita
+	        // https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
+	        google.maps.Map.prototype.setDefaultLocation = function() {
+	        	var map = this;
+		        if (navigator.geolocation) {
+		            navigator.geolocation.getCurrentPosition(function(position) {
+		                var pos = {
+		                    lat: position.coords.latitude,
+		                    lng: position.coords.longitude
+		                };
+		                map.setCenter(pos);
+		                map.setZoom($.maps.getZoom());
+		            });
+		        } // Fim if (navigator.geolocation)
+	        };
+
 	        // Criar o objeto mapa
 	        var map = new google.maps.Map(
 	            element.get(0), {
 	                mapTypeControl: false,
 	                streetViewControl: false,
-	                zoom: 2,
-	                center: new google.maps.LatLng(32.5468, -23.203),
 	                mapTypeId: google.maps.MapTypeId.ROADMAP
 	            });
 
-	        // Define atribuito map
+	        // Definir local inicial (sem marcadores)
+			map.setDefaultLocation();
+
+	        // Bind método no elemento HTML para definir local no map
 	        $(this).bind('setMapLocation', function(element, pos) { 
-	        		var markers = [];
 		            // Create a marker for each place.
-		            markers.push(new google.maps.Marker({
+		            map.markers.push(new google.maps.Marker({
 		                map: map,
 		                icon: $.maps.icon,
 		                position: pos
@@ -309,20 +349,6 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 		            map.setCenter(pos);
 		            map.setZoom($.maps.getZoom());
 	        	});
-
-	        // Definir a posição inicial perto do usuário, caso o browser permita
-	        // https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
-	        if (navigator.geolocation) {
-	            navigator.geolocation.getCurrentPosition(function(position) {
-	                var pos = {
-	                    lat: position.coords.latitude,
-	                    lng: position.coords.longitude
-	                };
-	                map.setCenter(pos);
-	                map.setZoom($.maps.getZoom());
-	            });
-	        } // Fim if (navigator.geolocation)
-
 
 	        // Caso haja autocomplete para o mapa
 	        if (options.autocomplete) {

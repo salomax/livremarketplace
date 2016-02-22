@@ -29,6 +29,7 @@ import app.marketplace.services as marketplace
 import app.purchase.services as purchase
 import app.product.services as product
 import app.supplier.services as supplier
+import app.customer.services as customer
 
 # Importando sys e ajustando o encode para UTF-8, afim de contemplar acentuação
 reload(sys)  
@@ -41,4 +42,5 @@ APPLICATION = endpoints.api_server([
 	purchase.PurchaseService, 
 	user.UserService,
 	product.ProductService,
-	supplier.SupplierService])
+	supplier.SupplierService,
+	customer.CustomerService])

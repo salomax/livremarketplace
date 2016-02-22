@@ -1,5 +1,5 @@
 /******************************************************************************
- * supplier.js
+ * customer.js
  *
  * Copyright 2016 Marcos Salomão
  *
@@ -27,7 +27,7 @@
     /*
      * Inserindo o escopo de fornecedor.
      */
-    $.supplier = {};
+    $.customer = {};
 
     /*****************************************************************************
      * Controller API REST 
@@ -36,7 +36,7 @@
     /**
      * Métodos relativos à API REST do recurso fornecedor.
      */
-    $.supplier.api = {
+    $.customer.api = {
 
         /* 
          * Método destinado à pesquisar pelo nome ou código os fornecedors cadastrados.
@@ -59,8 +59,8 @@
 
                     // apresentar mensagem ao usuário
                     $('.modal-dialog-message').modalDialog({
-                        title: messages.supplier.search.dialog.title,
-                        message: messages.supplier.search.dialog.errormessage
+                        title: messages.customer.search.dialog.title,
+                        message: messages.customer.search.dialog.errormessage
                     }).danger();
 
                     console.log(reason.result.error.message);
@@ -70,8 +70,8 @@
                 } // Fim fn error
 
             // Load API e executar serviço
-            gapi.client.load('supplier', 'v1', function() {
-                var request = gapi.client.supplier.search(_data);
+            gapi.client.load('customer', 'v1', function() {
+                var request = gapi.client.customer.search(_data);
                 request.then(success, error);
             }, API_ROOT);
 
@@ -102,8 +102,8 @@
 
                 // apresentar mensagem ao usuário
                 $('.modal-dialog-message').modalDialog({
-                    title: messages.supplier.save.dialog.title,
-                    message: messages.supplier.save.dialog.success
+                    title: messages.customer.save.dialog.title,
+                    message: messages.customer.save.dialog.success
                 }).success();
 
                 // resolve promise
@@ -118,8 +118,8 @@
 
                 // apresentar mensagem ao usuário
                 $('.modal-dialog-message').modalDialog({
-                    title: messages.supplier.save.dialog.title,
-                    message: messages.supplier.save.dialog.errormessage
+                    title: messages.customer.save.dialog.title,
+                    message: messages.customer.save.dialog.errormessage
                 }).danger();
 
                 console.log(reason.result.error.message);
@@ -129,8 +129,8 @@
             };
 
             // Load API e  executar serviço
-            gapi.client.load('supplier', 'v1', function() {
-                var request = gapi.client.supplier.save(_data);
+            gapi.client.load('customer', 'v1', function() {
+                var request = gapi.client.customer.save(_data);
                 request.then(success, failure);
             }, API_ROOT);
 
@@ -157,8 +157,8 @@
 
                     // apresentar mensagem ao usuário
                     $('.modal-dialog-message').modalDialog({
-                        title: messages.supplier.delete.dialog.title,
-                        message: messages.supplier.delete.dialog.success
+                        title: messages.customer.delete.dialog.title,
+                        message: messages.customer.delete.dialog.success
                     }).success();
 
                     // Executar promise
@@ -173,8 +173,8 @@
 
                     // apresentar mensagem ao usuário
                     $('.modal-dialog-message').modalDialog({
-                        title: messages.supplier.delete.dialog.title,
-                        message: messages.supplier.delete.dialog.errormessage
+                        title: messages.customer.delete.dialog.title,
+                        message: messages.customer.delete.dialog.errormessage
                     }).danger();
 
                     console.log(reason.result.error.message);
@@ -184,8 +184,8 @@
                 };
 
                 // Load API e  executar serviço
-                gapi.client.load('supplier', 'v1', function() {
-                    var request = gapi.client.supplier.delete({ id: _id });
+                gapi.client.load('customer', 'v1', function() {
+                    var request = gapi.client.customer.delete({ id: _id });
                     request.then(success, failure);
                 }, API_ROOT);
 
@@ -200,7 +200,7 @@
      * View components
      *****************************************************************************/
 
-    $.supplier.view = {
+    $.customer.view = {
 
         /**
          * Método destinado à criar a tabela com os fornecedors.
@@ -208,14 +208,14 @@
         bindTable: function(_data) {
 
             // Construir tabela
-            $('table.table-suppliers').bootstrapTable({
+            $('table.table-customers').bootstrapTable({
                 uniqueId: 'id',
                 columns: [{
                     field: 'id',
                     visible: false
                 }, {
                     field: 'name',
-                    title: messages.supplier.name,
+                    title: messages.customer.name,
                     searchable: true
                 }, {
                     title: '',
@@ -225,9 +225,9 @@
                     formatter: $.common.view.tableactionbuttons,
                     events: {
                         'click button.delete': function(e, value, row, index) {
-                            $.supplier.api.delete(row.id).then(
+                            $.customer.api.delete(row.id).then(
                                 function() {
-                                    $('table.table-suppliers').bootstrapTable('remove', {
+                                    $('table.table-customers').bootstrapTable('remove', {
                                         field: 'id',
                                         values: [row.id]
                                     });
@@ -237,7 +237,7 @@
 
                             // Preencher form, precisa ser primeiro show tab
                             // senão não atualiza o map 
-                            $('form.supplier-form').populate(row);
+                            $('form.customer-form').populate(row);
 
                             // mostar tab do form
                             $('.nav-tabs a[href="#tab_2"]').tab('show');
@@ -262,8 +262,8 @@
             $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
 
             // Load API e  executar serviço
-            gapi.client.load('supplier', 'v1', function() {
-                var request = gapi.client.supplier.list();
+            gapi.client.load('customer', 'v1', function() {
+                var request = gapi.client.customer.list();
                 request.then(
                     function(response) {
 
@@ -271,7 +271,7 @@
                         $('.progress-bar-table').progress(75, messages.progressbar.building);
 
                         // Atachar a lista de compras na tabela
-                        $.supplier.view.bindTable(response.result);
+                        $.customer.view.bindTable(response.result);
 
                         // atualizar barra de progresso					
                         $('.progress-bar-table').progress(100, messages.progressbar.done);
@@ -284,8 +284,8 @@
 
                         // apresentar mensagem ao usuário
                         $('.modal-dialog-message').modalDialog({
-                            title: messages.supplier.list.dialog.title,
-                            message: messages.supplier.list.dialog.errormessage
+                            title: messages.customer.list.dialog.title,
+                            message: messages.customer.list.dialog.errormessage
                         }).danger();
 
                         console.log(reason.result.error.message);
@@ -309,32 +309,32 @@
 ! function($) {
 
     // Aplicar i18n
-    $('span.tab_list').text(messages.supplier.tab.list);
-    $('span.tab_save').text(messages.supplier.tab.save);
-    $('h3.supplier_save_title').text(messages.supplier.save.title);
+    $('span.tab_list').text(messages.customer.tab.list);
+    $('span.tab_save').text(messages.customer.tab.save);
+    $('h3.customer_save_title').text(messages.customer.save.title);
     $('span.new-item').text(messages.action.new_item);
-    $('small.supplier_save_subtitle').text(messages.supplier.save.subtitle);
+    $('small.customer_save_subtitle').text(messages.customer.save.subtitle);
 
-    $('label.name').text(messages.supplier.name);
-    $('input[name="name"]').attr('placeholder', messages.supplier.form.name.placeholder);
-    $('label.email').text(messages.supplier.email);
-    $('input[name="email"]').attr('placeholder', messages.supplier.form.email.placeholder);
-    $('label.phone').text(messages.supplier.phone);
-    $('input[name="phone"]').attr('placeholder', messages.supplier.form.phone.placeholder);
-    $('label.location').text(messages.supplier.location);
-    $('input[name="location"]').attr('placeholder', messages.supplier.form.location.placeholder);
+    $('label.name').text(messages.customer.name);
+    $('input[name="name"]').attr('placeholder', messages.customer.form.name.placeholder);
+    $('label.email').text(messages.customer.email);
+    $('input[name="email"]').attr('placeholder', messages.customer.form.email.placeholder);
+    $('label.phone').text(messages.customer.phone);
+    $('input[name="phone"]').attr('placeholder', messages.customer.form.phone.placeholder);
+    $('label.location').text(messages.customer.location);
+    $('input[name="location"]').attr('placeholder', messages.customer.form.location.placeholder);
 
     $('button.save').text(messages.action.save);
 
     $('button.new-item').bind('click', function() {
-        $('form.supplier-form').trigger('reset');
+        $('form.customer-form').trigger('reset');
     });
 
     // Carregar a lista de fornecedors
-    $.supplier.view.loadTable();
+    $.customer.view.loadTable();
 
     // Criar a validação do formulário
-    $('form.supplier-form').validate({ // initialize the plugin
+    $('form.customer-form').validate({ // initialize the plugin
         rules: {
             name: {
                 required: true,
@@ -345,8 +345,8 @@
             }
         },
         messages: {
-            name: messages.supplier.form.name.required,
-            email: messages.supplier.form.email.valid
+            name: messages.customer.form.name.required,
+            email: messages.customer.form.email.valid
         },
 
         /**
@@ -360,24 +360,24 @@
             var data = $(form).serializeObject();
 
             // Submeter ao endpoint
-            $.supplier.api.save(data).then(function(_data) {
+            $.customer.api.save(data).then(function(_data) {
 
                 // Zerar o form qdo houver sucesso
                 $(form).trigger('reset');
 
                 // Atualizar lista
-                var row = $('table.table-suppliers').bootstrapTable(
+                var row = $('table.table-customers').bootstrapTable(
                     'getRowByUniqueId', _data.result.id);
 
                 // Insere se não existe ou atualiza caso já esteja inserida
                 if (row == null) {
-                    $('table.table-suppliers').bootstrapTable('insertRow', {
+                    $('table.table-customers').bootstrapTable('insertRow', {
                         index: 0,
                         row: _data.result
                     });
                 } else {
 
-                    $('table.table-suppliers').bootstrapTable('updateByUniqueId', {
+                    $('table.table-customers').bootstrapTable('updateByUniqueId', {
                         id: _data.result.id,
                         row: _data.result
                     });
