@@ -189,6 +189,21 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 !function($) {
 
 	/**
+	 * ìcone default.
+	 */
+	$.maps = {
+		getZoom : function() { return 15 },
+		getIcon : function() {
+			return {
+				size: new google.maps.Size(71, 71),
+				origin: new google.maps.Point(0, 0),
+				anchor: new google.maps.Point(17, 34),
+				scaledSize: new google.maps.Size(25, 25)
+			};
+		}
+	};
+
+	/**
 	 * Bind autocomplete search no input.
 	 */
 	bindAutocompleteMap = function(map, autocomplete) {
@@ -198,6 +213,12 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 			console.warning('Autocomplete object not is an input HTML element!'); 
 			return; 
 		}
+
+		// Evitar que o enter ao selecionar uma localização
+		// no input de pesquisa do map realize um submit
+		autocomplete.keypress(function(event) {
+			return event.keyCode != 13;
+		});
 
 		// Obter input
 	    var input = autocomplete.get(0);
@@ -229,18 +250,11 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 	        // For each place, get the icon, name and location.
 	        var bounds = new google.maps.LatLngBounds();
 	        places.forEach(function(place) {
-	            var icon = {
-	                url: place.icon,
-	                size: new google.maps.Size(71, 71),
-	                origin: new google.maps.Point(0, 0),
-	                anchor: new google.maps.Point(17, 34),
-	                scaledSize: new google.maps.Size(25, 25)
-	            };
 
 	            // Create a marker for each place.
 	            markers.push(new google.maps.Marker({
 	                map: map,
-	                icon: icon,
+	                icon: $.maps.icon,
 	                title: place.name,
 	                position: place.geometry.location
 	            }));
@@ -257,7 +271,7 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 	        map.fitBounds(bounds);
 
 	        // Melhor zoom
-	        if (markers.length == 1) map.setZoom(17);
+	        if (markers.length == 1) map.setZoom($.maps.getZoom());
 	    });
 	};
 
@@ -271,38 +285,78 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 
 	    // Verificar se o elemento já não está carregado
 	    // Isto pode lançar exceções no console caso esteja
-	    if (element.html() != '') return;
+	    if (element.html() == '') {
 
-	    // Criar o objeto mapa
-	    var map = new google.maps.Map(
-	        element.get(0), {
-	            mapTypeControl: false,
-	            streetViewControl: false,
-	            zoom: 2,
-	            center: new google.maps.LatLng(32.5468, -23.203),
-	            mapTypeId: google.maps.MapTypeId.ROADMAP
+	        // Criar o objeto mapa
+	        var map = new google.maps.Map(
+	            element.get(0), {
+	                mapTypeControl: false,
+	                streetViewControl: false,
+	                zoom: 2,
+	                center: new google.maps.LatLng(32.5468, -23.203),
+	                mapTypeId: google.maps.MapTypeId.ROADMAP
+	            });
+
+	        // Define atribuito map
+	        $(this).bind('setMapLocation', function(element, pos) { 
+	        		var markers = [];
+		            // Create a marker for each place.
+		            markers.push(new google.maps.Marker({
+		                map: map,
+		                icon: $.maps.icon,
+		                position: pos
+		            }));
+		            map.setCenter(pos);
+		            map.setZoom($.maps.getZoom());
+	        	});
+
+	        // Definir a posição inicial perto do usuário, caso o browser permita
+	        // https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
+	        if (navigator.geolocation) {
+	            navigator.geolocation.getCurrentPosition(function(position) {
+	                var pos = {
+	                    lat: position.coords.latitude,
+	                    lng: position.coords.longitude
+	                };
+	                map.setCenter(pos);
+	                map.setZoom($.maps.getZoom());
+	            });
+	        } // Fim if (navigator.geolocation)
+
+
+	        // Caso haja autocomplete para o mapa
+	        if (options.autocomplete) {
+
+	            // Bind autocomplete
+	            bindAutocompleteMap(map, options.autocomplete);
+
+	        } // Fim if (options.autocomplete)
+
+	    } 
+
+	    if (options.autocomplete && $.trim(options.autocomplete.val()).length > 0) { // else if (element.html() == '')
+
+	        var geocoder = new google.maps.Geocoder();
+	        var address = options.autocomplete.val();
+
+	        var _this = $(this);
+
+	        geocoder.geocode({ 'address': address }, function(results, status) {
+
+	            if (status == google.maps.GeocoderStatus.OK) {
+
+					var pos = {
+		                lat: results[0].geometry.location.lat(),
+		                lng: results[0].geometry.location.lng()
+		            };
+
+		            _this.trigger('setMapLocation', pos);
+
+	            }
+
 	        });
-	
-		// Definir a posição inicial perto do usuário, caso o browser permita
-		// https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
-	    if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition(function(position) {
-	            var pos = {
-	                lat: position.coords.latitude,
-	                lng: position.coords.longitude
-	            };
-	            map.setCenter(pos);
-	            map.setZoom(14);
-	        });
-	    }
 
-	    // Caso haja autocomplete para o mapa
-	    if (options.autocomplete) {
-
-	    	// Bind autocomplete
-	        bindAutocompleteMap(map, options.autocomplete);
-
-	    }
+	    } // Fim else (element.html() == '')
 
 	};
 

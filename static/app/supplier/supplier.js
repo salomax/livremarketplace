@@ -235,11 +235,12 @@
                         },
                         'click button.update': function(e, value, row, index) {
 
+                            // Preencher form, precisa ser primeiro show tab
+                            // senão não atualiza o map 
+                            $('form.supplier-form').populate(row);
+
                             // mostar tab do form
                             $('.nav-tabs a[href="#tab_2"]').tab('show');
-
-                            // Preencher form
-                            $('form.supplier-form').populate(row);
                         }
                     }
                 }],
