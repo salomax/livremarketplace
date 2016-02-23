@@ -63,6 +63,16 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
  		getMenus : function() {
  			return [
 		 			{
+		 				header : messages.menu.header.management
+		 			}, 
+					{
+						icon : 'ion-arrow-graph-up-right',
+						title : messages.menu.dashboard.title,
+						subtitle : messages.menu.dashboard.subtitle,
+						html : '/dashboard/dashboard.html', 
+						script : '/dashboard/dashboard.js'
+					}, 
+		 			{
 		 				header : messages.menu.header.commercial
 		 			}, 
 					{

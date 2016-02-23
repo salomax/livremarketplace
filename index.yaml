@@ -26,6 +26,21 @@ indexes:
   - name: purchase_date
     direction: desc
 
+- kind: PurchaseModel
+  ancestor: yes
+  properties:
+  - name: purchase_date
+    direction: desc
+  - name: payment_date
+  - name: total_cost
+
+- kind: PurchaseModel
+  ancestor: yes
+  properties:
+  - name: purchase_date
+    direction: desc
+  - name: total_cost
+
 - kind: SupplierModel
   ancestor: yes
   properties:

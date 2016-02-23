@@ -37,33 +37,39 @@ purchase = {
 					{
 						field : 'product.name',
 						title : 'Produto',
+	                    'class': 'col-sm-4',
 						searchable : true
 					},
 					{
 						field : 'supplier.name',
 						title : 'Fornecedor',
+	                    'class': 'col-sm-3',
 						searchable : true
 					},
 					{
 						field : 'quantity',
 						title : 'Qtde',
+	                    'class': 'col-sm-1',
 						align : 'center',
 						searchable : false
 					},
 					{
 						field : 'purchase_date',
 						title : 'Data Compra',
+	                    'class': 'col-sm-1',
 						align : 'center',
 						searchable : false
 					},
 					{
 						field : 'received_date',
 						title : 'Data Recebimento',
+	                    'class': 'col-sm-1',
 						align : 'center',
 						searchable : false
 					},
 					{
 						title : '',
+	                    'class': 'col-sm-2',						
 						align : 'center',
 						searchable : false,
 						formatter : function(value, row, index) {
@@ -108,8 +114,8 @@ purchase = {
 		            refresh: 'glyphicon-refresh icon-refresh',
 		            toggle: 'glyphicon-list-alt icon-list-alt',
 		            columns: 'glyphicon-th icon-th',
-		            detailOpen: 'glyphicon-option-horizontal',
-		            detailClose: 'glyphicon-option-vertical'
+		            detailOpen: 'glyphicon-option-vertical',
+		            detailClose: 'glyphicon-minus'
 		        },
 				detailFormatter : function(index, row, element) {
 
@@ -302,6 +308,9 @@ $('form.purchase-form').validate({ // initialize the plugin
         purchase_date : {
         	required: true,        	
         },
+        payment_date : {
+        	required: true,        	
+        },
         cost : {
         	required: true, 
         	number: true,
@@ -314,15 +323,19 @@ $('form.purchase-form').validate({ // initialize the plugin
     	'supplier[name]' : 'Fornecedor é uma informação obrigatória!',
     	quantity : 'Quantidade é numérico obrigatória e maior que zero!',
     	purchase_date : 'Data da Compra é obrigatória!',
+    	payment_date : 'Data do pagamento é obrigatória!',
     	cost : 'Custo por unidade é numérico e obrigatório!'
     },
     submitHandler: function(form) {
+
     	// Convert form to JSON Object
     	var data = $(form).serializeObject();
+
     	// Para se adequar ao padrão RFC3339 os campos data são convertidos
     	data.purchase_date = $.toRFC3339(data.purchase_date);
     	data.received_date = $.toRFC3339(data.received_date);
     	data.payment_date = $.toRFC3339(data.payment_date);
+
     	// Submeter ao endpoint
 	    purchase.put(data).then(function(_data) {
 	    	// Zerar o form qdo houver sucesso

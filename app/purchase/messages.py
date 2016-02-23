@@ -46,7 +46,7 @@ class PurchaseGetMessage(messages.Message):
 	purchase_date = message_types.DateTimeField(5, required=True)
 
 	#Data Pagamento 	
-	payment_date = message_types.DateTimeField(6)
+	payment_date = message_types.DateTimeField(6, required=True)
 
 	#Valor Unidade 	
 	cost = messages.FloatField(7)

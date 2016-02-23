@@ -49,8 +49,8 @@ class PurchaseModel(ndb.Model):
 	#Data Recebimento 	
 	received_date = ndb.DateTimeProperty()
 
-	#Data Recebimento 	
-	payment_date = ndb.DateTimeProperty()
+	#Data Pagamento 	
+	payment_date = ndb.DateTimeProperty(required=True)
 
 	#Valor Unidade 	
 	cost = ndb.FloatProperty(required=True)

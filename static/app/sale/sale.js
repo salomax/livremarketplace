@@ -171,11 +171,34 @@
                 columns: [{
                     field: 'id',
                     visible: false
-                }, {
-                    field: 'quantity',
-                    title: messages.sale.quantity,
+                }, 
+                {
+                    field: 'customer.name',
+                    'class': 'col-sm-4',
+                    title: messages.sale.customer,
                     searchable: true
-                }, {
+                }, 
+                {
+                    field: 'product.name',
+                    'class': 'col-sm-4',
+                    title: messages.sale.product,
+                    searchable: true
+                }, 
+                {
+                    field: 'quantity',
+                    'class': 'col-sm-1',
+                    align : 'right',
+                    title: messages.sale.quantity,
+                    searchable: false
+                }, 
+                {
+                    field: 'sale_date',
+                    'class': 'col-sm-1',
+                    align : 'center',
+                    title: messages.sale.sale_date,
+                    searchable: true
+                }, 
+                {
                     title: '',
                     align: 'center',
                     searchable: false,
@@ -227,6 +250,12 @@
 
                         // atualizar barra de progresso
                         $('.progress-bar-table').progress(75, messages.progressbar.building);
+
+                        // Formatar os campos para a view
+                        response.result.items = $.dataFormatter.format({
+                                data : response.result.items,
+                                format : [{'sale_date' : $.dataFormatter.dateFormat}]
+                            });
 
                         // Atachar a lista de compras na tabela
                         $.sale.view.bindTable(response.result);
@@ -288,11 +317,14 @@
     $('input[name="track_code"]').text(messages.sale.form.track_code.placeholder);
 
     $('label.amount').text(messages.sale.amount);
-    $('label.fare').text(messages.sale.sale_date);
-    $('label.net_total').text(messages.sale.sale_date);
-    
-    
+    $('input[name="amount"]').text(messages.sale.form.amount.placeholder);
 
+    $('label.fare').text(messages.sale.fare);
+    $('input[name="fare"]').text(messages.sale.form.fare.placeholder);
+
+    $('label.net_total').text(messages.sale.net_total);    
+    $('input[name="net_total"]').text(messages.sale.form.net_total.placeholder);
+    
     $('button.save').text(messages.action.save);
 
     $('button.new-item').bind('click', function() {
@@ -305,17 +337,32 @@
     // Criar a validação do formulário
     $('form.sale-form').validate({ // initialize the plugin
         rules: {
-            name: {
-                required: true,
-                minlength: 3
+            'customer[name]': {
+                required: true
             },
-            email : {
-                email: true
+            'product' : {
+                required: true
+            },
+            'quantity' : {
+                required: true
+            },
+            'sale_date' : {
+                required: true
+            },
+            'amount' : {
+                required: true
+            },
+            'net_total' : {
+                required: true
             }
         },
         messages: {
-            name: messages.sale.form.name.required,
-            email: messages.sale.form.email.valid
+            'customer[name]': messages.sale.form.customer.required,
+            'product' : messages.sale.form.product.required ,
+            'quantity' : messages.sale.form.quantity.required ,
+            'sale_date' : messages.sale.form.sale_date.required ,
+            'amount' : messages.sale.form.amount.required ,
+            'net_total' : messages.sale.form.net_total.required 
         },
 
         /**
@@ -328,11 +375,20 @@
             // Convert form to JSON Object
             var data = $(form).serializeObject();
 
+            // Para se adequar ao padrão RFC3339 os campos data são convertidos
+            data.sale_date = $.toRFC3339(data.sale_date);
+
             // Submeter ao endpoint
             $.sale.api.save(data).then(function(_data) {
 
                 // Zerar o form qdo houver sucesso
                 $(form).trigger('reset');
+
+                // Formatar os campos para a view
+                _data.result = $.dataFormatter.format({
+                        data : [_data.result],
+                        format : [{'sale_date' : $.dataFormatter.dateFormat}]
+                    });
 
                 // Atualizar lista
                 var row = $('table.table-sales').bootstrapTable(
@@ -358,17 +414,89 @@
 
     }); // Fim validate
 
+    // Autocomplete para produtos e fornecedores
+    // Importar script de produtos
+    $.getScript('/product/product.js');
 
-    $('.nav-tabs-custom').on('shown.bs.tab',
-        function(e) {
+    var productsSearchSource = function(request, response) {
+        var success = function(_data) {
+            // Aplicar resultado da pesquisa no autocomplete    
+            response($.map(_data.result.items, function (_item) {
+                            return { 
+                                label: _item.name,
+                                value: _item.code,
+                                id: _item.id
+                            }
+                        })
+            );
+        };
 
-            if ($(e.target).attr('href') != '#tab_2') return;
+        // Realizar pesquisa 
+        $.product.api.search({code : request.term, name : request.term}).then(success);
+    };
 
-            $('.map-canvas').maps({
-            	autocomplete : $('input[name="location"]')
-            });
+    $('input[name="product[name]"]').autocomplete({
 
-        });
+        source: productsSearchSource,
 
+        create: function () {
+            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+                var code = $('<span>').addClass('badge').append(item.value)
+                return   $( "<li>" )
+                        .append(code)
+                        .append(item.label)
+                        .appendTo(ul);
+            };
+        },
+
+        select: function(event, ui) {
+            event.preventDefault();
+            $('input[name="product[name]"]').val(ui.item.label);
+            $('input[name="product[id]"]').val(ui.item.id);
+            return false;
+        }
+
+    }).data("ui-autocomplete")._renderItem;
+
+ // Autocomplete para produtos e fornecedores
+    // Importar script de clientes
+    $.getScript('/customer/customer.js');
+
+    var productsSearchSource = function(request, response) {
+        var success = function(_data) {
+            // Aplicar resultado da pesquisa no autocomplete    
+            response($.map(_data.result.items, function (_item) {
+                            return { 
+                                label: _item.name,
+                                id: _item.id
+                            }
+                        })
+            );
+        };
+
+        // Realizar pesquisa 
+        $.customer.api.search({code : request.term, name : request.term}).then(success);
+    };
+
+    $('input[name="customer[name]"]').autocomplete({
+
+        source: productsSearchSource,
+
+        create: function () {
+            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+                return   $( "<li>" )
+                        .append(item.label)
+                        .appendTo(ul);
+            };
+        },
+
+        select: function(event, ui) {
+            event.preventDefault();
+            $('input[name="customer[name]"]').val(ui.item.label);
+            $('input[name="customer[id]"]').val(ui.item.id);
+            return false;
+        }
+
+    }).data("ui-autocomplete")._renderItem;
 
 }(jQuery);

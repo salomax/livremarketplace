@@ -91,9 +91,8 @@ def get(id):
 
 	return customer
 
-
-def list():
-	"""Listar os clientes cadastrados na loja do usuário.
+def get_customer_query():
+	"""Retorna a query do CustomerModel.
 	"""
 
 	logging.debug("Listando os clientes cadastrados")
@@ -107,8 +106,17 @@ def list():
 	marketplaceModel = marketplace.get(email)
 
 	#Realizando query, listando os clientes
-	customers = CustomerModel.query(ancestor=marketplaceModel.key).order(
-		CustomerModel.name).fetch()
+	query = CustomerModel.query(ancestor=marketplaceModel.key)
+
+	return query
+
+
+def list():
+	"""Listar os clientes cadastrados na loja do usuário.
+	"""
+
+	#Realizando query, listando os clientes
+	customers = get_customer_query().order(CustomerModel.name).fetch()
 
 	logging.debug("Foram selecionado(s) %d clientes(s) cadastrados na loja do usuário %s", 
 		len(customers), email)

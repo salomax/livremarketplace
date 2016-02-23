@@ -88,8 +88,8 @@ def get(id):
 	return customer
 
 
-def list():
-	"""Listar as vendas realizadas.
+def get_sales_query():
+	""" Retorna a query.
 	"""
 
 	logging.debug("Listando os clientes cadastrados")
@@ -102,8 +102,15 @@ def list():
 	#Obtendo marketplace como parent
 	marketplaceModel = marketplace.get(email)
 
+	# Retorna query
+	return SaleModel.query(ancestor=marketplaceModel.key)
+
+
+def list():
+	"""Listar as vendas realizadas.
+	"""
 	#Realizando query, listando os clientes
-	sales = SaleModel.query(ancestor=marketplaceModel.key).fetch()
+	sales = get_sales_query().fetch()
 
 	logging.debug("Foram selecionada(s) %d venda(s) realizadas na loja do usuário %s", 
 		len(sales), email)

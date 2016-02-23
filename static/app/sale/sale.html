@@ -71,7 +71,7 @@
 								  <div class="input-group-addon">
 								    <i class="fa fa-calendar"></i>
 								  </div>
-				                  <input type="text" class="form-control pull-right datepicker" name="purchase_date" />
+				                  <input type="text" class="form-control pull-right datepicker" name="sale_date" />
 								</div><!-- /.input group -->
 								<label id="sale_date-error" class="error" for="sale_date" style="display : none;"></label>
 			                </div>
@@ -86,12 +86,13 @@
                 	<div class="col-md-6">
                 		<div class="box-header box box-primary">
 
-			                <div class="form-group">
+			                <div class="form-group required">
 			                  <label for="amount" class="amount"></label>
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
 		 		                    <input type="text" class="form-control" name="amount" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
 								</div>
+								<label id="amount-error" class="error" for="amount" style="display: none;"></label>
 			                </div>
 
 
@@ -104,12 +105,13 @@
 			                </div>
 
 
-			                <div class="form-group">
+			                <div class="form-group required">
 			                  <label for="net_total" class="net_total"></label>
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
 		 		                    <input type="text" class="form-control" name="net_total" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
 								</div>
+								<label id="net_total-error" class="error" for="net_total" style="display: none;"></label>
 			                </div>
 						    
                 		</div> <!-- /.box-header box box-primary -->
