@@ -1,27 +1,25 @@
 <div class="row">
-
     <div class="col-lg-2 col-xs-4">
         <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
-                <h3>15.000<sup style="font-size: 20px">$</sup></h3>
-                <p>Faturamento</p>
+                <h3 class="revenue"><span class="value"></span><sup style="font-size: 20px">$</sup></h3>
+                <p class="revenue"></p>
             </div>
             <div class="icon">
                 <i class="ion ion-cash"></i>
             </div>
         </div>
     </div>
-
     <div class="col-lg-2 col-xs-4">
         <!-- small box -->
-        <div class="small-box bg-green">
+        <div class="small-box bg-blue">
             <div class="inner">
-                <h3>8.000<sup style="font-size: 20px">$</sup></h3>
-                <p>Lucro Líquido</p>
+                <h3 class="net_profit"><span class="value"></span><sup style="font-size: 20px">$</sup></h3>
+                <p class="net_profit"></p>
             </div>
             <div class="icon">
-                <i class="ion ion-cash"></i>
+                <i class="ion ion-ios-pulse-strong"></i>
             </div>
         </div>
     </div>
@@ -30,8 +28,8 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
             <div class="inner">
-                <h3>53<sup style="font-size: 20px">%</sup></h3>
-                <p>Margem Lucro</p>
+                <h3 class="profit_margin"><span class="value"></span><sup style="font-size: 20px">%</sup></h3>
+                <p class="profit_margin"></p>
             </div>
             <div class="icon">
                 <i class="ion ion-speedometer"></i>
@@ -43,8 +41,8 @@
         <!-- small box -->
         <div class="small-box bg-yellow">
             <div class="inner">
-                <h3>44</h3>
-                <p>Ticket Médio</p>
+                <h3 class="average_ticket"><span class="value"></span><sup style="font-size: 20px">$</sup></h3>
+                <p class="average_ticket"></p>
             </div>
             <div class="icon">
                 <i class="ion ion-bag"></i>
@@ -56,8 +54,8 @@
         <!-- small box -->
         <div class="small-box bg-red">
             <div class="inner">
-                <h3>65<sup style="font-size: 20px">/50</sup></h3>
-                <p>Vendas<sup style="font-size: 10px">/Clientes</sup></p>
+                <h3 class="count"><span class="sales"></span>/<sup style="font-size: 20px" class="customers"></sup></h3>
+                <p class="count"><span class="sales"></span>/<sup style="font-size: 10px" class="customers"></sup></p>
             </div>
             <div class="icon">
                 <i class="ion ion-person"></i>
@@ -67,21 +65,33 @@
     <!-- ./col -->
     <div class="col-lg-2 col-xs-4">
         <!-- small box -->
-        <div class="small-box bg-green">
+        <div class="small-box bg-purple">
             <div class="inner">
-                <h3>3.000<sup style="font-size: 20px">$</sup></h3>
-                <p>Em Estoque</p>
+                <h3><sup style="font-size: 20px">$</sup></h3>
+                <p class="instock"></p>
             </div>
             <div class="icon">
-                <i class="ion ion-cash"></i>
+                <i class="ion ion-archive"></i>
             </div>
         </div>
-    </div>  
+    </div>
 </div>
-
 <div class="box box-default">
     <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-tag"></i> Vendas</h3>
+        <h3 class="box-title"><i class="fa fa-tag"></i> <span class="cash_flow_chart_title"></span> <small class="cash_flow_chart_subtitle"></small></h3>
+        <!-- tools box -->
+        <div class="pull-right box-tools">
+            <!-- button with a dropdown -->
+            <div class="btn-group">
+                <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i></button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li><a href="#" class="cash_flow_chart_3months"></a></li>
+                    <li><a href="#" class="cash_flow_chart_6months"></a></li>
+                    <li><a href="#" class="cash_flow_chart_1year"></a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /. tools -->
     </div>
     <div class="box-body">
         <div class="chart tab-pane active" id="cash_flow-chart" style="position: relative; height: 300px;"></div>

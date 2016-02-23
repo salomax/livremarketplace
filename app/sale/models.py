@@ -112,8 +112,7 @@ def list():
 	#Realizando query, listando os clientes
 	sales = get_sales_query().fetch()
 
-	logging.debug("Foram selecionada(s) %d venda(s) realizadas na loja do usuário %s", 
-		len(sales), email)
+	logging.debug("Foram selecionada(s) %d venda(s)", len(sales))
 
 	#Retornando
 	return sales

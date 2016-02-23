@@ -83,8 +83,8 @@ class PurchaseModel(ndb.Model):
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
 
 
-def list():
-	"""Listar compras cadastradas para a loja do usuário.
+def get_query_purchase():
+	"""Retornar a query do model de compras.
 	"""
 
 	logging.debug("Listando compras cadastradas")
@@ -98,7 +98,17 @@ def list():
 	marketplaceModel = marketplace.get(email)
 
 	#Realizando query, listando as compras
-	purchases = PurchaseModel.query(ancestor=marketplaceModel.key).order(
+	purchasesQuery = PurchaseModel.query(ancestor=marketplaceModel.key)
+
+	return purchasesQuery
+
+
+def list():
+	"""Listar compras cadastradas para a loja do usuário.
+	"""
+
+	#Realizando query, listando as compras
+	purchases = get_query_purchase().order(
 		-PurchaseModel.purchase_date).fetch()
 
 	logging.debug("Foram selecionada(s) %d compra(s) para a loja do usuário %s", 
@@ -106,6 +116,7 @@ def list():
 
 	#Retornando
 	return purchases
+
 
 @ndb.transactional
 def put(purchase):

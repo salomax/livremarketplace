@@ -22,17 +22,30 @@ __license__ = "Apache 2.0"
 
 import logging
 import datetime
+import dateutil.relativedelta
 
 from app import user
 from app import util
 from app.marketplace import models as marketplace
 from app.sale import models as salesModel
 from app.customer import models as customersModel
+from app.purchase import models as purchasesModel
 
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
 
-from app.purchase import models as purchase
+
+def calculate_average_ticket():
+
+	sales = salesModel.list()
+
+	total_revenue = 0
+	count = 0
+	for sale in sales:
+		total_revenue = total_revenue + sale.amount
+		count = count + 1
+
+	return total_revenue / count	
 
 
 def calculate_count_customers():
@@ -85,40 +98,46 @@ def calculate_total_net_profit():
 	return total_net_profit
 
 
-def cash_flow():
-	"""Obtêm os totais de compra e venda mensal do último ano.
+def cash_flow(n):
+	"""Obtêm os totais de compra e venda mensal dos últimos 'n' meses.
 	"""
+	# Criando dict para os últimos 'n' meses
+	list = list_monthly(n)
+	
+	# Obtendo a data mínima para filtro na query
+	date = datetime.datetime.now() - dateutil.relativedelta.relativedelta(months=n)
 
-	logging.debug("Carregando as compras")
-
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
-	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	# Obter a query das compras
+	queryPurchases = purchasesModel.get_query_purchase()
 
 	#Realizando query, listando as compras
-	queryPurchases = purchase.PurchaseModel.query(ancestor=marketplaceModel.key)
-
-	# Criando map dos últimos 12 meses
-	list = list_monthly(12)
-	
-	last_year = datetime.datetime.now()
-	last_year = last_year.replace(year = last_year.year - 1)
-
 	purchases = queryPurchases.filter(
-		purchase.PurchaseModel.purchase_date > last_year).order(
-		-purchase.PurchaseModel.purchase_date).fetch(
-		projection=[purchase.PurchaseModel.total_cost, purchase.PurchaseModel.payment_date])
+		purchasesModel.PurchaseModel.purchase_date > date).fetch(
+		projection=[purchasesModel.PurchaseModel.total_cost, purchasesModel.PurchaseModel.payment_date])
+
+	# Realizando o agrupamento com somatória
+	for purchase in purchases:
+		for i in list:
+			if same_period(purchase.payment_date, i['period']):
+				i['purchases'] = i['purchases'] + purchase.total_cost
 
 
+	#Obtendo query das vendas
+	salesQuery = salesModel.get_sales_query()
+
+	#Realizando query, listando as vendas
+	sales = salesQuery.filter(
+		salesModel.SaleModel.sale_date > date).fetch(
+		projection=[salesModel.SaleModel.amount, salesModel.SaleModel.sale_date])
+
+	# Realizando o agrupamento com somatória
+	for sale in sales:
+		for i in list:
+			if same_period(sale.sale_date, i['period']):
+				i['sales'] = i['sales'] + sale.amount
 
 	#Retornando
-	return      [{"period": datetime.datetime.now(), "purchases": 3407.0, "sales": 3660.0},
-       			{"period": datetime.datetime.now(), "purchases": 3351.0, "sales": 3629.0},
-       			{"period": datetime.datetime.now(), "purchases": 3269.0, "sales": 2618.0}]
+	return list
 
 def list_monthly(n):
 	"""Criando lista dos últimos "n" meses.
@@ -128,11 +147,20 @@ def list_monthly(n):
 	timeMap = []
 	year = now.year
 	month = now.month
-	for x in range(12):
-		timeMap.append(datetime.date(year, month, 1))
+	for x in range(n):
+		timeMap.append({"period" : datetime.datetime(year, month, 1), "purchases": 0.0, "sales": 0.0})
 		month = month - 1
 		if month < 1:
 			year = year - 1
 			month = 12
 
 	return timeMap
+
+def same_period(date1, date2):
+	""" Verifica se é o mesmo período (ano e mês)
+	""" 
+
+	if date1.year == date2.year and date1.month == date2.month:
+		return True
+	else:
+		return False

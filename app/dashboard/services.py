@@ -103,7 +103,7 @@ class DashboardService(remote.Service):
                     FloatGetMessage,
                     http_method='GET',
                     name='revenue')
-	def net_profit(self, unused_request):
+	def revenue(self, unused_request):
 		"""Retornar o valor totalizado do faturamento.
 		"""
 
@@ -116,7 +116,7 @@ class DashboardService(remote.Service):
                     FloatGetMessage,
                     http_method='GET',
                     name='net_profit')
-	def revenue(self, unused_request):
+	def net_profit(self, unused_request):
 		"""Retornar o valor totalizado do lucro líquido.
 		"""
 
@@ -125,16 +125,20 @@ class DashboardService(remote.Service):
 		return FloatGetMessage(value = net_profit)
 
 
-	@endpoints.method(message_types.VoidMessage, 
+	ID_RESOURCE = endpoints.ResourceContainer(
+		message_types.VoidMessage, count=messages.IntegerField(1, variant=messages.Variant.INT32))
+
+	@endpoints.method(ID_RESOURCE, 
                     CashFlowCollectionMessage,
+                    path='{count}',
                     http_method='GET',
                     name='cash_flow')
-	def cash_flow(self, unused_request):
+	def cash_flow(self, request):
 		"""Retornar os valores do fluxo de caixa sumarizados mensalmente de compras x vendas.
 		"""
 
 		#Obter os valores do fluxo de caixa sumarizados mensalmente de compras x vendas
-		cash_flow = models.cash_flow()
+		cash_flow = models.cash_flow(request.count)
 
 		#Declarando lista e convertendo model para message
 		items = []
