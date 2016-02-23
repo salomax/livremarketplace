@@ -30,6 +30,7 @@ from messages import PurchaseGetMessage
 from messages import PurchaseCollectionMessage
 
 from app.product import messages as product
+from app.supplier import messages as supplier
 
 from app import user
 from app import oauth
@@ -67,7 +68,11 @@ class PurchaseService(remote.Service):
 			items.append(
 				PurchaseGetMessage(
 					id = purchaseModel.key.id(),
-					supplier = purchaseModel.supplier,
+					supplier = supplier.SupplierGetMessage(
+							id = purchaseModel.supplier.key.id(),
+							name = purchaseModel.supplier.name,
+							created_date = purchaseModel.supplier.created_date
+						),
 					product = product.ProductGetMessage(
 							id = purchaseModel.product.key.id(),
 							code = purchaseModel.product.code,
@@ -112,7 +117,11 @@ class PurchaseService(remote.Service):
 		#Retornando compra persistida
 		return PurchaseGetMessage(
 					id = purchaseModel.key.id(),
-					supplier = purchaseModel.supplier,
+					supplier = supplier.SupplierGetMessage(
+							id = purchaseModel.supplier.key.id(),
+							name = purchaseModel.supplier.name,
+							created_date = purchaseModel.supplier.created_date
+						),
 					product = product.ProductGetMessage(
 							id = purchaseModel.product.key.id(),
 							code = purchaseModel.product.code,

@@ -33,6 +33,8 @@ handlers:
   static_dir: static/app/supplier
 - url: /customer
   static_dir: static/app/customer
+- url: /sale
+  static_dir: static/app/sale
 
 libraries:
 - name: pycrypto

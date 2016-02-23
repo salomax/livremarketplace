@@ -1,5 +1,5 @@
 /******************************************************************************
- * customer.js
+ * sale.js
  *
  * Copyright 2016 Marcos Salomão
  *
@@ -20,68 +20,26 @@
  *****************************************************************************/
 
 /**
- * Objeto global relativo aos clientes da loja.
+ * Objeto global relativo às vendas.
  */
 ! function($) {
 
     /*
-     * Inserindo o escopo de cliente.
+     * Inserindo o escopo de vendas.
      */
-    $.customer = {};
+    $.sale = {};
 
     /*****************************************************************************
      * Controller API REST 
      *****************************************************************************/
 
     /**
-     * Métodos relativos à API REST do recurso cliente.
+     * Métodos relativos à API REST do recurso venda.
      */
-    $.customer.api = {
-
-        /* 
-         * Método destinado à pesquisar pelo nome ou código os clientes cadastrados.
-         */
-        search: function(_data) {
-
-            // Criar controle promise
-            var deferred = $.Deferred();
-
-            // fn sucesso
-            var success = function(response) {
-
-                    // Executar fn sucesso pelo promise
-                    deferred.resolve(response);
-
-                } // Fim fn sucesso
-
-            // fn error
-            var error = function(reason) {
-
-                    // apresentar mensagem ao usuário
-                    $('.modal-dialog-message').modalDialog({
-                        title: messages.customer.search.dialog.title,
-                        message: messages.customer.search.dialog.errormessage
-                    }).danger();
-
-                    console.log(reason.result.error.message);
-
-                    // Executar fn erro pelo promise
-                    resolve.reject();
-                } // Fim fn error
-
-            // Load API e executar serviço
-            gapi.client.load('customer', 'v1', function() {
-                var request = gapi.client.customer.search(_data);
-                request.then(success, error);
-            }, API_ROOT);
-
-            // retornar promise
-            return deferred.promise();
-
-        }, // Fim search
+    $.sale.api = {
 
         /**
-         *  Método persiste o cliente.
+         *  Método persiste o fornecedor.
          */
         save: function(_data) {
 
@@ -102,8 +60,8 @@
 
                 // apresentar mensagem ao usuário
                 $('.modal-dialog-message').modalDialog({
-                    title: messages.customer.save.dialog.title,
-                    message: messages.customer.save.dialog.success
+                    title: messages.sale.save.dialog.title,
+                    message: messages.sale.save.dialog.success
                 }).success();
 
                 // resolve promise
@@ -118,8 +76,8 @@
 
                 // apresentar mensagem ao usuário
                 $('.modal-dialog-message').modalDialog({
-                    title: messages.customer.save.dialog.title,
-                    message: messages.customer.save.dialog.errormessage
+                    title: messages.sale.save.dialog.title,
+                    message: messages.sale.save.dialog.errormessage
                 }).danger();
 
                 console.log(reason.result.error.message);
@@ -129,8 +87,8 @@
             };
 
             // Load API e  executar serviço
-            gapi.client.load('customer', 'v1', function() {
-                var request = gapi.client.customer.save(_data);
+            gapi.client.load('sale', 'v1', function() {
+                var request = gapi.client.sale.save(_data);
                 request.then(success, failure);
             }, API_ROOT);
 
@@ -139,7 +97,7 @@
         }, // Fim save
 
         /**
-         *  Método realiza a exclusão do cliente.
+         *  Método realiza a exclusão do fornecedor.
          */
         delete: function(_id) {
 
@@ -157,8 +115,8 @@
 
                     // apresentar mensagem ao usuário
                     $('.modal-dialog-message').modalDialog({
-                        title: messages.customer.delete.dialog.title,
-                        message: messages.customer.delete.dialog.success
+                        title: messages.sale.delete.dialog.title,
+                        message: messages.sale.delete.dialog.success
                     }).success();
 
                     // Executar promise
@@ -173,8 +131,8 @@
 
                     // apresentar mensagem ao usuário
                     $('.modal-dialog-message').modalDialog({
-                        title: messages.customer.delete.dialog.title,
-                        message: messages.customer.delete.dialog.errormessage
+                        title: messages.sale.delete.dialog.title,
+                        message: messages.sale.delete.dialog.errormessage
                     }).danger();
 
                     console.log(reason.result.error.message);
@@ -184,8 +142,8 @@
                 };
 
                 // Load API e  executar serviço
-                gapi.client.load('customer', 'v1', function() {
-                    var request = gapi.client.customer.delete({ id: _id });
+                gapi.client.load('sale', 'v1', function() {
+                    var request = gapi.client.sale.delete({ id: _id });
                     request.then(success, failure);
                 }, API_ROOT);
 
@@ -200,22 +158,22 @@
      * View components
      *****************************************************************************/
 
-    $.customer.view = {
+    $.sale.view = {
 
         /**
-         * Método destinado à criar a tabela com os clientes.
+         * Método destinado à criar a tabela com os fornecedors.
          */
         bindTable: function(_data) {
 
             // Construir tabela
-            $('table.table-customers').bootstrapTable({
+            $('table.table-sales').bootstrapTable({
                 uniqueId: 'id',
                 columns: [{
                     field: 'id',
                     visible: false
                 }, {
-                    field: 'name',
-                    title: messages.customer.name,
+                    field: 'quantity',
+                    title: messages.sale.quantity,
                     searchable: true
                 }, {
                     title: '',
@@ -225,9 +183,9 @@
                     formatter: $.common.view.tableactionbuttons,
                     events: {
                         'click button.delete': function(e, value, row, index) {
-                            $.customer.api.delete(row.id).then(
+                            $.sale.api.delete(row.id).then(
                                 function() {
-                                    $('table.table-customers').bootstrapTable('remove', {
+                                    $('table.table-sales').bootstrapTable('remove', {
                                         field: 'id',
                                         values: [row.id]
                                     });
@@ -237,7 +195,7 @@
 
                             // Preencher form, precisa ser primeiro show tab
                             // senão não atualiza o map 
-                            $('form.customer-form').populate(row);
+                            $('form.sale-form').populate(row);
 
                             // mostar tab do form
                             $('.nav-tabs a[href="#tab_2"]').tab('show');
@@ -254,7 +212,7 @@
         }, // Fim bindTable
 
         /**
-         * Método destinado à carregar a tabela com os clientes.
+         * Método destinado à carregar a tabela com os fornecedors.
          */
         loadTable: function() {
 
@@ -262,8 +220,8 @@
             $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
 
             // Load API e  executar serviço
-            gapi.client.load('customer', 'v1', function() {
-                var request = gapi.client.customer.list();
+            gapi.client.load('sale', 'v1', function() {
+                var request = gapi.client.sale.list();
                 request.then(
                     function(response) {
 
@@ -271,7 +229,7 @@
                         $('.progress-bar-table').progress(75, messages.progressbar.building);
 
                         // Atachar a lista de compras na tabela
-                        $.customer.view.bindTable(response.result);
+                        $.sale.view.bindTable(response.result);
 
                         // atualizar barra de progresso					
                         $('.progress-bar-table').progress(100, messages.progressbar.done);
@@ -284,8 +242,8 @@
 
                         // apresentar mensagem ao usuário
                         $('.modal-dialog-message').modalDialog({
-                            title: messages.customer.list.dialog.title,
-                            message: messages.customer.list.dialog.errormessage
+                            title: messages.sale.list.dialog.title,
+                            message: messages.sale.list.dialog.errormessage
                         }).danger();
 
                         console.log(reason.result.error.message);
@@ -309,32 +267,43 @@
 ! function($) {
 
     // Aplicar i18n
-    $('span.tab_list').text(messages.customer.tab.list);
-    $('span.tab_save').text(messages.customer.tab.save);
-    $('h3.customer_save_title').text(messages.customer.save.title);
+    $('span.tab_list').text(messages.sale.tab.list);
+    $('span.tab_save').text(messages.sale.tab.save);
+    $('h3.sale_save_title').text(messages.sale.save.title);
     $('span.new-item').text(messages.action.new_item);
-    $('small.customer_save_subtitle').text(messages.customer.save.subtitle);
+    $('small.sale_save_subtitle').text(messages.sale.save.subtitle);
 
-    $('label.name').text(messages.customer.name);
-    $('input[name="name"]').attr('placeholder', messages.customer.form.name.placeholder);
-    $('label.email').text(messages.customer.email);
-    $('input[name="email"]').attr('placeholder', messages.customer.form.email.placeholder);
-    $('label.phone').text(messages.customer.phone);
-    $('input[name="phone"]').attr('placeholder', messages.customer.form.phone.placeholder);
-    $('label.location').text(messages.customer.location);
-    $('input[name="location"]').attr('placeholder', messages.customer.form.location.placeholder);
+    $('label.customer').text(messages.sale.customer);
+    $('input[name="customer[name]"]').attr('placeholder', messages.sale.form.customer.placeholder);
+
+    $('label.product').text(messages.sale.product);
+    $('input[name="product[name]"]').attr('placeholder', messages.sale.form.product.placeholder);
+
+    $('label.quantity').text(messages.sale.quantity);
+    $('input[name="quantity"]').attr('placeholder', messages.sale.form.quantity.placeholder);
+    
+    $('label.sale_date').text(messages.sale.sale_date);
+
+    $('label.track_code').text(messages.sale.track_code);
+    $('input[name="track_code"]').text(messages.sale.form.track_code.placeholder);
+
+    $('label.amount').text(messages.sale.amount);
+    $('label.fare').text(messages.sale.sale_date);
+    $('label.net_total').text(messages.sale.sale_date);
+    
+    
 
     $('button.save').text(messages.action.save);
 
     $('button.new-item').bind('click', function() {
-        $('form.customer-form').trigger('reset');
+        $('form.sale-form').trigger('reset');
     });
 
-    // Carregar a lista de clientes
-    $.customer.view.loadTable();
+    // Carregar a lista das vendas
+    $.sale.view.loadTable();
 
     // Criar a validação do formulário
-    $('form.customer-form').validate({ // initialize the plugin
+    $('form.sale-form').validate({ // initialize the plugin
         rules: {
             name: {
                 required: true,
@@ -345,8 +314,8 @@
             }
         },
         messages: {
-            name: messages.customer.form.name.required,
-            email: messages.customer.form.email.valid
+            name: messages.sale.form.name.required,
+            email: messages.sale.form.email.valid
         },
 
         /**
@@ -360,24 +329,24 @@
             var data = $(form).serializeObject();
 
             // Submeter ao endpoint
-            $.customer.api.save(data).then(function(_data) {
+            $.sale.api.save(data).then(function(_data) {
 
                 // Zerar o form qdo houver sucesso
                 $(form).trigger('reset');
 
                 // Atualizar lista
-                var row = $('table.table-customers').bootstrapTable(
+                var row = $('table.table-sales').bootstrapTable(
                     'getRowByUniqueId', _data.result.id);
 
                 // Insere se não existe ou atualiza caso já esteja inserida
                 if (row == null) {
-                    $('table.table-customers').bootstrapTable('insertRow', {
+                    $('table.table-sales').bootstrapTable('insertRow', {
                         index: 0,
                         row: _data.result
                     });
                 } else {
 
-                    $('table.table-customers').bootstrapTable('updateByUniqueId', {
+                    $('table.table-sales').bootstrapTable('updateByUniqueId', {
                         id: _data.result.id,
                         row: _data.result
                     });

@@ -25,23 +25,19 @@ import datetime
 
 from app import user
 from app.marketplace import models as marketplace
-from app.product import models as  product
+from app.product import models as product
+from app.supplier import models as supplier
 
 from google.appengine.ext import ndb
-
-
-#from app.supplier import models
 
 
 class PurchaseModel(ndb.Model):
 	"""Entidade representa a compra de um produto pela loja"""
 
 	#Fornecedor	
-	supplier = ndb.StringProperty(required=True, indexed=False)
-	#ndb.StructuredProperty(SupplierModel, required=True, repeated=False)
-	
+	supplier = ndb.LocalStructuredProperty(supplier.SupplierModel, keep_keys=True, required=True, repeated=False)
+
 	#Produto 
-	#product = ndb.StringProperty(required=True, indexed=False)
 	product = ndb.LocalStructuredProperty(product.ProductModel, keep_keys=True, required=True, repeated=False)
 
 	#Qtidade	
@@ -136,15 +132,21 @@ def put(purchase):
 	else:
 		purchaseModel = PurchaseModel(parent=marketplaceModel.key)
 
-	#Selecionando models filhas
+	#Selecionando produto
 	productModel = ndb.Key('ProductModel', int(purchase.product.id), 
 			parent=marketplaceModel.key).get() 
 	if productModel is None:
 		raise IndexError("Produto com o id %d não encontrado!", purchase.product.id)
 	purchaseModel.product = productModel
 
+	#Selecionando fornecedor
+	supplierModel = ndb.Key('SupplierModel', int(purchase.supplier.id), 
+			parent=marketplaceModel.key).get() 
+	if supplierModel is None:
+		raise IndexError("Fornecedor com o id %d não encontrado!", purchase.supplier.id)
+	purchaseModel.supplier = supplierModel
+
 	#Criando model
-	purchaseModel.supplier = purchase.supplier
 	purchaseModel.quantity = purchase.quantity
 	purchaseModel.purchase_date = purchase.purchase_date
 	purchaseModel.received_date = purchase.received_date

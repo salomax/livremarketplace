@@ -25,7 +25,7 @@ from protorpc import messages
 from protorpc import message_types
 
 from app.product import messages as product
-
+from app.supplier import messages as supplier
 
 class PurchaseGetMessage(messages.Message):
   	"""Compras de produtos no estoque. Mensagem a ser trafegada pelo endpoint"""
@@ -34,10 +34,9 @@ class PurchaseGetMessage(messages.Message):
   	id = messages.IntegerField(1)
 
 	#Fornecedor	
-	supplier = messages.StringField(2, required=True)
+	supplier = messages.MessageField(supplier.SupplierGetMessage, 2, required=True)
 
 	#Produto 
-	# product = messages.StringField(3, required=True)
 	product = messages.MessageField(product.ProductGetMessage, 3, required=True)
 
 	#Qtidade	
@@ -89,10 +88,9 @@ class PurchasePostMessage(messages.Message):
   	id = messages.IntegerField(1)
 
 	#Fornecedor	
-	supplier = messages.StringField(2, required=True)
+	supplier = messages.MessageField(supplier.SupplierKeyMessage, 2, required=True)
 
 	#Produto 
-	# product = messages.StringField(3, required=True)
 	product = messages.MessageField(product.ProductKeyMessage, 3, required=True)
 
 	#Qtidade	

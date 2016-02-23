@@ -30,7 +30,7 @@ from app.marketplace import models as marketplace
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
 
-# Index autocomplete produto
+# Index autocomplete cliente
 CUSTOMER_AUTOCOMPLETE_INDEX_NAME = 'customer_autocomplete_index'
 AUTOCOMPLETE_SEARCH_LIMIT = 5
 def get_autocomplete_index():

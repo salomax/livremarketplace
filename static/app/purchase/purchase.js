@@ -40,7 +40,7 @@ purchase = {
 						searchable : true
 					},
 					{
-						field : 'supplier',
+						field : 'supplier.name',
 						title : 'Fornecedor',
 						searchable : true
 					},
@@ -122,7 +122,7 @@ purchase = {
 									return  ['<span class="badge">', row.product.code, "</span>", value].join(' ');
 								}
 							},
-							{field : 'supplier', title : 'Fornecedor'},
+							{field : 'supplier.name', title : 'Fornecedor'},
 							{field : 'quantity', title : 'Quantidade'},
 							{field : 'purchase_date', title : 'Data da Compra'},
 							{field : 'payment_date', title : 'Data do Pagamento'},
@@ -290,7 +290,7 @@ $('form.purchase-form').validate({ // initialize the plugin
         'product[name]' : {
         	required: true,
         },
-        supplier : {
+        'supplier[name]' : {
 			required: true,
 			minlength: 3
         },
@@ -311,7 +311,7 @@ $('form.purchase-form').validate({ // initialize the plugin
     },
     messages : {
     	'product[name]' : 'Produto é uma informação obrigatória!',
-    	supplier : 'Fornecedor é uma informação obrigatória!',
+    	'supplier[name]' : 'Fornecedor é uma informação obrigatória!',
     	quantity : 'Quantidade é numérico obrigatória e maior que zero!',
     	purchase_date : 'Data da Compra é obrigatória!',
     	cost : 'Custo por unidade é numérico e obrigatório!'
@@ -379,6 +379,39 @@ $('input[name="product[name]"]').autocomplete({
     	event.preventDefault();
     	$('input[name="product[name]"]').val(ui.item.label);
     	$('input[name="product[id]"]').val(ui.item.id);
+    	return false;
+    }
+}).data("ui-autocomplete")._renderItem;
+
+// Importar script de fornecedores
+$.getScript('/supplier/supplier.js');
+var suppliersSearchSource = function(request, response) {
+	var success = function(_data) {
+		// Aplicar resultado da pesquisa no autocomplete	
+		response($.map(_data.result.items, function (_item) {
+	                    return { 
+	                        label: _item.name,
+	                        id: _item.id
+	                    }
+	                })
+		);
+	};
+	// Realizar pesquisa 
+	$.supplier.api.search({code : request.term, name : request.term}).then(success);
+};
+$('input[name="supplier[name]"]').autocomplete({
+    source: suppliersSearchSource,
+	create: function () {
+        $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+	        return   $( "<li>" )
+				    .append(item.label)
+				    .appendTo(ul);
+        };
+    },
+    select: function(event, ui) {
+    	event.preventDefault();
+    	$('input[name="supplier[name]"]').val(ui.item.label);
+    	$('input[name="supplier[id]"]').val(ui.item.id);
     	return false;
     }
 }).data("ui-autocomplete")._renderItem;

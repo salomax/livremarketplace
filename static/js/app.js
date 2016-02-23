@@ -72,6 +72,13 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 						html : '/purchase/purchase.html', 
 						script : '/purchase/purchase.js'
 					}, 
+					{
+						icon : 'ion-social-usd',
+						title : messages.menu.sale.title,
+						subtitle : messages.menu.sale.subtitle,
+						html : '/sale/sale.html', 
+						script : '/sale/sale.js'
+					}, 
 		 			{
 		 				header : messages.menu.header.registration
 		 			},
