@@ -50,6 +50,34 @@ class CustomerService(remote.Service):
 	# Resource Container para POSTs
 	Customer_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(CustomerPostMessage)
 	Customer_Search_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(CustomerSearchMessage)
+	ID_RESOURCE = endpoints.ResourceContainer(
+		message_types.VoidMessage, id=messages.IntegerField(1, variant=messages.Variant.INT32))
+
+	@endpoints.method(ID_RESOURCE, 
+                    CustomerGetMessage,
+                    http_method='GET',
+                    path='{id}',
+                    name='get')
+	def get(self, request):
+		"""Retornar o cliente cadastrado a partir de um id.
+		"""
+
+		logging.debug('Executando endpoint para obter o clientes cadastrado')
+
+		#Obter a lista de clientes cadastrados
+		customerModel = models.get(request.id)
+		
+		logging.debug('Cliente selecionado com sucesso, retornando endpoint')
+
+		#Retornando cliente
+		return CustomerGetMessage(
+					id = customerModel.key.id(),
+					name = customerModel.name,
+					email = customerModel.email,
+					phone = customerModel.phone,
+					location = customerModel.location,
+					created_date = customerModel.created_date)
+
 
 	@endpoints.method(message_types.VoidMessage, 
                     CustomerCollectionMessage,
@@ -130,9 +158,6 @@ class CustomerService(remote.Service):
 					location = customerModel.location,
 					created_date = customerModel.created_date)
 
-	ID_RESOURCE = endpoints.ResourceContainer(
-		message_types.VoidMessage, id=messages.IntegerField(1, variant=messages.Variant.INT32))
-	
 
 	@endpoints.method(ID_RESOURCE,
 					  message_types.VoidMessage,
