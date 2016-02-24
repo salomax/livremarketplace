@@ -111,8 +111,8 @@ def list():
 	purchases = get_query_purchase().order(
 		-PurchaseModel.purchase_date).fetch()
 
-	logging.debug("Foram selecionada(s) %d compra(s) para a loja do usuário %s", 
-		len(purchases), email)
+	logging.debug("Foram selecionada(s) %d compra(s)", 
+		len(purchases))
 
 	#Retornando
 	return purchases

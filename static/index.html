@@ -1,97 +1,102 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Marketplace</title>
+    <title>openMarketplace</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Google sign in -->
+    <meta name="google-signin-client_id" content="768767255656-cs88prcq2s6olvb4dhsjdf2r7br50uej.apps.googleusercontent.com">
+    <!-- pace loading page -->
+    <script src="/js/plugins/pace.min.js"></script>
+    <link rel="stylesheet" href="/css/plugins/pace.css" />
     <!-- Bootstrap 3.3.5 -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="/css/plugins/dataTables.bootstrap.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-     <!-- Theme style -->
-    <link rel="stylesheet" href="/css/marketplace.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/css/openmarketplace.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="/css/skins/skin-blue-light.min.css">
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
-  <body class="hold-transition skin-blue sidebar-mini">
+</head>
 
+<body class="hold-transition skin-blue sidebar-mini">
     <!-- General Modal -->
     <div class="modal modal-dialog-message">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"></h4>
-          </div>
-          <div class="modal-body">
-            <p class="modal-body-message"></p>
-          </div>
-<!--           <div class="modal-footer">
-            <button type="button" class="btn btn-outline" data-dismiss="modal">Ok</button>
-          </div> -->
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <div id="wrapper">
-
-      <a class="logo">
-        <h1><span class="logo-lg"><b>Market</b>place</span> <small>Gerenciador de sua loja virtual</small></h1>
-      </a>
-      <div id="inner">
-        <div id="signin-button">
-          <button class="g-signin"
-              data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.email"
-              data-clientId="768767255656-cs88prcq2s6olvb4dhsjdf2r7br50uej.apps.googleusercontent.com"
-              data-callback="loginFinishedCallback"
-              data-cookiepolicy="single_host_origin"
-              data-width="wide"
-              data-height="tall">
-          </button>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-body-message"></p>
+                </div>
+            </div>
+            <!-- /.modal-content -->
         </div>
-      </div>
-  
-    </div><!-- ./wrapper -->
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <div id="wrapper" style="display: none;">
 
+        <div class="login-box">
+            <div class="login-logo">
+                <span>open<b>Market</b>place</span>
+            </div>  
+            <div class="login-text">
+                <small>OpenSource ERP</small> 
+            </div>  
+            <!-- /.login-logo -->
+            <div class="login-box-body">
+                <p class="login-box-msg">Sign in to start your session</p>
+                <div class="signin-button">
+                    <div id="signin2"></div>
+                </div>
+                <!-- /.login-box-body -->
+            </div>
+        </div>
+
+    <footer class="footer">
+        <div class="login-github">
+            <a href="https://github.com/salomax/openMarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
+        </div>
+    </footer>
+    </div> <!-- /#wrapper -->
     <!-- jQuery 2.1.4 -->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
-
     <!-- Latest compiled and minified JavaScript -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.js"></script>
-
     <!-- Latest compiled and minified Locales -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/locale/bootstrap-table-pt-BR.min.js"></script>
-
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
-      $.widget.bridge('uibutton', $.ui.button);
+    $.widget.bridge('uibutton', $.ui.button);
     </script>
     <!-- Bootstrap 3.3.5 -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- JQuery i18n plugin -->
     <script src="js/plugins/jquery.i18n.properties.min.js"></script>
-     <!-- DataTables -->
+    <!-- DataTables -->
     <script async src="/js/plugins/jquery.dataTables.min.js"></script>
     <!-- SlimScroll -->
     <script src="/js/plugins/jquery.slimscroll.min.js"></script>
@@ -110,23 +115,46 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
     <script async defer src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script async defer src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-    <!-- App -->
-    <script src="/js/app.js"></script>
-
+    <!-- openmarketplace script -->
+    <script src="/js/openmarketplace.js"></script>
     <!-- Oauth control -->
     <script src="https://apis.google.com/js/client.js?onload=init"></script>
     <script src="/js/oauth.js"></script>
     <script type="text/javascript">
-    (function() {
-      var po = document.createElement('script');
-      po.type = 'text/javascript'; po.async = true;
-      po.src = 'https://plus.google.com/js/client:plusone.js';
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(po, s);
-    })();
+        window.paceOptions = {
+          // Disable the 'elements' source
+          elements: false,
+
+          // Only show the progress on regular and ajax-y page navigation,
+          // not every request
+          restartOnRequestAfter: false
+        }
+
+    // Load page waiting message 
+    $(window).load(function() {
+      $("#wrapper").fadeIn('slow');
+    });
+    // login google account concerns
+    function onSuccess(googleUser) {
+      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+    }
+    function onFailure(error) {
+      console.log(error);
+    }
+    function renderButton() {
+      gapi.signin2.render('signin2', {
+        'scope': 'profile email',
+        'width': 'wide',
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSuccess,
+        'onfailure': onFailure
+      });
+    }
     </script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c&libraries=places" async defer></script>
+</body>
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c&libraries=places"></script>
-
-  </body>
 </html>

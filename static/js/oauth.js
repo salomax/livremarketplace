@@ -47,7 +47,7 @@ function loginFinishedCallback(authResult) {
 
     } else {
 
-      console.log('An error occurred');
+      console.log('An error occurred: ' + authResult['error']);
 
     }
 

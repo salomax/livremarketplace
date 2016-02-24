@@ -41,7 +41,6 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 		    name:'messages', 
 		    path:'bundle/', 
 		    mode:'both',
-		    language:'pt_BR',
 		    checkAvailableLanguages: true,
 		    async: true,
 		    callback : function() {

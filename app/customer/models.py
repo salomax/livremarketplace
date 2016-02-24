@@ -118,8 +118,8 @@ def list():
 	#Realizando query, listando os clientes
 	customers = get_customer_query().order(CustomerModel.name).fetch()
 
-	logging.debug("Foram selecionado(s) %d clientes(s) cadastrados na loja do usuário %s", 
-		len(customers), email)
+	logging.debug("Foram selecionado(s) %d clientes(s) cadastrados", 
+		len(customers))
 
 	#Retornando
 	return customers
