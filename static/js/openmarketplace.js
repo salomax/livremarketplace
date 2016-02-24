@@ -24,6 +24,7 @@
  */
 var API_ROOT = '//' + document.location.host + '/_ah/api';
 
+// Key for Google Maps concerns
 var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 
 /**

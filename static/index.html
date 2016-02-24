@@ -52,30 +52,29 @@
     </div>
     <!-- /.modal -->
     <div id="wrapper" style="display: none;">
-
         <div class="login-box">
             <div class="login-logo">
                 <span>open<b>Market</b>place</span>
-            </div>  
+            </div>
             <div class="login-text">
-                <small>OpenSource ERP</small> 
-            </div>  
+                <small>OpenSource ERP</small>
+            </div>
             <!-- /.login-logo -->
             <div class="login-box-body">
                 <p class="login-box-msg">Sign in to start your session</p>
                 <div class="signin-button">
-                    <div id="signin2"></div>
+                    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" data-longtitle="true" data-width="wide"></div>
                 </div>
                 <!-- /.login-box-body -->
             </div>
         </div>
-
-    <footer class="footer">
-        <div class="login-github">
-            <a href="https://github.com/salomax/openMarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
-        </div>
-    </footer>
-    </div> <!-- /#wrapper -->
+        <footer class="footer">
+            <div class="login-github">
+                <a href="https://github.com/salomax/openMarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
+            </div>
+        </footer>
+    </div>
+    <!-- /#wrapper -->
     <!-- jQuery 2.1.4 -->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -121,39 +120,19 @@
     <script src="https://apis.google.com/js/client.js?onload=init"></script>
     <script src="/js/oauth.js"></script>
     <script type="text/javascript">
-        window.paceOptions = {
-          // Disable the 'elements' source
-          elements: false,
-
-          // Only show the progress on regular and ajax-y page navigation,
-          // not every request
-          restartOnRequestAfter: false
-        }
-
+    window.paceOptions = {
+        // Disable the 'elements' source
+        elements: false,
+        // Only show the progress on regular and ajax-y page navigation,
+        // not every request
+        restartOnRequestAfter: false
+    }
     // Load page waiting message 
     $(window).load(function() {
-      $("#wrapper").fadeIn('slow');
+        $("#wrapper").fadeIn('slow');
     });
-    // login google account concerns
-    function onSuccess(googleUser) {
-      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-    }
-    function onFailure(error) {
-      console.log(error);
-    }
-    function renderButton() {
-      gapi.signin2.render('signin2', {
-        'scope': 'profile email',
-        'width': 'wide',
-        'height': 50,
-        'longtitle': true,
-        'theme': 'dark',
-        'onsuccess': onSuccess,
-        'onfailure': onFailure
-      });
-    }
     </script>
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c&libraries=places" async defer></script>
 </body>
 
