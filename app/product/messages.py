@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 #
 # Copyright 2016, Marcos Salomão.
 #
@@ -14,63 +14,65 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+
+from protorpc import messages
+from protorpc import message_types
+
+
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
 
-from protorpc import messages
-from protorpc import message_types
-
 class ProductKeyMessage(messages.Message):
-  	"""Produto comercializado na loja. Mensagem GET a ser trafegada pelo endpoint"""
+    """Mensagem GET do Produto a ser trafegada pelo endpoint"""
 
-  	#Id
-  	id = messages.IntegerField(1)
+    # Id
+    id = messages.IntegerField(1)
 
 
 class ProductGetMessage(messages.Message):
-  	"""Produto comercializado na loja. Mensagem GET a ser trafegada pelo endpoint"""
+    """Mensagem GET do Produto a ser trafegada pelo endpoint"""
 
-  	#Id
-  	id = messages.IntegerField(1)
+    # Id
+    id = messages.IntegerField(1)
 
-	#Código de referência	
-	code = messages.StringField(2, required=True)
+    # Código de referência
+    code = messages.StringField(2, required=True)
 
-	#Nome 
-	name = messages.StringField(3, required=True)
+    # Nome
+    name = messages.StringField(3, required=True)
 
-	#Data criação
-  	created_date = message_types.DateTimeField(4, required=True)
+    # Data criação
+    created_date = message_types.DateTimeField(4, required=True)
 
 
 class ProductPostMessage(messages.Message):
-  	"""Produto comercializado na loja. Mensagem POST a ser trafegada pelo endpoint"""
- 
-   	#Id
-  	id = messages.IntegerField(1)
+    """Mensagem POST do Produto a ser trafegada pelo endpoint"""
 
-	#Código de referência	
-	code = messages.StringField(2, required=True)
+    # Id
+    id = messages.IntegerField(1)
 
-	#Nome 
-	name = messages.StringField(3, required=True)
+    # Código de referência
+    code = messages.StringField(2, required=True)
+
+    # Nome
+    name = messages.StringField(3, required=True)
 
 
 class ProductSearchMessage(messages.Message):
-  	"""Produto comercializado na loja. Mensagem POST de pesquisa a ser trafegada pelo endpoint"""
- 
-	#Código de referência	
-	code = messages.StringField(1, required=False)
+    """Mensagem POST do Produto de pesquisa a ser trafegada pelo endpoint"""
 
-	#Nome 
-	name = messages.StringField(2, required=False)
+    # Código de referência
+    code = messages.StringField(1, required=False)
+
+    # Nome
+    name = messages.StringField(2, required=False)
 
 
 class ProductCollectionMessage(messages.Message):
-	"""Coleção de produtos."""
+    """Coleção de produtos."""
 
-	items = messages.MessageField(ProductGetMessage, 1, repeated=True)
+    items = messages.MessageField(ProductGetMessage, 1, repeated=True)

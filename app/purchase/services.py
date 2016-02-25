@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 #
 # Copyright 2016, Marcos Salomão.
 #
@@ -14,148 +14,151 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+
+import logging
+import endpoints
+import models
+from messages import PurchasePostMessage
+from messages import PurchaseGetMessage
+from messages import PurchaseCollectionMessage
+from app.product import messages as product
+from app.supplier import messages as supplier
+from app import user
+from app import oauth
+from protorpc import remote
+from protorpc import messages
+from protorpc import message_types
+
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
 
-import logging
-import endpoints
-import models
-
-from messages import PurchasePostMessage
-from messages import PurchaseGetMessage
-from messages import PurchaseCollectionMessage
-
-from app.product import messages as product
-from app.supplier import messages as supplier
-
-from app import user
-from app import oauth
-
-from protorpc import remote
-from protorpc import messages
-from protorpc import message_types
-
-
-@endpoints.api(name='purchase', 
+@endpoints.api(name='purchase',
                version='v1',
-               allowed_client_ids=oauth.ALLOWED_CLIENT_IDS, 
-               audiences=oauth.ALLOWED_CLIENT_IDS, # ANDROID_AUDIENCE argument is required for Android clients and is not used by other clients
-               scopes=[endpoints.EMAIL_SCOPE]) # Although you can add other scopes, you must always include the email scope if you use OAuth.
+               allowed_client_ids=oauth.ALLOWED_CLIENT_IDS,
+               # ANDROID_AUDIENCE argument is required for Android clients and
+               # is not used by other clients
+               audiences=oauth.ALLOWED_CLIENT_IDS,
+               # Although you can add other scopes, you must always include the
+               # email scope if you use OAuth.
+               scopes=[endpoints.EMAIL_SCOPE])
 class PurchaseService(remote.Service):
-	"""Serviço destinado ao gerenciamento das compras de produtos no estoque.
-	"""
+    """Serviço destinado ao gerenciamento das compras de produtos no estoque.
+    """
 
-	@endpoints.method(message_types.VoidMessage, 
-                    PurchaseCollectionMessage,
-                    http_method='GET',
-                    name='list')
-	def list(self, unused_request):
-		"""Retornar a lista de compras realizadas pelo usuário.
-		"""
+    @endpoints.method(message_types.VoidMessage,
+                      PurchaseCollectionMessage,
+                      http_method='GET',
+                      name='list')
+    def list(self, unused_request):
+        """Retornar a lista de compras realizadas pelo usuário.
+        """
 
-		logging.debug('Executando endpoint para obter uma compra de produto no estoque da loja')
+        logging.debug(
+            'Executando endpoint para obter uma compra de produto no estoque')
 
-		#Obter lista de compras cadastradas para a loja
-		purchases = models.list()
+        # Obter lista de compras cadastradas para a loja
+        purchases = models.list()
 
-		#Declarando lista e convertendo model para message
-		items = []
-		for purchaseModel in purchases:
-			items.append(
-				PurchaseGetMessage(
-					id = purchaseModel.key.id(),
-					supplier = supplier.SupplierGetMessage(
-							id = purchaseModel.supplier.key.id(),
-							name = purchaseModel.supplier.name,
-							created_date = purchaseModel.supplier.created_date
-						),
-					product = product.ProductGetMessage(
-							id = purchaseModel.product.key.id(),
-							code = purchaseModel.product.code,
-							name = purchaseModel.product.name,
-							created_date = purchaseModel.product.created_date
-						),
-					quantity = purchaseModel.quantity,
-					purchase_date = purchaseModel.purchase_date,
-					received_date = purchaseModel.received_date,
-					cost = purchaseModel.cost,
-					total_cost = purchaseModel.total_cost,
-					exchange_dollar = purchaseModel.exchange_dollar,
-					cost_dollar = purchaseModel.cost_dollar,
-					total_cost_dollar = purchaseModel.total_cost_dollar,
-					shipping_cost = purchaseModel.shipping_cost,
-					track_code = purchaseModel.track_code,
-					invoice = purchaseModel.invoice,
-					payment_date = purchaseModel.payment_date, 
-					purchase_link = purchaseModel.purchase_link, 
-					created_date = purchaseModel.created_date))
+        # Declarando lista e convertendo model para message
+        items = []
+        for purchaseModel in purchases:
+            items.append(
+                PurchaseGetMessage(
+                    id=purchaseModel.key.id(),
+                    supplier=supplier.SupplierGetMessage(
+                        id=purchaseModel.supplier.key.id(),
+                        name=purchaseModel.supplier.name,
+                        created_date=purchaseModel.supplier.created_date
+                    ),
+                    product=product.ProductGetMessage(
+                        id=purchaseModel.product.key.id(),
+                        code=purchaseModel.product.code,
+                        name=purchaseModel.product.name,
+                        created_date=purchaseModel.product.created_date
+                    ),
+                    quantity=purchaseModel.quantity,
+                    purchase_date=purchaseModel.purchase_date,
+                    received_date=purchaseModel.received_date,
+                    cost=purchaseModel.cost,
+                    total_cost=purchaseModel.total_cost,
+                    exchange_dollar=purchaseModel.exchange_dollar,
+                    cost_dollar=purchaseModel.cost_dollar,
+                    total_cost_dollar=purchaseModel.total_cost_dollar,
+                    shipping_cost=purchaseModel.shipping_cost,
+                    track_code=purchaseModel.track_code,
+                    invoice=purchaseModel.invoice,
+                    payment_date=purchaseModel.payment_date,
+                    purchase_link=purchaseModel.purchase_link,
+                    created_date=purchaseModel.created_date))
 
-		#Retornando compras
-		return PurchaseCollectionMessage(items=items)
+        # Retornando compras
+        return PurchaseCollectionMessage(items=items)
 
+    # Resource Container para POSTs
+    PURCHASE_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(
+        PurchasePostMessage)
 
-	# Resource Container para POSTs
-	PURCHASE_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(PurchasePostMessage)
-
-	@endpoints.method(PURCHASE_MESSAGE_RESOURCE_CONTAINER,
-					  PurchaseGetMessage,
+    @endpoints.method(PURCHASE_MESSAGE_RESOURCE_CONTAINER,
+                      PurchaseGetMessage,
                       http_method='PUT',
                       name='put')
-	def put(self, request):
-		"""Inclui ou atualiza a loja do usuário.
-		"""
+    def put(self, request):
+        """Inclui ou atualiza a loja do usuário.
+        """
 
-		logging.debug('Executando endpoint para incluir/atualizar uma compra de produto no estoque da loja')
+        logging.debug(
+            'Executando endpoint para incluir/atualizar uma compra')
 
-		#Cadastrar/atualizar a compra de um produto
-		purchaseModel = models.put(request)
+        # Cadastrar/atualizar a compra de um produto
+        purchaseModel = models.put(request)
 
-		#Retornando compra persistida
-		return PurchaseGetMessage(
-					id = purchaseModel.key.id(),
-					supplier = supplier.SupplierGetMessage(
-							id = purchaseModel.supplier.key.id(),
-							name = purchaseModel.supplier.name,
-							created_date = purchaseModel.supplier.created_date
-						),
-					product = product.ProductGetMessage(
-							id = purchaseModel.product.key.id(),
-							code = purchaseModel.product.code,
-							name = purchaseModel.product.name,
-							created_date = purchaseModel.product.created_date
-						),
-					quantity = purchaseModel.quantity,
-					purchase_date = purchaseModel.purchase_date,
-					received_date = purchaseModel.received_date,
-					cost = purchaseModel.cost,
-					total_cost = purchaseModel.total_cost,
-					exchange_dollar = purchaseModel.exchange_dollar,
-					cost_dollar = purchaseModel.cost_dollar,
-					total_cost_dollar = purchaseModel.total_cost_dollar,
-					shipping_cost = purchaseModel.shipping_cost,
-					track_code = purchaseModel.track_code,
-					invoice = purchaseModel.invoice,
-					payment_date = purchaseModel.payment_date, 
-					purchase_link = purchaseModel.purchase_link, 
-					created_date = purchaseModel.created_date)
+        # Retornando compra persistida
+        return PurchaseGetMessage(
+            id=purchaseModel.key.id(),
+            supplier=supplier.SupplierGetMessage(
+                id=purchaseModel.supplier.key.id(),
+                name=purchaseModel.supplier.name,
+                created_date=purchaseModel.supplier.created_date
+            ),
+            product=product.ProductGetMessage(
+                id=purchaseModel.product.key.id(),
+                code=purchaseModel.product.code,
+                name=purchaseModel.product.name,
+                created_date=purchaseModel.product.created_date
+            ),
+            quantity=purchaseModel.quantity,
+            purchase_date=purchaseModel.purchase_date,
+            received_date=purchaseModel.received_date,
+            cost=purchaseModel.cost,
+            total_cost=purchaseModel.total_cost,
+            exchange_dollar=purchaseModel.exchange_dollar,
+            cost_dollar=purchaseModel.cost_dollar,
+            total_cost_dollar=purchaseModel.total_cost_dollar,
+            shipping_cost=purchaseModel.shipping_cost,
+            track_code=purchaseModel.track_code,
+            invoice=purchaseModel.invoice,
+            payment_date=purchaseModel.payment_date,
+            purchase_link=purchaseModel.purchase_link,
+            created_date=purchaseModel.created_date)
 
-	ID_RESOURCE = endpoints.ResourceContainer(
-		message_types.VoidMessage, id=messages.IntegerField(1, variant=messages.Variant.INT32))
+    ID_RESOURCE = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.IntegerField(1, variant=messages.Variant.INT32))
 
-	@endpoints.method(ID_RESOURCE,
-					  message_types.VoidMessage,
-					  path='{id}',
+    @endpoints.method(ID_RESOURCE,
+                      message_types.VoidMessage,
+                      path='{id}',
                       http_method='DELETE',
                       name='delete')
-	def delete(self, request):
-		"""Remove uma compra relaizada.
-		"""
+    def delete(self, request):
+        """Remove uma compra relaizada.
+        """
 
-		#Removendo purchase
-		models.delete(request.id)
+        # Removendo purchase
+        models.delete(request.id)
 
-		return message_types.VoidMessage()
+        return message_types.VoidMessage()

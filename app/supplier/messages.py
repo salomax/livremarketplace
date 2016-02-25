@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 #
 # Copyright 2016, Marcos Salomão.
 #
@@ -14,72 +14,77 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+
+from protorpc import messages
+from protorpc import message_types
+
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
 
-from protorpc import messages
-from protorpc import message_types
-
 class SupplierKeyMessage(messages.Message):
-  	"""Fornecedor da loja. Mensagem GET a ser trafegada pelo endpoint"""
+    """Mensagem GET do Fornecedor a ser trafegada pelo endpoint.
+    """
 
-  	#Id
-  	id = messages.IntegerField(1)
+    # Id
+    id = messages.IntegerField(1)
 
 
 class SupplierGetMessage(messages.Message):
-  	"""Fornecedor da loja. Mensagem GET a ser trafegada pelo endpoint"""
+    """Mensagem GET do Fornecedor a ser trafegada pelo endpoint.
+    """
 
-  	#Id
-  	id = messages.IntegerField(1)
+    # Id
+    id = messages.IntegerField(1)
 
-	#Nome 
-	name = messages.StringField(2, required=True)
+    # Nome
+    name = messages.StringField(2, required=True)
 
-	# Email de contato do fornecedor
-	email = messages.StringField(3, required=False)
+    # Email de contato do fornecedor
+    email = messages.StringField(3, required=False)
 
-	# Telefone de contato do fornecedor
-	phone = messages.StringField(4, required=False)
+    # Telefone de contato do fornecedor
+    phone = messages.StringField(4, required=False)
 
-	# Localização
-	location = messages.StringField(5, required=False)
+    # Localização
+    location = messages.StringField(5, required=False)
 
-	#Data criação
-  	created_date = message_types.DateTimeField(6, required=True)
+    # Data criação
+    created_date = message_types.DateTimeField(6, required=True)
 
 
 class SupplierPostMessage(messages.Message):
-  	"""Fornecedor da loja. Mensagem POST a ser trafegada pelo endpoint"""
- 
-  	#Id
-  	id = messages.IntegerField(1)
+    """Mensagem POST do Fornecedor a ser trafegada pelo endpoint.
+    """
 
-	#Nome 
-	name = messages.StringField(2, required=True)
+    # Id
+    id = messages.IntegerField(1)
 
-	# Email de contato do fornecedor
-	email = messages.StringField(3, required=False)
+    # Nome
+    name = messages.StringField(2, required=True)
 
-	# Telefone de contato do fornecedor
-	phone = messages.StringField(4, required=False)
+    # Email de contato do fornecedor
+    email = messages.StringField(3, required=False)
 
-	# Localização
-	location = messages.StringField(5, required=False)
+    # Telefone de contato do fornecedor
+    phone = messages.StringField(4, required=False)
+
+    # Localização
+    location = messages.StringField(5, required=False)
 
 
 class SupplierSearchMessage(messages.Message):
-  	"""Fornecedor da loja. Mensagem POST de pesquisa a ser trafegada pelo endpoint"""
- 
-	#Nome 
-	name = messages.StringField(2, required=True)
+    """Mensagem POST do Fornecedor de pesquisa a ser trafegada pelo endpoint.
+    """
+
+    # Nome
+    name = messages.StringField(2, required=True)
 
 
 class SupplierCollectionMessage(messages.Message):
-	"""Coleção de fornecedores."""
+    """Coleção de fornecedores."""
 
-	items = messages.MessageField(SupplierGetMessage, 1, repeated=True)
+    items = messages.MessageField(SupplierGetMessage, 1, repeated=True)
