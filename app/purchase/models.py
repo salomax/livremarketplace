@@ -89,13 +89,8 @@ def get_query_purchase():
 
 	logging.debug("Listando compras cadastradas")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	#Realizando query, listando as compras
 	purchasesQuery = PurchaseModel.query(ancestor=marketplaceModel.key)
@@ -125,13 +120,8 @@ def put(purchase):
 
 	logging.debug("Persistindo uma compra na loja")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -190,13 +180,8 @@ def delete(id):
 
 	logging.debug("Removendo a compra %d persistida na loja", id)
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 

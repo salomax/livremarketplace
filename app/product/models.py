@@ -67,13 +67,8 @@ def get(id):
 	"""Selecionar um produto cadastrado pelo id.
 	"""
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -94,13 +89,8 @@ def list():
 
 	logging.debug("Listando os produtos cadastrados")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	#Realizando query, listando os produtos
 	products = ProductModel.query(ancestor=marketplaceModel.key).order(
@@ -143,13 +133,8 @@ def put(product):
 
 	logging.debug("Persistindo um produto na loja")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -189,13 +174,8 @@ def delete(id):
 
 	logging.debug("Removendo o produto %d persistido na loja", id)
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 

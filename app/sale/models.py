@@ -67,15 +67,8 @@ def get(id):
 	"""Selecionar uma venda pelo id.
 	"""
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
-
-	logging.debug("Loja encontrada com sucesso")
+	marketplaceModel = marketplace.get_marketplace()
 
 	#Realizando query, selecionando a venda pelo pai e id
 	sale = ndb.Key('SaleModel', int(id), parent=marketplaceModel.key).get() 
@@ -94,13 +87,8 @@ def get_sales_query():
 
 	logging.debug("Listando os clientes cadastrados")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	# Retorna query
 	return SaleModel.query(ancestor=marketplaceModel.key)
@@ -124,13 +112,8 @@ def save(sale):
 
 	logging.debug("Persistindo uma venda na loja")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -181,13 +164,8 @@ def delete(id):
 
 	logging.debug("Removendo a venda %d persistida na loja", id)
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 

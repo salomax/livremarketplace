@@ -70,14 +70,8 @@ def remove_index(_id):
 def get(id):
 	"""Selecionar um cliente cadastrado pelo id.
 	"""
-
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -90,6 +84,7 @@ def get(id):
 	logging.debug("Cliente encontrado com sucesso")
 
 	return customer
+
 
 def get_customer_query():
 	"""Retorna a query do CustomerModel.
@@ -147,6 +142,7 @@ def search(customer):
 	# Retornando resultado
 	return results
 
+
 @ndb.transactional
 def save(customer):
 	"""Inclui ou atualiza um cliente.
@@ -154,15 +150,8 @@ def save(customer):
 
 	logging.debug("Persistindo um cliente na loja")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
-
-	logging.debug("Loja encontrada com sucesso")
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Criando model para o cliente ou selecionando o existente para atualizá-lo")
 
@@ -202,13 +191,8 @@ def delete(id):
 
 	logging.debug("Removendo o cliente %d persistido na loja", id)
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 

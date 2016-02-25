@@ -71,13 +71,8 @@ def get(id):
 	"""Selecionar um fornecedor cadastrado pelo id.
 	"""
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -98,13 +93,8 @@ def list():
 
 	logging.debug("Listando os fornecedores cadastrados")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	#Realizando query, listando os fornecedores
 	suppliers = SupplierModel.query(ancestor=marketplaceModel.key).order(
@@ -146,13 +136,8 @@ def save(supplier):
 
 	logging.debug("Persistindo um fornecedor na loja")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 
@@ -194,13 +179,8 @@ def delete(id):
 
 	logging.debug("Removendo o fornecedor %d persistido na loja", id)
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
-
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
 	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+	marketplaceModel = marketplace.get_marketplace()
 
 	logging.debug("Loja encontrada com sucesso")
 

@@ -33,6 +33,28 @@ class MarketplaceModel(ndb.Model):
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
 
 
+def  get_marketplace():
+	"""Método retorna um marketplace para o usuário logado. Caso o mesmo não exista, um novo é criado."""
+
+	#Identificando usuário da requisição
+	email = user.get_current_user().email()
+	
+	# Selecionando key do usuário
+	user_key = user.user_key(email)
+
+	# Selecionando a marketplace (loja) do usuário
+	marketplaceModel = MarketplaceModel.query(ancestor=user_key).get()
+
+	# Caso ainda não exista, uma nova marketplace (loja) é criada para o usuário
+	if marketplaceModel is None:
+		marketplaceModel = put(email=email, name='Nova Loja', user_key=user_key)
+
+	logging.debug(marketplaceModel)	
+		
+	# Criando mensagem de retorno para o endpoint
+	return marketplaceModel
+
+
 def  get(email):
 	"""Método retorna um marketplace para o usuário informado através do email. Caso o mesmo não exista, um novo é criado."""
 
