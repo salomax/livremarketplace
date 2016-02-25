@@ -2,6 +2,8 @@ languages:
    JavaScript: true
    Python: true
 engines:
+  pep8:
+    enabled: true
   eslint:
     enabled: true
   csslint:
