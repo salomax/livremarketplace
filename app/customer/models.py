@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 #
 # Copyright 2016, Marcos Salomão.
 #
@@ -14,196 +14,205 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+
+import logging
+import datetime
+from app import user
+from app import util
+from app.marketplace import models as marketplace
+from google.appengine.ext import ndb
+from google.appengine.api import search as search_api
+
+
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
-import logging
-import datetime
-
-from app import user
-from app import util
-from app.marketplace import models as marketplace
-
-from google.appengine.ext import ndb
-from google.appengine.api import search as search_api
 
 # Index autocomplete cliente
 CUSTOMER_AUTOCOMPLETE_INDEX_NAME = 'customer_autocomplete_index'
 AUTOCOMPLETE_SEARCH_LIMIT = 5
+
+
 def get_autocomplete_index():
-	return search_api.Index(name=CUSTOMER_AUTOCOMPLETE_INDEX_NAME)
+    return search_api.Index(name=CUSTOMER_AUTOCOMPLETE_INDEX_NAME)
+
 
 class CustomerModel(ndb.Model):
-	"""Entidade representa um cliente da loja"""
+    """Entidade representa um cliente da loja"""
 
-	# Nome do cliente
-	name = ndb.StringProperty(required=True)
+    # Nome do cliente
+    name = ndb.StringProperty(required=True)
 
-	# Email de contato do cliente
-	email = ndb.StringProperty(required=False)
+    # Email de contato do cliente
+    email = ndb.StringProperty(required=False)
 
-	# Telefone de contato do cliente
-	phone = ndb.StringProperty(required=False)
+    # Telefone de contato do cliente
+    phone = ndb.StringProperty(required=False)
 
-	# Localização
-	location = ndb.StringProperty(required=False)
+    # Localização
+    location = ndb.StringProperty(required=False)
 
-	#Data criação	
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
+    # Data criação
+    created_date = ndb.DateTimeProperty(auto_now_add=True)
 
-#http://stackoverflow.com/questions/12899083/partial-matching-gae-search-api
+# http://stackoverflow.com/questions/12899083/partial-matching-gae-search-api
+
+
 def update_index(customer):
-	name = ','.join(util.tokenize_autocomplete(customer.name))
-	document = search_api.Document(
-		doc_id=str(customer.key.id()),
-		fields=[search_api.TextField(name='name', value=name)])
-	get_autocomplete_index().put(document)
+    name = ','.join(util.tokenize_autocomplete(customer.name))
+    document = search_api.Document(
+        doc_id=str(customer.key.id()),
+        fields=[search_api.TextField(name='name', value=name)])
+    get_autocomplete_index().put(document)
 
 
 def remove_index(_id):
-	get_autocomplete_index().remove(str(_id))
+    get_autocomplete_index().remove(str(_id))
 
 
 def get(id):
-	"""Selecionar um cliente cadastrado pelo id.
-	"""
-	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get_marketplace()
+    """Selecionar um cliente cadastrado pelo id.
+    """
+    # Obtendo marketplace como parent
+    marketplaceModel = marketplace.get_marketplace()
 
-	logging.debug("Loja encontrada com sucesso")
+    logging.debug("Loja encontrada com sucesso")
 
-	#Realizando query, selecionando o cliente pelo pai e id
-	customer = ndb.Key('CustomerModel', int(id), parent=marketplaceModel.key).get() 
+    # Realizando query, selecionando o cliente pelo pai e id
+    customer = ndb.Key('CustomerModel', int(
+        id), parent=marketplaceModel.key).get()
 
-	if customer is None:
-		raise IndexError("Cliente não encontrado!")
+    if customer is None:
+        raise IndexError("Cliente não encontrado!")
 
-	logging.debug("Cliente encontrado com sucesso")
+    logging.debug("Cliente encontrado com sucesso")
 
-	return customer
+    return customer
 
 
 def get_customer_query():
-	"""Retorna a query do CustomerModel.
-	"""
+    """Retorna a query do CustomerModel.
+    """
 
-	logging.debug("Listando os clientes cadastrados")
+    logging.debug("Listando os clientes cadastrados")
 
-	#Identificando usuário da requisição
-	email = user.get_current_user().email()
+    # Identificando usuário da requisição
+    email = user.get_current_user().email()
 
-	logging.debug("Obtendo a entidade da loja para o usuario %s", email)
+    logging.debug("Obtendo a entidade da loja para o usuario %s", email)
 
-	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get(email)
+    # Obtendo marketplace como parent
+    marketplaceModel = marketplace.get(email)
 
-	#Realizando query, listando os clientes
-	query = CustomerModel.query(ancestor=marketplaceModel.key)
+    # Realizando query, listando os clientes
+    query = CustomerModel.query(ancestor=marketplaceModel.key)
 
-	return query
+    return query
 
 
 def list():
-	"""Listar os clientes cadastrados na loja do usuário.
-	"""
+    """Listar os clientes cadastrados na loja do usuário.
+    """
 
-	#Realizando query, listando os clientes
-	customers = get_customer_query().order(CustomerModel.name).fetch()
+    # Realizando query, listando os clientes
+    customers = get_customer_query().order(CustomerModel.name).fetch()
 
-	logging.debug("Foram selecionado(s) %d clientes(s) cadastrados", 
-		len(customers))
+    logging.debug("Foram selecionado(s) %d clientes(s) cadastrados",
+                  len(customers))
 
-	#Retornando
-	return customers
+    # Retornando
+    return customers
 
 
 def search(customer):
-	"""Pesquisa dos clientes cadastrados na loja.
-	"""
+    """Pesquisa dos clientes cadastrados na loja.
+    """
 
-	# Listando os clientes cadastrados	
-	items = list()
+    # Listando os clientes cadastrados
+    items = list()
 
-	logging.debug("Realizando a pesquisa indexada de clientes")
+    logging.debug("Realizando a pesquisa indexada de clientes")
 
-	# Realizando a pesquisa
-	search_results = get_autocomplete_index().search(search_api.Query(
-			query_string="name:{name}".format(name=customer.name),
-			options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
+    # Realizando a pesquisa
+    search_results = get_autocomplete_index().search(search_api.Query(
+        query_string="name:{name}".format(name=customer.name),
+        options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
 
-	# Convertendo docs para model
-	results = []
-	for doc in search_results:
-		results.append(get(int(doc.doc_id)))
+    # Convertendo docs para model
+    results = []
+    for doc in search_results:
+        results.append(get(int(doc.doc_id)))
 
-	# Retornando resultado
-	return results
+    # Retornando resultado
+    return results
 
 
 @ndb.transactional
 def save(customer):
-	"""Inclui ou atualiza um cliente.
-	"""
+    """Inclui ou atualiza um cliente.
+    """
 
-	logging.debug("Persistindo um cliente na loja")
+    logging.debug("Persistindo um cliente na loja")
 
-	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get_marketplace()
+    # Obtendo marketplace como parent
+    marketplaceModel = marketplace.get_marketplace()
 
-	logging.debug("Criando model para o cliente ou selecionando o existente para atualizá-lo")
+    logging.debug(
+        "Criando model para o cliente ou selecionando o existente")
 
-	if customer.id is not None:
-		customerModel = ndb.Key('CustomerModel', int(customer.id), 
-			parent=marketplaceModel.key).get() 
-	else:
-		customerModel = CustomerModel(parent=marketplaceModel.key)
+    if customer.id is not None:
+        customerModel = ndb.Key('CustomerModel', int(customer.id),
+                                parent=marketplaceModel.key).get()
+    else:
+        customerModel = CustomerModel(parent=marketplaceModel.key)
 
-	#Criando model
-	customerModel.name = customer.name
-	customerModel.email = customer.email
-	customerModel.phone = customer.phone
-	customerModel.location = customer.location
+    # Criando model
+    customerModel.name = customer.name
+    customerModel.email = customer.email
+    customerModel.phone = customer.phone
+    customerModel.location = customer.location
 
-	#Persistindo cliente
-	logging.debug("Persistindo cliente...")
+    # Persistindo cliente
+    logging.debug("Persistindo cliente...")
 
-	customerModel.put()
+    customerModel.put()
 
-	logging.debug("Persistido cliente %d com sucesso na loja %s", 
-		customerModel.key.id(), marketplaceModel.name)
+    logging.debug("Persistido cliente %d com sucesso na loja %s",
+                  customerModel.key.id(), marketplaceModel.name)
 
-	#Atualizando índice
-	update_index(customerModel)
-	logging.debug("Índice atualizado com sucesso para o cliente %s", 
-		customerModel.key.id())
+    # Atualizando índice
+    update_index(customerModel)
+    logging.debug("Índice atualizado com sucesso para o cliente %s",
+                  customerModel.key.id())
 
-	#Retornando cliente cadastrado com o id
-	return customerModel
+    # Retornando cliente cadastrado com o id
+    return customerModel
 
 
 @ndb.transactional
 def delete(id):
-	"""Remove um cliente cadastrado.
-	"""
+    """Remove um cliente cadastrado.
+    """
 
-	logging.debug("Removendo o cliente %d persistido na loja", id)
+    logging.debug("Removendo o cliente %d persistido na loja", id)
 
-	#Obtendo marketplace como parent
-	marketplaceModel = marketplace.get_marketplace()
+    # Obtendo marketplace como parent
+    marketplaceModel = marketplace.get_marketplace()
 
-	logging.debug("Loja encontrada com sucesso")
+    logging.debug("Loja encontrada com sucesso")
 
-	#Realizando query, selecionando o cliente pelo pai e id
-	customer = ndb.Key('CustomerModel', int(id), parent=marketplaceModel.key).get() 
+    # Realizando query, selecionando o cliente pelo pai e id
+    customer = ndb.Key('CustomerModel', int(
+        id), parent=marketplaceModel.key).get()
 
-	if customer is None:
-		raise IndexError("cliente não encontrado!")
+    if customer is None:
+        raise IndexError("cliente não encontrado!")
 
-	logging.debug("cliente encontrado com sucesso")
+    logging.debug("cliente encontrado com sucesso")
 
-	customer.key.delete()
+    customer.key.delete()
 
-	logging.debug("cliente removido com sucesso")
+    logging.debug("cliente removido com sucesso")
