@@ -1,12 +1,8 @@
 languages:
-   Ruby: false
    JavaScript: true
    Python: true
-   PHP: false
 engines:
-  rubocop:
-    enabled: true
-  golint:
+  pep8:
     enabled: true
   eslint:
     enabled: true
@@ -14,7 +10,6 @@ engines:
     enabled: true
 ratings:
   paths:
-  - "**.html"
   - "**.css"
   - "**.js"
   - "**.py"
