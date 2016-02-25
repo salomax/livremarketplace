@@ -57,8 +57,9 @@ function onSignIn(googleUser) {
             $('.dropdown-toggle').dropdown();
 
             // Definir imagem do usuário
-            $('img.user-image').attr('src', profile.getImageUrl());
-            $('img.user-image-lg').attr('src', profile.getImageUrl() + '?sz=160');
+            var image = (profile.getImageUrl()? profile.getImageUrl() : '/img/profile.png');
+            $('img.user-image').attr('src', image);
+            $('img.user-image-lg').attr('src', image + '?sz=160');
 
             // Definir nome do usuário
             $('span.user-display-name').html(profile.getName());

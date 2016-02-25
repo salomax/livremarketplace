@@ -43,6 +43,9 @@ def calculate_average_ticket():
         total_revenue = total_revenue + sale.amount
         count = count + 1
 
+    if total_revenue == 0 or count == 0:
+        return 0.0
+
     return total_revenue / count
 
 
@@ -68,7 +71,7 @@ def calculate_profit_margin():
     net_profit = calculate_total_net_profit()
 
     if revenue == 0 or net_profit == 0:
-        return 0
+        return 0.0
 
     return net_profit / revenue
 
@@ -79,7 +82,7 @@ def calculate_total_revenue():
 
     sales = salesModel.list()
 
-    total_revenue = 0
+    total_revenue = 0.0
     for sale in sales:
         total_revenue = total_revenue + sale.amount
 
@@ -92,7 +95,7 @@ def calculate_total_net_profit():
 
     sales = salesModel.list()
 
-    total_net_profit = 0
+    total_net_profit = 0.0
     for sale in sales:
         total_net_profit = total_net_profit + sale.net_total
 
