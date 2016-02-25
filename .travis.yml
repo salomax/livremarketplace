@@ -1,14 +1,9 @@
 language: python
-
 python:
   - "2.7"
-
+  
 before_script:
 - export PYTHONPATH=${PYTHONPATH}:google_appengine
-
-branches:
-  only:    
-    - master
 
 # command to install dependencies
 install: 
