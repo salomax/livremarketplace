@@ -1,3 +1,16 @@
-## other configuration excluded from example...
+languages:
+   JavaScript: true
+   Python: true
+engines:
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+ratings:
+  paths:
+  - "**.html"
+  - "**.css"
+  - "**.js"
+  - "**.py"
 exclude_paths:
 - "**/plugins/**/*"
