@@ -100,8 +100,8 @@ def list():
 	suppliers = SupplierModel.query(ancestor=marketplaceModel.key).order(
 		SupplierModel.name).fetch()
 
-	logging.debug("Foram selecionado(s) %d fornecedores(s) cadastrados na loja do usuário %s", 
-		len(suppliers), email)
+	logging.debug("Foram selecionado(s) %d fornecedores(s) cadastrados", 
+		len(suppliers))
 
 	#Retornando
 	return suppliers

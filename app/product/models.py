@@ -96,8 +96,8 @@ def list():
 	products = ProductModel.query(ancestor=marketplaceModel.key).order(
 		ProductModel.name).fetch()
 
-	logging.debug("Foram selecionado(s) %d produtos(s) cadastrados na loja do usuário %s", 
-		len(products), email)
+	logging.debug("Foram selecionado(s) %d produtos(s)", 
+		len(products))
 
 	#Retornando
 	return products
