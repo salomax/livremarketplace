@@ -30,6 +30,7 @@ from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
 
+
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
 __copyright__ = "Copyright 2016, Marcos Salomão"
