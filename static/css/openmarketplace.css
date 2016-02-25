@@ -1,12 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic);
-/*!
- *   AdminLTE v2.3.0
- *   Author: Almsaeed Studio
- *	 Website: Almsaeed Studio <http://almsaeedstudio.com>
- *   License: Open source - MIT
- *           Please visit http://opensource.org/licenses/MIT for more information
-!*/
-
 html,
 body {
     min-height: 100%
@@ -18,10 +9,11 @@ body {
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 400;
+    font-size: 14px;
     overflow-x: hidden;
-    overflow-y: auto
+    overflow-y: auto;
 }
 body {
 	color: #000;
@@ -147,20 +139,6 @@ body.hold-transition .main-header .logo {
     padding-left: 15px;
     padding-right: 15px
 }
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-    font-family: 'Source Sans Pro', sans-serif
-}
 a {
     color: #303F9F
 }
@@ -285,7 +263,6 @@ a:focus {
     line-height: 50px;
     text-align: center;
     width: 230px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     padding: 0 15px;
     font-weight: 300;
     overflow: hidden
@@ -425,7 +402,8 @@ a:focus {
         -webkit-transform: translate(-230px, 0);
         -ms-transform: translate(-230px, 0);
         -o-transform: translate(-230px, 0);
-        transform: translate(-230px, 0)
+        -moz-transform: translate(-230px, 0);
+        transform: translate(-230px, 0);
     }
 }
 @media (min-width: 768px) {
@@ -628,7 +606,7 @@ a:focus {
         display: block;
         margin-left: -15px;
         margin-right: -15px;
-        font-size: 18px
+        font-size: 14px
     }
     .sidebar-mini.sidebar-collapse .main-header .logo>.logo-lg {
         display: none
@@ -1169,6 +1147,7 @@ a:focus {
     }
     60% {
         -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+        transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
         opacity: 1
     }
     80% {
@@ -1431,7 +1410,7 @@ a:focus {
 }
 .small-box h3,
 .small-box p {
-    z-index: 5px
+    z-index: 5;
 }
 .small-box .icon {
     -webkit-transition: all .3s linear;
@@ -2516,8 +2495,8 @@ a:focus {
     border-bottom-width: 0
 }
 .fixed-table-container {
-    border: 0px !important;
-    border-radius: 0px !important;
+    border: 0px;    
+    border-radius: 0px;    
 }
 .table tr>td .progress {
     margin: 0
@@ -2525,22 +2504,22 @@ a:focus {
 .table>thead>tr>td,
 .table>tbody>tr>td,
 .table>tfoot>tr>td {
-    border: 0px !important;
+    border: 0px;    
     padding: 10px;
 }
 .table {
-    border: 0px !important;
-    border-radius: 0px !important;
+    border: 0px;    
+    border-radius: 0px;    
 }
 .table>thead>tr>th {
     border-bottom: 1px solid #f4f4f4;
-    border-top: 0px !important;
-    border-left: 0px !important;
-    border-right: 0px !important;
+    border-top: 0px;    
+    border-left: 0px;    
+    border-right: 0px;    
 }
 .fixed-table-body {
-    border: 0px !important;
-    border-radius: 0px !important;
+    border: 0px;    
+    border-radius: 0px;
 }
 .table tr td .progress {
     margin-top: 5px;
