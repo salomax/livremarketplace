@@ -1,16 +1,28 @@
 language: python
+
 python:
   - "2.7"
+<<<<<<< HEAD
 before_script:
 - export PYTHONPATH=${PYTHONPATH}:google_appengine
+=======
+
+branches:
+  only:    
+    - master
+>>>>>>> fc9dededa9e1fb15bc21544fa05c4f1a67fb2c94
 
 # command to install dependencies
 install: 
  - pip install -t lib -r requirements.txt
+<<<<<<< HEAD
  - appcfg.py -A salomax-marketplace update .
+=======
+>>>>>>> fc9dededa9e1fb15bc21544fa05c4f1a67fb2c94
 
 # command to run tests
 script: 
  - python test.py
+ 
 notifications:
   email: false
