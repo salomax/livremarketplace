@@ -1,3 +1,22 @@
-## other configuration excluded from example...
+languages:
+   Ruby: false
+   JavaScript: true
+   Python: true
+   PHP: false
+engines:
+  rubocop:
+    enabled: true
+  golint:
+    enabled: true
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
+ratings:
+  paths:
+  - "**.html"
+  - "**.css"
+  - "**.js"
+  - "**.py"
 exclude_paths:
 - "**/plugins/**/*"
