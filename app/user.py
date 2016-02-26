@@ -19,6 +19,7 @@
 import logging
 import endpoints
 import oauth
+from google.appengine.api import users
 from google.appengine.ext import ndb
 from protorpc import remote
 from protorpc import messages

@@ -11,11 +11,12 @@ before_script:
 # command to install dependencies
 install: 
  - pip install -t lib -r requirements.txt
-# - /usr/local/google_appengine/appcfg.py -A salomax-marketplace update .
+ - pip install coveralls
+ # - /usr/local/google_appengine/appcfg.py -A salomax-marketplace update .
 
-# command to run tests
 script: 
  - python test.py
+ - coverage run --source=app openmarketplace_test.py
  
 notifications:
   email: false

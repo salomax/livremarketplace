@@ -24,7 +24,7 @@ __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
 ALLOWED_CLIENT_IDS = [
-    os.environ['WEB_CLIENT_ID'],
+    '768767255656-cs88prcq2s6olvb4dhsjdf2r7br50uej.apps.googleusercontent.com',
     # endpoints.API_EXPLORER_CLIENT_ID is needed for testing against the API
     # Explorer in production.
     endpoints.API_EXPLORER_CLIENT_ID,
