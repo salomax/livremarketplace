@@ -20,6 +20,7 @@ import logging
 import datetime
 from app import user
 from app import util
+from app.exceptions import NotFoundEntityException
 from app.marketplace import models as marketplace
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
@@ -84,9 +85,6 @@ def get(id):
     # Realizando query, selecionando o cliente pelo pai e id
     customer = ndb.Key('CustomerModel', int(
         id), parent=marketplaceModel.key).get()
-
-    if customer is None:
-        raise IndexError("Cliente não encontrado!")
 
     logging.debug("Cliente encontrado com sucesso")
 
@@ -209,7 +207,7 @@ def delete(id):
         id), parent=marketplaceModel.key).get()
 
     if customer is None:
-        raise IndexError("cliente não encontrado!")
+        raise NotFoundEntityException(message='messages.customer.notfound')
 
     logging.debug("cliente encontrado com sucesso")
 
