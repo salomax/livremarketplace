@@ -30,11 +30,11 @@
     $.sale = {};
 
     /*****************************************************************************
-     * Controller API REST 
+     * Controller API 
      *****************************************************************************/
 
     /**
-     * Métodos relativos à API REST do recurso venda.
+     * Métodos relativos à API do recurso venda.
      */
     $.sale.api = {
 

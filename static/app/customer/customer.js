@@ -30,11 +30,11 @@
     $.customer = {};
 
     /*****************************************************************************
-     * Controller API REST 
+     * Controller API 
      *****************************************************************************/
 
     /**
-     * Métodos relativos à API REST do recurso cliente.
+     * Métodos relativos à API do recurso cliente.
      */
     $.customer.api = {
 

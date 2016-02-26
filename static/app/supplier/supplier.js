@@ -30,11 +30,11 @@
     $.supplier = {};
 
     /*****************************************************************************
-     * Controller API REST 
+     * Controller API 
      *****************************************************************************/
 
     /**
-     * Métodos relativos à API REST do recurso fornecedor.
+     * Métodos relativos à API do recurso fornecedor.
      */
     $.supplier.api = {
 

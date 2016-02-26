@@ -30,11 +30,11 @@
     $.dashboard = {};
 
     /*****************************************************************************
-     * Controller API REST 
+     * Controller API 
      *****************************************************************************/
 
     /**
-     * Métodos relativos à API REST do recurso produto.
+     * Métodos relativos à API do recurso produto.
      */
     $.dashboard.api = {
 

@@ -5,9 +5,10 @@ NOTE: The which method below is borrowed from a project with a different
 LICENSE. See README.md for this project for more details.
 """
 
-
 import os
 
+# Set key test
+os.environ['WEB_CLIENT_ID'] = 'key.apps.googleusercontent.com'
 
 PATH_ENV_VAR = 'PATH'
 # Used by Windows to add potential extensions to scripts on path

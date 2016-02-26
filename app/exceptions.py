@@ -15,17 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import endpoints
+import httplib
 
-__author__ = "Marcos Salomão"
-__email__ = "salomao.marcos@gmail.com"
-__copyright__ = "Copyright 2016, Marcos Salomão"
-__license__ = "Apache 2.0"
+class NotFoundEntityException(endpoints.ServiceException):
 
-ALLOWED_CLIENT_IDS = [
-    os.environ['WEB_CLIENT_ID'],
-    # endpoints.API_EXPLORER_CLIENT_ID is needed for testing against the API
-    # Explorer in production.
-    endpoints.API_EXPLORER_CLIENT_ID,
-]
+    http_status = httplib.NOT_FOUND
+
+

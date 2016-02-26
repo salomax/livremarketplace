@@ -20,6 +20,7 @@ import logging
 import datetime
 from app import user
 from app import util
+from app.exceptions import NotFoundEntityException
 from app.marketplace import models as marketplace
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
@@ -64,8 +65,8 @@ def update_index(product):
     get_autocomplete_index().put(document)
 
 
-def remove_index(_id):
-    get_autocomplete_index().remove(str(_id))
+def delete_index(_id):
+    get_autocomplete_index().delete(str(_id))
 
 
 def get(id):
@@ -80,9 +81,6 @@ def get(id):
     # Realizando query, selecionando o produto pelo pai e id
     product = ndb.Key('ProductModel', int(
         id), parent=marketplaceModel.key).get()
-
-    if product is None:
-        raise IndexError("Produto não encontrado!")
 
     logging.debug("Produto encontrado com sucesso")
 
@@ -192,10 +190,11 @@ def delete(id):
         id), parent=marketplaceModel.key).get()
 
     if product is None:
-        raise IndexError("Produto não encontrado!")
+        raise NotFoundEntityException(message='messages.product.notfound')
 
     logging.debug("Produto encontrado com sucesso")
 
     product.key.delete()
+    delete_index(id)
 
     logging.debug("Produto removido com sucesso")

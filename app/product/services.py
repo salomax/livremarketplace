@@ -64,7 +64,7 @@ class ProductService(remote.Service):
         """
 
         logging.debug(
-            'Executando endpoint para obter a lista de produtos cadastrados')
+            'Executando endpoint para obter a lista dos produtos cadastrados')
 
         # Obter a lista de produtos cadastrados
         products = models.list()
