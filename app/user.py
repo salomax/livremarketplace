@@ -26,7 +26,6 @@ from protorpc import messages
 from protorpc import message_types
 from oauth2client.appengine import AppAssertionCredentials
 from httplib2 import Http
-from apiclient.discovery import build
 
 
 __author__ = "Marcos Salomão"
