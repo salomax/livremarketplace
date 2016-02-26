@@ -17,6 +17,9 @@ install:
 script: 
  - python test.py
  - coverage run --source=app openmarketplace_test.py
- 
+
+after_success:
+    coveralls
+    
 notifications:
   email: false
