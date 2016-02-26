@@ -11,6 +11,7 @@ before_script:
 # command to install dependencies
 install: 
  - pip install -t lib -r requirements.txt
+ - pip install WebTest
  - pip install coveralls
  # - /usr/local/google_appengine/appcfg.py -A salomax-marketplace update .
 
