@@ -20,6 +20,7 @@ import logging
 import datetime
 from app import user
 from app import util
+from app.exceptions import NotFoundEntityException
 from app.marketplace import models as marketplace
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
@@ -84,9 +85,6 @@ def get(id):
     # Realizando query, selecionando o fornecedor pelo pai e id
     supplier = ndb.Key('SupplierModel', int(
         id), parent=marketplaceModel.key).get()
-
-    if supplier is None:
-        raise IndexError("Fornecedor não encontrado!")
 
     logging.debug("Fornecedor encontrado com sucesso")
 
@@ -197,7 +195,7 @@ def delete(id):
         id), parent=marketplaceModel.key).get()
 
     if supplier is None:
-        raise IndexError("Fornecedor não encontrado!")
+        raise NotFoundEntityException(message='messages.supplier.notfound')
 
     logging.debug("Fornecedor encontrado com sucesso")
 

@@ -25,7 +25,8 @@ import unittest
 
 from app_test import test_utils
 
-MODULES_TO_TEST = ['product_test']
+MODULES_TO_TEST = ['product_test', 'supplier_test', 'customer_test']
+
 NO_DEVAPPSERVER_TEMPLATE = ('Either dev appserver file path %r does not exist '
                             'or dev_appserver.py is not on your PATH.')
 
