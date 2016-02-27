@@ -18,13 +18,19 @@
 
 import logging
 import datetime
+
 from app import user
 from app import util
-from app.marketplace import models as marketplace
-from google.appengine.ext import ndb
-from google.appengine.api import search as search_api
+
 from app.product import models as product
 from app.customer import models as customer
+
+from app.marketplace import models as marketplace
+from app.exceptions import NotFoundEntityException
+
+from google.appengine.ext import ndb
+from google.appengine.api import search as search_api
+
 
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
@@ -190,7 +196,20 @@ def delete(id):
 
 
 def report_customers_by_product(product_id):
-    """ List all customers that have ever bought the product.
+    """ List customers have ever bought product {product_id}.
+        The result is grouped by product.
     """
 
+    # Get product
     product = product.get(product_id)
+
+    # Verify if is not null
+    if product is None:
+        raise exceptions.NotFoundEntityException(message='messages.product.notfound')
+
+    # List all purchases
+
+    # Group by products
+
+    # Return
+

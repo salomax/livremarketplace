@@ -34,9 +34,7 @@ from app.product.messages import ProductKeyMessage
 from app.product.messages import ProductCollectionMessage
 from app.exceptions import NotFoundEntityException
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+
 
 
 class ProductTestCase(unittest.TestCase):
