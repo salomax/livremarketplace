@@ -33,8 +33,6 @@ from app.customer.messages import CustomerSearchMessage
 from app.customer.messages import CustomerKeyMessage
 from app.customer.messages import CustomerCollectionMessage
 from app.exceptions import NotFoundEntityException
-        
-
 
 
 class CustomerTestCase(TestCase):
@@ -49,7 +47,7 @@ class CustomerTestCase(TestCase):
             [CustomerService], restricted=False)
 
         # Create test
-        self.testapp = webtest.TestApp(customerService)        
+        self.testapp = webtest.TestApp(customerService)
 
     def save(self, request):
         """ Call save endpoint.

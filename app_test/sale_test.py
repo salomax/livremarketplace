@@ -14,3 +14,61 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+import mock
+from mock import Mock
+from mock import MagicMock
+
+from test_utils import TestCase
+
+from app.sale import models as saleModel
+from app.product import models as productModel
+from app.exceptions import NotFoundEntityException
+
+from google.appengine.api import apiproxy_stub
+from google.appengine.api import apiproxy_stub_map
+
+
+class SaleTestCase(TestCase):
+
+    @mock.patch('app.product.models.ProductModel', autospec=True)
+    @mock.patch('app.sale.models.SaleModel', autospec=True)
+    def test_report_customers_by_product(self, _productModel,_saleModel):
+        """ Unit test to customers grouped by product report. 
+        """
+
+        # Mock some inexistent product
+        saleModel.productModel.get = MagicMock(return_value=None)
+
+        # Verify exception
+        self.assertRaises(NotFoundEntityException,
+                          saleModel.report_customers_by_product, 1)
+
+        # Mock some valid product
+        saleModel.productModel.get = MagicMock(return_value=_productModel)
+
+        # Mock Sale Model        
+        sale = _saleModel
+        sale.key.id = Mock()
+        sale.key.id.side_effect = [1, 2, 3, 4, 5]
+
+        # Mock product Model child        
+        sale.product = _productModel
+        sale.product.key.id = Mock()
+        sale.product.key.id.side_effect =  [1, 1, 1, 2, 2]
+
+        salesList = []
+        for _ in range(5):
+            salesList.append(sale)
+
+        # Mock fetch method        
+        _saleModel.query().filter().fetch = MagicMock(return_value=salesList)
+
+        # Set get_sales_query to return query mocked
+        saleModel.get_sales_query = MagicMock(return_value=_saleModel.query())
+
+        # Call report_customers_by_product method
+        result = saleModel.report_customers_by_product(product_id=1)
+
+       

@@ -18,11 +18,12 @@
 
 import logging
 import datetime
+from collections import defaultdict
 
 from app import user
 from app import util
 
-from app.product import models as product
+from app.product import models as productModel
 from app.customer import models as customer
 
 from app.marketplace import models as marketplace
@@ -48,7 +49,7 @@ class SaleModel(ndb.Model):
 
     # Produto
     product = ndb.LocalStructuredProperty(
-        product.ProductModel, keep_keys=True, required=True, repeated=False)
+        productModel.ProductModel, keep_keys=True, required=True, repeated=False)
 
     # Quantidade
     quantity = ndb.IntegerProperty(required=True, default=1)
@@ -201,15 +202,21 @@ def report_customers_by_product(product_id):
     """
 
     # Get product
-    product = product.get(product_id)
+    product = productModel.get(product_id)
 
     # Verify if is not null
     if product is None:
-        raise exceptions.NotFoundEntityException(message='messages.product.notfound')
+        raise NotFoundEntityException(
+            message='messages.product.notfound')
 
-    # List all purchases
+    # List all sales within filter sale.product == product_id
+    sales = get_sales_query().filter(
+        SaleModel.product == product.key).fetch()
 
     # Group by products
+    for x in sales:
+        print x.key.id()
+        print x.product.key.id()
 
     # Return
-
+    return sales
