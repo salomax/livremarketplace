@@ -22,4 +22,9 @@ class NotFoundEntityException(endpoints.ServiceException):
 
     http_status = httplib.NOT_FOUND
 
+class IllegalStateException(endpoints.ServiceException):
+
+    http_status = httplib.UNPROCESSABLE_ENTITY
+    
+
 

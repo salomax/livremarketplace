@@ -22,6 +22,7 @@ from app import user
 from app.marketplace import models as marketplace
 from app.product import models as product
 from app.supplier import models as supplier
+from app.stock import models as stock
 from google.appengine.ext import ndb
 
 __author__ = "Marcos Salomão"
@@ -134,6 +135,10 @@ def put(purchase):
     if purchase.id is not None:
         purchaseModel = ndb.Key('PurchaseModel', int(purchase.id),
                                 parent=marketplaceModel.key).get()
+
+        # Remove from stock
+        stock.remove_item_from_stock(purchaseModel)    
+
     else:
         purchaseModel = PurchaseModel(parent=marketplaceModel.key)
 
@@ -151,6 +156,7 @@ def put(purchase):
     if supplierModel is None:
         raise IndexError(
             "Fornecedor com o id %d não encontrado!", purchase.supplier.id)
+        
     purchaseModel.supplier = supplierModel
 
     # Criando model
@@ -172,6 +178,9 @@ def put(purchase):
 
     # Persistindo
     purchaseModel.put()
+
+    # Update stock
+    stock.add_item_to_stock(purchaseModel)
 
     logging.debug("Persistida compra %d com sucesso na loja ",
                   purchaseModel.key.id(), marketplaceModel.name)
@@ -200,6 +209,10 @@ def delete(id):
 
     logging.debug("Compra encontrada com sucesso")
 
+    # Update stock
+    stock.remove_item_from_stock(purchase)    
+
+    # Delete from datastore
     purchase.key.delete()
 
     logging.debug("Compra removida com sucesso")

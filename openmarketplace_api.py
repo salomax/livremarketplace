@@ -27,6 +27,7 @@ import app.supplier.services as supplier
 import app.customer.services as customer
 import app.sale.services as sale
 import app.dashboard.services as dashboard
+import app.stock.services as stock
 
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
@@ -48,4 +49,5 @@ APPLICATION = endpoints.api_server([
     supplier.SupplierService,
     customer.CustomerService,
     sale.SaleService,
-    dashboard.DashboardService])
+    dashboard.DashboardService,
+    stock.StockService])

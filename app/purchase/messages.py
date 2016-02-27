@@ -85,6 +85,14 @@ class PurchaseGetMessage(messages.Message):
     created_date = message_types.DateTimeField(17, required=True)
 
 
+class PurchaseKeyMessage(messages.Message):
+    """Mensagem POST de Compras de produtos a ser trafegada pelo endpoint.
+    """
+
+    # Id
+    id = messages.IntegerField(1)
+
+
 class PurchasePostMessage(messages.Message):
     """Mensagem POST de Compras de produtos a ser trafegada pelo endpoint.
     """
