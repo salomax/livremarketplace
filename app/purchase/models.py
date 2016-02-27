@@ -60,7 +60,7 @@ class PurchaseModel(ndb.Model):
     cost = ndb.FloatProperty(required=True)
 
     # Valor Total
-    total_cost = ndb.FloatProperty()
+    total_cost = ndb.FloatProperty(required=True)
 
     # Cambio	USD
     exchange_dollar = ndb.FloatProperty()

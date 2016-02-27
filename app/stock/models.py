@@ -140,7 +140,7 @@ def listLog():
     """
 
     # List all logs
-    items = StockLogModel.query().fetch()
+    items = StockLogModel.query().order(-StockLogModel.created_date).fetch()
 
     # Returns
     return items    
