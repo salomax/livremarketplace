@@ -7,13 +7,16 @@ LICENSE. See README.md for this project for more details.
 
 import os
 
+import unittest
+import webtest
+
+
 # Set key test
 os.environ['WEB_CLIENT_ID'] = 'key.apps.googleusercontent.com'
 
 PATH_ENV_VAR = 'PATH'
 # Used by Windows to add potential extensions to scripts on path
 PATH_EXTENSIONS_ENV_VAR = 'PATHEXT'
-
 
 def which(name, flags=os.X_OK):
     """Search PATH for executable files with the given name.
@@ -59,3 +62,21 @@ def which(name, flags=os.X_OK):
                 return potential_match_with_ext
 
     return result
+
+class TestCase(unittest.TestCase):
+
+    def setUp(self):
+    
+        from google.appengine.ext import testbed
+       
+        tb = testbed.Testbed()
+        tb.setup_env(current_version_id='testbed.version',
+                     ENDPOINTS_AUTH_EMAIL='testmail@gmail.com',
+                     ENDPOINTS_AUTH_DOMAIN='TEST_DOMAIN')
+        tb.activate()
+        tb.init_all_stubs()
+        self.testbed = tb
+
+
+    def tearDown(self):
+        self.testbed.deactivate()

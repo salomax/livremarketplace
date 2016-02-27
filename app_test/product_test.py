@@ -21,6 +21,8 @@ import webtest
 import endpoints
 import logging
 
+from test_utils import TestCase
+
 from protorpc.remote import protojson
 from protorpc import message_types
 
@@ -35,24 +37,19 @@ from app.product.messages import ProductCollectionMessage
 from app.exceptions import NotFoundEntityException
 
 
-
-
-class ProductTestCase(unittest.TestCase):
+class ProductTestCase(TestCase):
 
     def setUp(self):
-        tb = testbed.Testbed()
-        tb.setup_env(current_version_id='testbed.version',
-                     ENDPOINTS_AUTH_EMAIL='testmail@gmail.com',
-                     ENDPOINTS_AUTH_DOMAIN='TEST_DOMAIN')
-        tb.activate()
-        tb.init_all_stubs()
-        self.testbed = tb
+
+        # Call super method
+        super(ProductTestCase, self).setUp()
+
+        #  Create service
         productService = endpoints.api_server(
             [ProductService], restricted=False)
-        self.testapp = webtest.TestApp(productService)
 
-    def tearDown(self):
-        self.testbed.deactivate()
+        # Create test
+        self.testapp = webtest.TestApp(productService)
 
     def save(self, request):
         """ Call save endpoint.

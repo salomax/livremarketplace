@@ -21,6 +21,8 @@ import webtest
 import endpoints
 import logging
 
+from test_utils import TestCase
+
 from protorpc.remote import protojson
 from protorpc import message_types
 
@@ -39,22 +41,19 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-class SupplierTestCase(unittest.TestCase):
+class SupplierTestCase(TestCase):
 
     def setUp(self):
-        tb = testbed.Testbed()
-        tb.setup_env(current_version_id='testbed.version',
-                     ENDPOINTS_AUTH_EMAIL='testmail@gmail.com',
-                     ENDPOINTS_AUTH_DOMAIN='TEST_DOMAIN')
-        tb.activate()
-        tb.init_all_stubs()
-        self.testbed = tb
+
+        # Call super method
+        super(SupplierTestCase, self).setUp()
+
+        #  Create service
         supplierService = endpoints.api_server(
             [SupplierService], restricted=False)
-        self.testapp = webtest.TestApp(supplierService)
 
-    def tearDown(self):
-        self.testbed.deactivate()
+        # Create test
+        self.testapp = webtest.TestApp(supplierService)
 
     def save(self, request):
         """ Call save endpoint.

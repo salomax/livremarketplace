@@ -44,11 +44,49 @@ open source light ERP for e-commerces
 
 	http://your-app-id.appspot.com/_ah/api/explorer
 
-### Tests
-    
+## Tests
+  
+### Install and Run
+
     $ pip install coverage 
     $ coverage run --source=app openmarketplace_test.py
-	
+
+### Create a Test Case
+
+	Add module in the openmarketplace_test.py
+
+	```python
+	# Add modules to test over here
+	MODULES_TO_TEST = ['example_test', ...]
+	```
+
+	Create your test case in [app_test](salomax/openMarketplace/tree/master/app_test)
+
+	```python
+	# Import super class TestCase
+	import from test_utils import TestCase
+
+	class YourTestCase(TestCase):
+	""" Test case example.
+	"""
+
+	# Override setUp() to create a webtest
+    def setUp(self):
+
+        # Call super method
+        super(YourTestCase, self).setUp()
+
+        #  Create service
+        YourService = endpoints.api_server(
+            [CustomerService], restricted=False)
+
+        # Create test
+        self.testapp = webtest.TestApp(YourService)    
+
+        ...    
+
+	```python
+
 ## License
 
 See [LICENSE](https://github.com/salomax/openMarketplace/blob/master/LICENSE).	

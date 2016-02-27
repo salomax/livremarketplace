@@ -18,7 +18,6 @@
 import os
 import unittest
 import webtest
-import endpoints
 import logging
 import datetime
 
@@ -33,11 +32,6 @@ from app.purchase.messages import PurchaseGetMessage
 from app.purchase.messages import PurchaseKeyMessage
 from app.purchase.messages import PurchaseCollectionMessage
 from app.exceptions import NotFoundEntityException
-
-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 
 class PurchaseTestCase(unittest.TestCase):
@@ -99,36 +93,33 @@ class PurchaseTestCase(unittest.TestCase):
         """ Save purchase.
         """
         request = PurchasePostMessage(
-            supplier = None,
-            product = None,
-            quantity = 1,
-            purchase_date = datetime.datetime.now(),
-            payment_date = datetime.datetime.now(),
-            cost = 1.0,
-            total_cost = 1.0 ,
-            exchange_dollar = 1.0,
-            cost_dollar = 1.0,
-            total_cost_dollar = 1.0 ,
-            shipping_cost = 1.0,
-            track_code = 'TEST',
-            invoice = 'TEST',
-            received_date = datetime.datetime.now(),
-            purchase_link = 'http://something.com')
+            supplier=None,
+            product=None,
+            quantity=1,
+            purchase_date=datetime.datetime.now(),
+            payment_date=datetime.datetime.now(),
+            cost=1.0,
+            total_cost=1.0,
+            exchange_dollar=1.0,
+            cost_dollar=1.0,
+            total_cost_dollar=1.0,
+            shipping_cost=1.0,
+            track_code='TEST',
+            invoice='TEST',
+            received_date=datetime.datetime.now(),
+            purchase_link='http://something.com')
 
         purchase = self.save(request)
 
         self.assertIsNotNone(purchase)
         self.assertIsNotNone(purchase.id)
 
-
         purchase = self.save(request)
 
         self.assertIsNotNone(purchase)
         self.assertIsNotNone(purchase.id)
-
 
         return purchase
-
 
     def testList(self):
         """ List all purchases.

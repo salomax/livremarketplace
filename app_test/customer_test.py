@@ -16,16 +16,16 @@
 # limitations under the License.
 
 import os
-import unittest
-import webtest
 import endpoints
 import logging
+import endpoints
+import webtest
+
+from test_utils import TestCase
 
 from protorpc.remote import protojson
 from protorpc import message_types
 
-from google.appengine.ext import testbed
-from google.appengine.api import users
 from app.customer.services import CustomerService
 from app.customer.messages import CustomerPostMessage
 from app.customer.messages import CustomerGetMessage
@@ -33,28 +33,23 @@ from app.customer.messages import CustomerSearchMessage
 from app.customer.messages import CustomerKeyMessage
 from app.customer.messages import CustomerCollectionMessage
 from app.exceptions import NotFoundEntityException
-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+        
 
 
-class CustomerTestCase(unittest.TestCase):
+
+class CustomerTestCase(TestCase):
 
     def setUp(self):
-        tb = testbed.Testbed()
-        tb.setup_env(current_version_id='testbed.version',
-                     ENDPOINTS_AUTH_EMAIL='testmail@gmail.com',
-                     ENDPOINTS_AUTH_DOMAIN='TEST_DOMAIN')
-        tb.activate()
-        tb.init_all_stubs()
-        self.testbed = tb
+
+        # Call super method
+        super(CustomerTestCase, self).setUp()
+
+        #  Create service
         customerService = endpoints.api_server(
             [CustomerService], restricted=False)
-        self.testapp = webtest.TestApp(customerService)
 
-    def tearDown(self):
-        self.testbed.deactivate()
+        # Create test
+        self.testapp = webtest.TestApp(customerService)        
 
     def save(self, request):
         """ Call save endpoint.
