@@ -53,39 +53,39 @@ open source light ERP for e-commerces
 
 ### Create a Test Case
 
-	Add module in the openmarketplace_test.py
+Add module in the openmarketplace_test.py
 
-	```python
-	# Add modules to test over here
-	MODULES_TO_TEST = ['example_test', ...]
-	```
+```python
+# Add modules to test over here
+MODULES_TO_TEST = ['example_test', ...]
+```
 
-	Create your test case in [app_test](salomax/openMarketplace/tree/master/app_test)
+Create your test case in [app_test](salomax/openMarketplace/tree/master/app_test)
 
-	```python
-	# Import super class TestCase
-	import from test_utils import TestCase
+```python
+# Import super class TestCase
+import from test_utils import TestCase
 
-	class YourTestCase(TestCase):
-	""" Test case example.
-	"""
+class YourTestCase(TestCase):
+""" Test case example.
+"""
 
-	# Override setUp() to create a webtest
-    def setUp(self):
+# Override setUp() to create a webtest
+def setUp(self):
 
-        # Call super method
-        super(YourTestCase, self).setUp()
+# Call super method
+super(YourTestCase, self).setUp()
 
-        #  Create service
-        YourService = endpoints.api_server(
-            [CustomerService], restricted=False)
+#  Create service
+YourService = endpoints.api_server(
+    [CustomerService], restricted=False)
 
-        # Create test
-        self.testapp = webtest.TestApp(YourService)    
+# Create test
+self.testapp = webtest.TestApp(YourService)    
 
-        ...    
+...    
 
-	```
+```
 
 ## License
 
