@@ -62,7 +62,11 @@ class SaleTestCase(TestCase):
 
         # Create list to set query result
         salesList = []
-        for _ in range(5):
+        for x in range(5):
+            # Mock product Model child        
+            sale.product = _productModel
+            sale.product.key.id = Mock()
+            sale.product.key.id.return_value = x
             salesList.append(sale)
 
         # Mock fetch method        
