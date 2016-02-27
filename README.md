@@ -83,8 +83,7 @@ YourService = endpoints.api_server(
 # Create test
 self.testapp = webtest.TestApp(YourService)    
 
-...    
-
+... 
 ```
 
 ## License
