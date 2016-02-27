@@ -56,8 +56,10 @@ class SaleTestCase(TestCase):
         # Mock product Model child        
         sale.product = _productModel
         sale.product.key.id = Mock()
-        sale.product.key.id.side_effect =  [1, 1, 1, 2, 2]
+        # Important test must be unsorted
+        sale.product.key.id.side_effect =  [2, 1, 3, 2, 1]
 
+        # Create list to set query result
         salesList = []
         for _ in range(5):
             salesList.append(sale)
@@ -70,5 +72,11 @@ class SaleTestCase(TestCase):
 
         # Call report_customers_by_product method
         result = saleModel.report_customers_by_product(product_id=1)
+
+        # The result must be:
+        # Product 1 => 2 Customers
+        # Product 2 => 2 Customers
+        # Product 3 => 1 Customer
+
 
        

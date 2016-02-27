@@ -214,9 +214,15 @@ def report_customers_by_product(product_id):
         SaleModel.product == product.key).fetch()
 
     # Group by products
-    for x in sales:
-        print x.key.id()
-        print x.product.key.id()
+    groups = []
+    uniquekeys = []
+    data = sorted(sales, key=lambda t: t.product.key.id())
+
+    print data
+
+    # for k, g in groupby(data, keyfunc):
+    #     groups.append(list(g))      # Store group iterator as a list
+    #     uniquekeys.append(k)
 
     # Return
     return sales
