@@ -60,7 +60,7 @@ Add module in the openmarketplace_test.py
 MODULES_TO_TEST = ['example_test', ...]
 ```
 
-Create your test case in [app_test]
+Create your test case in /app_test
 
 ```python
 # Import super class TestCase
