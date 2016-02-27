@@ -1,6 +1,6 @@
 # [openMarketplace](https://salomax-marketplace.appspot.com)
 [![Build Status](https://travis-ci.org/salomax/openMarketplace.svg?branch=master)](https://travis-ci.org/salomax/openMarketplace)
-[![Code Climate](https://codeclimate.com/github/salomax/openMarketplace/badges/gpa.svg)](https://codeclimate.com/github/salomax/openMarketplace) [![Test Coverage](https://codeclimate.com/github/salomax/openMarketplace/badges/coverage.svg)](https://codeclimate.com/github/salomax/openMarketplace/coverage) [![Issue Count](https://codeclimate.com/github/salomax/openMarketplace/badges/issue_count.svg)](https://codeclimate.com/github/salomax/openMarketplace) [![Gitter](https://badges.gitter.im/salomax/openMarketplace.svg)](https://gitter.im/salomax/openMarketplace?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Code Climate](https://codeclimate.com/github/salomax/openMarketplace/badges/gpa.svg)](https://codeclimate.com/github/salomax/openMarketplace) [![Test Coverage](https://img.shields.io/coveralls/salomax/openMarketplace.svg)](https://codeclimate.com/github/salomax/openMarketplace/coverage) [![Issue Count](https://codeclimate.com/github/salomax/openMarketplace/badges/issue_count.svg)](https://codeclimate.com/github/salomax/openMarketplace) [![Gitter](https://badges.gitter.im/salomax/openMarketplace.svg)](https://gitter.im/salomax/openMarketplace?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 open source light ERP for e-commerces
 
@@ -47,4 +47,3 @@ open source light ERP for e-commerces
 ## License
 
 See [LICENSE](https://github.com/salomax/openMarketplace/blob/master/LICENSE).	
-
