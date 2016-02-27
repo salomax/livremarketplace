@@ -86,6 +86,22 @@ self.testapp = webtest.TestApp(YourService)
 ... 
 ```
 
+### Mock
+
+Make sure mock has installed
+
+	$ pip install mock
+	
+Use mock
+
+```python
+from mock import MagicMock
+
+something = MagicMock(return_value=None)
+
+something()
+```
+
 ## License
 
 See [LICENSE](https://github.com/salomax/openMarketplace/blob/master/LICENSE).	
