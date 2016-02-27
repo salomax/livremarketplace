@@ -187,3 +187,10 @@ def delete(id):
     sale.key.delete()
 
     logging.debug("Venda removida com sucesso")
+
+
+def report_customers_by_product(product_id):
+    """ List all customers that have ever bought the product.
+    """
+
+    product = product.get(product_id)

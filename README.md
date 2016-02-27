@@ -43,6 +43,11 @@ open source light ERP for e-commerces
 ### Endpoints API
 
 	http://your-app-id.appspot.com/_ah/api/explorer
+
+### Tests
+    
+    $ pip install coverage 
+    $ coverage run --source=app openmarketplace_test.py
 	
 ## License
 

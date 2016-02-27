@@ -82,6 +82,9 @@ def get(id):
     product = ndb.Key('ProductModel', int(
         id), parent=marketplaceModel.key).get()
 
+    if product is None:
+        raise NotFoundEntityException(message='messages.product.notfound')
+        
     logging.debug("Produto encontrado com sucesso")
 
     return product
