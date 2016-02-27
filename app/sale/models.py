@@ -18,7 +18,7 @@
 
 import logging
 import datetime
-from collections import defaultdict
+from itertools import groupby
 
 from app import user
 from app import util
@@ -213,16 +213,22 @@ def report_customers_by_product(product_id):
     sales = get_sales_query().filter(
         SaleModel.product == product.key).fetch()
 
+    for x in sales:
+        print x.product.key.id()
+
+    for x in sales:
+        print x.product.key.id()
+        
+    result = []
+
     # Group by products
-    groups = []
-    uniquekeys = []
-    data = sorted(sales, key=lambda t: t.product.key.id())
-
-    print data
-
-    # for k, g in groupby(data, keyfunc):
-    #     groups.append(list(g))      # Store group iterator as a list
-    #     uniquekeys.append(k)
+    # 
+    # data = sorted(sales, key=lambda t: t.product.key.id())
+    # for k, g in groupby(data, key=lambda t: t.product.key.id()):
+    #     result.append({
+    #             'product': k,
+    #             'customers': list(g)
+    #         })
 
     # Return
-    return sales
+    return result

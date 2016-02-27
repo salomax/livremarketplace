@@ -16,6 +16,8 @@
 # limitations under the License.
 
 
+from itertools import cycle
+
 import mock
 from mock import Mock
 from mock import MagicMock
@@ -32,7 +34,7 @@ from google.appengine.api import apiproxy_stub_map
 
 class SaleTestCase(TestCase):
 
-    @mock.patch('app.product.models.ProductModel', autospec=True)
+    @mock.patch.object('app.product.models.ProductModel', autospec=True)
     @mock.patch('app.sale.models.SaleModel', autospec=True)
     def test_report_customers_by_product(self, _productModel,_saleModel):
         """ Unit test to customers grouped by product report. 
@@ -55,9 +57,8 @@ class SaleTestCase(TestCase):
 
         # Mock product Model child        
         sale.product = _productModel
-        sale.product.key.id = Mock()
+        sale.product.key.id = Mock(side_effect=[2, 1, 3 ,2, 1])
         # Important test must be unsorted
-        sale.product.key.id.side_effect =  [2, 1, 3, 2, 1]
 
         # Create list to set query result
         salesList = []
@@ -77,6 +78,8 @@ class SaleTestCase(TestCase):
         # Product 1 => 2 Customers
         # Product 2 => 2 Customers
         # Product 3 => 1 Customer
+
+        print result
 
 
        
