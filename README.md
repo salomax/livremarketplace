@@ -60,7 +60,7 @@ Add module in the openmarketplace_test.py
 MODULES_TO_TEST = ['example_test', ...]
 ```
 
-Create your test case in [app_test](salomax/openMarketplace/tree/master/app_test)
+Create your test case in /app_test
 
 ```python
 # Import super class TestCase
@@ -83,8 +83,23 @@ YourService = endpoints.api_server(
 # Create test
 self.testapp = webtest.TestApp(YourService)    
 
-...    
+... 
+```
 
+### Mock
+
+Make sure mock has installed
+
+	$ pip install mock
+	
+Use mock
+
+```python
+from mock import MagicMock
+
+something = MagicMock(return_value=None)
+
+something()
 ```
 
 ## License
