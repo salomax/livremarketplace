@@ -44,12 +44,12 @@ class SaleModel(ndb.Model):
     """
 
     # Cliente
-    customer = ndb.LocalStructuredProperty(
-        customer.CustomerModel, keep_keys=True, required=True, repeated=False)
+    customer = ndb.KeyProperty(
+        kind='CustomerModel', indexed=True, required=True)
 
     # Produto
-    product = ndb.LocalStructuredProperty(
-        productModel.ProductModel, keep_keys=True, required=True, repeated=False)
+    product = ndb.KeyProperty(
+        kind='ProductModel', indexed=True, required=True)
 
     # Quantidade
     quantity = ndb.IntegerProperty(required=True, default=1)
@@ -140,19 +140,21 @@ def save(sale):
 
     # Selecionando produto
     productModel = ndb.Key('ProductModel', int(sale.product.id),
-                           parent=marketplaceModel.key).get()
+                           parent=marketplaceModel.key)
     if productModel is None:
-        raise IndexError("Produto com o id %d não encontrado!", sale.product.id)
-    saleModel.product = productModel
+        raise IndexError("Produto com o id %d não encontrado!",
+                         sale.product.id)
 
     # Selecionando cliente
     customerModel = ndb.Key('CustomerModel', int(sale.customer.id),
-                            parent=marketplaceModel.key).get()
+                            parent=marketplaceModel.key)
+
     if customerModel is None:
         raise IndexError("Cliente com o id %d não encontrado!",
                          sale.customer.id)
-    saleModel.customer = customerModel
 
+    saleModel.product = productModel
+    saleModel.customer = customerModel
     saleModel.quantity = sale.quantity
     saleModel.sale_date = sale.sale_date
     saleModel.amount = sale.amount
@@ -196,39 +198,38 @@ def delete(id):
     logging.debug("Venda removida com sucesso")
 
 
-def report_customers_by_product(product_id):
+def report_customers_by_products():
     """ List customers have ever bought product {product_id}.
         The result is grouped by product.
     """
 
-    # Get product
-    product = productModel.get(product_id)
+    # List all sales
+    sales = get_sales_query().fetch()
 
-    # Verify if is not null
-    if product is None:
-        raise NotFoundEntityException(
-            message='messages.product.notfound')
-
-    # List all sales within filter sale.product == product_id
-    sales = get_sales_query().filter(
-        SaleModel.product == product.key).fetch()
-
-    for x in sales:
-        print x.product.key.id()
-
-    for x in sales:
-        print x.product.key.id()
-        
+    # Create result variable
     result = []
 
     # Group by products
-    # 
-    # data = sorted(sales, key=lambda t: t.product.key.id())
-    # for k, g in groupby(data, key=lambda t: t.product.key.id()):
-    #     result.append({
-    #             'product': k,
-    #             'customers': list(g)
-    #         })
+    data = sorted(sales, key=lambda t: t.product.key.id())
+    for k, g in groupby(data, key=lambda t: t.product.key.id()):
+        
+        # Create variables
+        customers = []
+        product = None
+
+        # Create group and get product
+        for sale in g:
+            # product must be setted one time
+            # Avoiding overhead unecessary
+            if product is None:
+                product = sale.product.key.get()
+            customers.append(sale.customer.key.get())
+
+        # Create dict with key and value
+        result.append({
+            'product': product,
+            'customers': customers
+        })
 
     # Return
     return result

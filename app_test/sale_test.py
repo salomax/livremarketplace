@@ -16,16 +16,20 @@
 # limitations under the License.
 
 
-from itertools import cycle
+from google.appengine.ext import ndb
+
+from random import randint
 
 import mock
 from mock import Mock
 from mock import MagicMock
+from mock import PropertyMock
 
 from test_utils import TestCase
 
 from app.sale import models as saleModel
 from app.product import models as productModel
+from app.customer import models as customerModel
 from app.exceptions import NotFoundEntityException
 
 from google.appengine.api import apiproxy_stub
@@ -34,56 +38,55 @@ from google.appengine.api import apiproxy_stub_map
 
 class SaleTestCase(TestCase):
 
-    @mock.patch.object('app.product.models.ProductModel', autospec=True)
-    @mock.patch('app.sale.models.SaleModel', autospec=True)
-    def test_report_customers_by_product(self, _productModel,_saleModel):
+    def test_report_customers_by_products(self):
         """ Unit test to customers grouped by product report. 
         """
-
-        # Mock some inexistent product
-        saleModel.productModel.get = MagicMock(return_value=None)
-
-        # Verify exception
-        self.assertRaises(NotFoundEntityException,
-                          saleModel.report_customers_by_product, 1)
-
-        # Mock some valid product
-        saleModel.productModel.get = MagicMock(return_value=_productModel)
-
-        # Mock Sale Model        
-        sale = _saleModel
-        sale.key.id = Mock()
-        sale.key.id.side_effect = [1, 2, 3, 4, 5]
-
-        # Mock product Model child        
-        sale.product = _productModel
-        sale.product.key.id = Mock(side_effect=[2, 1, 3 ,2, 1])
-        # Important test must be unsorted
-
-        # Create list to set query result
+        # Mock sale model and products models
         salesList = []
-        for x in range(5):
-            # Mock product Model child        
-            sale.product = _productModel
-            sale.product.key.id = Mock()
-            sale.product.key.id.return_value = x
+        keys = [2, 1, 3, 2, 1]
+        for x in keys:
+            sale = Mock(spec_set=saleModel.SaleModel())
+            sale.product = Mock(spec_set=productModel.ProductModel())
+            sale.product.key = Mock(spec_set=ndb.Key('ProductModel', x))
+            sale.product.key.id = Mock(return_value=x)
+            sale.product.key.get = Mock(return_value=sale.product)
             salesList.append(sale)
 
-        # Mock fetch method        
-        _saleModel.query().filter().fetch = MagicMock(return_value=salesList)
+        # Mock customers models
+        keys = [{'id': '1', 'name': 'Test1'}, {'id': '2', 'name': 'Test2'}]
+        for sale in salesList:
+            sale.customer = Mock(spec_set=customerModel.CustomerModel())
+            customer = keys[randint(0, 1)]
+            sale.customer.key = Mock(
+                spec_set=ndb.Key('CustomerModel', customer['id']))
+            sale.customer.key.id = Mock(return_value=customer['id'])
+            sale.customer.key.get = Mock(return_value=customer)
+            sale.customer.name = PropertyMock(return_value=customer['name'])
+
+        # Mock fetch method
+        mockSale = Mock(spec_set=saleModel.SaleModel())
+        mockSale.query = Mock(spec=mockSale.query)
+        mockSale.query().fetch = MagicMock(return_value=salesList)
 
         # Set get_sales_query to return query mocked
-        saleModel.get_sales_query = MagicMock(return_value=_saleModel.query())
+        saleModel.get_sales_query = MagicMock(return_value=mockSale.query())
 
         # Call report_customers_by_product method
-        result = saleModel.report_customers_by_product(product_id=1)
+        result = saleModel.report_customers_by_products()
+
+        # Must have lenght == 3
+        self.assertEqual(len(result), 3)
 
         # The result must be:
-        # Product 1 => 2 Customers
-        # Product 2 => 2 Customers
-        # Product 3 => 1 Customer
+        #   Product 1 => 2 Customers
+        #   Product 2 => 2 Customers
+        #   Product 3 => 1 Customer
+        self.assertEqual(len(result[0]['customers']), 2)
+        self.assertEqual(len(result[1]['customers']), 2)
+        self.assertEqual(len(result[2]['customers']), 1)
 
-        print result
+        # And the products must be ordered
+        self.assertEqual(result[0]['product'].key.id(), 1)
+        self.assertEqual(result[1]['product'].key.id(), 2)
+        self.assertEqual(result[2]['product'].key.id(), 3)
 
-
-       

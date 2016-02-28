@@ -71,22 +71,28 @@ class SaleService(remote.Service):
         # Declarando lista e convertendo model para message
         items = []
         for saleModel in sales:
+
+            # Get entities children 
+            customerModel = saleModel.customer.get()
+            productModel = saleModel.product.get()
+            
+            # Add to list
             items.append(
                 SaleGetMessage(
                     id=saleModel.key.id(),
                     customer=customer.CustomerGetMessage(
-                        id=saleModel.customer.key.id(),
-                        name=saleModel.customer.name,
-                        email=saleModel.customer.email,
-                        phone=saleModel.customer.phone,
-                        location=saleModel.customer.location,
-                        created_date=saleModel.customer.created_date
+                        id=customerModel.key.id(),
+                        name=customerModel.name,
+                        email=customerModel.email,
+                        phone=customerModel.phone,
+                        location=customerModel.location,
+                        created_date=customerModel.created_date
                     ),
                     product=product.ProductGetMessage(
-                        id=saleModel.product.key.id(),
-                        code=saleModel.product.code,
-                        name=saleModel.product.name,
-                        created_date=saleModel.product.created_date
+                        id=productModel.key.id(),
+                        code=productModel.code,
+                        name=productModel.name,
+                        created_date=productModel.created_date
                     ),
                     quantity=saleModel.quantity,
                     sale_date=saleModel.sale_date,
@@ -112,22 +118,26 @@ class SaleService(remote.Service):
         # Cadastrar/atualizar a compra de um cliente
         saleModel = models.save(request)
 
+        # Get entities children 
+        customerModel = saleModel.customer.get()
+        productModel = saleModel.product.get()
+
         # Retornando compra persistida
         return SaleGetMessage(
             id=saleModel.key.id(),
             customer=customer.CustomerGetMessage(
-                id=saleModel.customer.key.id(),
-                name=saleModel.customer.name,
-                email=saleModel.customer.email,
-                phone=saleModel.customer.phone,
-                location=saleModel.customer.location,
-                created_date=saleModel.customer.created_date
+                id=customerModel.key.id(),
+                name=customerModel.name,
+                email=customerModel.email,
+                phone=customerModel.phone,
+                location=customerModel.location,
+                created_date=customerModel.created_date
             ),
             product=product.ProductGetMessage(
-                id=saleModel.product.key.id(),
-                code=saleModel.product.code,
-                name=saleModel.product.name,
-                created_date=saleModel.product.created_date
+                id=productModel.key.id(),
+                code=productModel.code,
+                name=productModel.name,
+                created_date=productModel.created_date
             ),
             quantity=saleModel.quantity,
             sale_date=saleModel.sale_date,
