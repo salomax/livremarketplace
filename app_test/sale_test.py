@@ -90,3 +90,53 @@ class SaleTestCase(TestCase):
         self.assertEqual(result[1]['product'].key.id(), 2)
         self.assertEqual(result[2]['product'].key.id(), 3)
 
+    def test_report_products_by_customers(self):
+        """ Unit test to products grouped by customers report. 
+        """
+        # Mock sale model and products models
+        salesList = []
+        keys = [2, 1, 3, 2, 1]
+        for x in keys:
+            sale = Mock(spec_set=saleModel.SaleModel())
+            sale.customer = Mock(spec_set=customerModel.CustomerModel())
+            sale.customer.key = Mock(spec_set=ndb.Key('CustomerModel', x))
+            sale.customer.key.id = Mock(return_value=x)
+            sale.customer.key.get = Mock(return_value=sale.customer)
+            salesList.append(sale)
+
+        # Mock products models
+        keys = [2, 3, 1]
+        for sale in salesList:
+            sale.product = Mock(spec_set=productModel.ProductModel())
+            key_id = keys[randint(0, 2)]
+            sale.product.key = Mock(
+                spec_set=ndb.Key('ProductModel', key_id))
+            sale.product.key.id = Mock(return_value=key_id)
+            sale.product.key.get = Mock(return_value=sale.product)
+
+        # Mock fetch method
+        mockSale = Mock(spec_set=saleModel.SaleModel())
+        mockSale.query = Mock(spec=mockSale.query)
+        mockSale.query().fetch = MagicMock(return_value=salesList)
+
+        # Set get_sales_query to return query mocked
+        saleModel.get_sales_query = MagicMock(return_value=mockSale.query())
+
+        # Call report_customers_by_product method
+        result = saleModel.report_products_by_customers()
+
+        # Must have lenght == 3
+        self.assertEqual(len(result), 3)
+
+        # The result must be:
+        #   Customer 1 => 2 Customers
+        #   Customer 2 => 2 Customers
+        #   Customer 3 => 1 Customer
+        self.assertEqual(len(result[0]['products']), 2)
+        self.assertEqual(len(result[1]['products']), 2)
+        self.assertEqual(len(result[2]['products']), 1)
+
+        # And the customers must be ordered
+        self.assertEqual(result[0]['customer'].key.id(), 1)
+        self.assertEqual(result[1]['customer'].key.id(), 2)
+        self.assertEqual(result[2]['customer'].key.id(), 3)

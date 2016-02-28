@@ -199,7 +199,7 @@ def delete(id):
 
 
 def report_customers_by_products():
-    """ List customers have ever bought product {product_id}.
+    """ List customers have ever bought at once.
         The result is grouped by product.
     """
 
@@ -212,7 +212,7 @@ def report_customers_by_products():
     # Group by products
     data = sorted(sales, key=lambda t: t.product.key.id())
     for k, g in groupby(data, key=lambda t: t.product.key.id()):
-        
+
         # Create variables
         customers = []
         product = None
@@ -229,6 +229,42 @@ def report_customers_by_products():
         result.append({
             'product': product,
             'customers': customers
+        })
+
+    # Return
+    return result
+
+
+def report_products_by_customers():
+    """ List products grouped by its customers.
+    """
+
+    # List all sales
+    sales = get_sales_query().fetch()
+
+    # Create result variable
+    result = []
+
+    # Group by products
+    data = sorted(sales, key=lambda t: t.customer.key.id())
+    for k, g in groupby(data, key=lambda t: t.customer.key.id()):
+
+        # Create variables
+        products = []
+        customer = None
+
+        # Create group and get customer
+        for sale in g:
+            # customer must be setted one time
+            # Avoiding overhead unecessary
+            if customer is None:
+                customer = sale.customer.key.get()
+            products.append(sale.product.key.get())
+
+        # Create dict with key and value
+        result.append({
+            'customer': customer,
+            'products': products
         })
 
     # Return
