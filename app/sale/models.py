@@ -25,7 +25,6 @@ from app import util
 
 from app.product import models as productModel
 from app.customer import models as customer
-
 from app.marketplace import models as marketplace
 from app.exceptions import NotFoundEntityException
 
@@ -245,7 +244,7 @@ def report_products_by_customers():
     # Create result variable
     result = []
 
-    # Group by products
+    # Group by customers
     data = sorted(sales, key=lambda t: t.customer.key.id())
     for k, g in groupby(data, key=lambda t: t.customer.key.id()):
 
@@ -269,3 +268,67 @@ def report_products_by_customers():
 
     # Return
     return result
+
+
+def get_stats_by_products():
+    """ Get sales statistics
+    """
+
+    # Get all sales
+    sales = list()
+
+    # Init result variable
+    stats_sales_products = []
+
+    # Group by product
+    data = sorted(sales, key=lambda t: t.product.id())
+    for k, g in groupby(data, key=lambda t: t.product.id()):
+
+        # Create variables
+        product = None
+        sum_quantity = 0
+        sum_net_profit = 0.0
+        sum_weighted_net_profit = 0.0
+        sum_unit_net_profit = 0.0
+        index = 0
+
+        # Create group and get product
+        for sale in g:
+
+            # product must be setted one time
+            # Avoiding overhead unecessary
+            if product is None:
+                product = sale.product.get()
+
+            # Sum quantities
+            sum_quantity = sum_quantity + sale.quantity
+
+            # Sum net profits
+            sum_net_profit = sum_net_profit + sale.net_total
+
+            # Sum unit net profit
+            sum_unit_net_profit = sum_unit_net_profit + \
+                (sale.net_total / float(sale.quantity))
+
+            # Sum weighted net profit
+            sum_weighted_net_profit = sum_weighted_net_profit + sale.net_total
+
+            # index++
+            index = index + 1
+
+        # Calculate average net profit
+        avg_net_profit = sum_unit_net_profit / index
+
+        # Calculate weighted average net profit
+        weighted_avg_net_profit = sum_weighted_net_profit / float(sum_quantity)
+
+        # Create dict with key and value
+        stats_sales_products.append({
+            'product': product,
+            'sum_quantity': sum_quantity,
+            'sum_net_profit': sum_net_profit,
+            'avg_net_profit': avg_net_profit,
+            'weighted_avg_net_profit': weighted_avg_net_profit
+        })
+
+    return stats_sales_products

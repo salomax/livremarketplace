@@ -8,6 +8,7 @@ handlers:
 # Endpoints handler: Must be /_ah/spi. Apps send requests to /_ah/api, but these are handled at /_ah/spi!!
 - url: /_ah/spi/.*
   script: openmarketplace_api.APPLICATION
+  secure: always
 
 # The following three handlers route requests to static resources: JS, CSS,
 # and HTML.
@@ -42,7 +43,7 @@ libraries:
 - name: pycrypto
   version: latest
 - name: endpoints
-  version: latest
+  version: latest            
 
 env_variables:
-  WEB_CLIENT_ID: '768767255656-cs88prcq2s6olvb4dhsjdf2r7br50uej.apps.googleusercontent.com'                    
+  WEB_CLIENT_ID: '768767255656-cs88prcq2s6olvb4dhsjdf2r7br50uej.apps.googleusercontent.com'

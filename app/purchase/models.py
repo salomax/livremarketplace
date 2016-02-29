@@ -18,6 +18,9 @@
 
 import logging
 import datetime
+
+from itertools import groupby
+
 from app import user
 from app.marketplace import models as marketplace
 from app.product import models as product
@@ -137,7 +140,7 @@ def put(purchase):
                                 parent=marketplaceModel.key).get()
 
         # Remove from stock
-        stock.remove_item_from_stock(purchaseModel)    
+        stock.remove_item_from_stock(purchaseModel)
 
     else:
         purchaseModel = PurchaseModel(parent=marketplaceModel.key)
@@ -156,7 +159,7 @@ def put(purchase):
     if supplierModel is None:
         raise IndexError(
             "Fornecedor com o id %d não encontrado!", purchase.supplier.id)
-        
+
     purchaseModel.supplier = supplierModel
 
     # Criando model
@@ -210,9 +213,69 @@ def delete(id):
     logging.debug("Compra encontrada com sucesso")
 
     # Update stock
-    stock.remove_item_from_stock(purchase)    
+    stock.remove_item_from_stock(purchase)
 
     # Delete from datastore
     purchase.key.delete()
 
     logging.debug("Compra removida com sucesso")
+
+
+def get_stats_by_products():
+    """ Get purchases statistics by products
+    """
+
+    # Get all purchases
+    purchases = list()
+
+    # Init result variable
+    stat_purchase_products = []
+
+    # Group by product
+    data = sorted(purchases, key=lambda t: t.product.key.id())
+    for k, g in groupby(data, key=lambda t: t.product.key.id()):
+
+        # Create variables
+        product = None
+        sum_quantity = 0
+        sum_cost = 0.0
+        sum_weighted_cost = 0.0
+        index = 0
+
+        # Create group and get product
+        for purchase in g:
+
+            # product must be setted one time
+            # Avoiding overhead unecessary
+            if product is None:
+                product = purchase.product.key.get()
+
+            # Sum quantities
+            sum_quantity = sum_quantity + purchase.quantity
+
+            # Sum net profits
+            sum_cost = sum_cost + purchase.cost
+
+            # Sum weighted
+            sum_weighted_cost = sum_weighted_cost + \
+                (purchase.quantity * purchase.cost)
+
+            # index++
+            index = index + 1
+
+        # Calculate average net profit
+        avg_cost = sum_cost / index
+
+        # Calculate weighted average net profit
+        weighted_avg_cost = sum_weighted_cost / float(sum_quantity)
+
+        # Create dict with key and value
+        stat_purchase_products.append({
+            'product': product,
+            'sum_quantity': sum_quantity,
+            'sum_cost': sum_cost,
+            'avg_cost': avg_cost,
+            'weighted_avg_cost': weighted_avg_cost
+        })
+
+    return stat_purchase_products

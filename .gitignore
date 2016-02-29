@@ -57,3 +57,7 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Exclude client secrets api
+# https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
+.client_secrets.json

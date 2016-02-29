@@ -21,8 +21,15 @@ import webtest
 import logging
 import datetime
 
+from google.appengine.ext import ndb
+
 from protorpc.remote import protojson
 from protorpc import message_types
+
+import mock
+from mock import Mock
+from mock import MagicMock
+from mock import PropertyMock
 
 from google.appengine.ext import testbed
 from google.appengine.api import users
@@ -33,123 +40,93 @@ from app.purchase.messages import PurchaseKeyMessage
 from app.purchase.messages import PurchaseCollectionMessage
 from app.exceptions import NotFoundEntityException
 
+from app.purchase import models as purchaseModel
+from app.product import models as productModel
 
 class PurchaseTestCase(unittest.TestCase):
-    """ Integration Test Case for Purchases.
+    """ Test Case for Purchases.
     """
 
-    def setUp(self):
-        tb = testbed.Testbed()
-        tb.setup_env(current_version_id='testbed.version',
-                     ENDPOINTS_AUTH_EMAIL='testmail@gmail.com',
-                     ENDPOINTS_AUTH_DOMAIN='TEST_DOMAIN')
-        tb.activate()
-        tb.init_all_stubs()
-        self.testbed = tb
-        purchaseService = endpoints.api_server(
-            [PurchaseService], restricted=False)
-        self.testapp = webtest.TestApp(purchaseService)
-
-    def tearDown(self):
-        self.testbed.deactivate()
-
-    def save(self, request):
-        """ Call save endpoint.
+    def test_purchases_statistics_by_products(self):
+        """ Unit test to get purchases statistics by products.
         """
 
-        response = self.testapp.post(
-            '/_ah/spi/PurchaseService.save',
-            protojson.encode_message(request),
-            content_type='application/json')
+        # Sales list
+        purchasesList = []
+        
+        # Mock purchase model and products models
+        purchasesMock = [{
+            'id': 1,
+            'product_id': 1,
+            'cost': 5,
+            'quantity': 7
+        }, {
+            'id': 2,
+            'product_id': 2,
+            'cost': 3,
+            'quantity': 20
+        }, {
+            'id': 3,
+            'product_id': 1,
+            'cost': 15,
+            'quantity': 8
+        }, {
+            'id': 4,
+            'product_id': 3,
+            'cost': 1,
+            'quantity': 1
+        }, {
+            'id': 5,
+            'product_id': 2,
+            'cost': 9,
+            'quantity': 40
+        }]
 
-        self.assertEqual(response.status, '200 OK')
+        # Iterate purchases mock
+        for x in purchasesMock:
+            
+            # Create purchase mock
+            purchase = Mock(spec_set=purchaseModel.PurchaseModel())
+            purchase.key = Mock(spec_set=ndb.Key('PurchaseModel', x['id']))
 
-        return protojson.decode_message(PurchaseGetMessage, response.body)
+            # Create product mock
+            purchase.product = Mock(spec_set=productModel.ProductModel())
+            purchase.product.key = Mock(spec_set=ndb.Key('ProductModel', x['product_id']))
+            purchase.product.key.id = Mock(return_value=x['product_id'])
+            purchase.product.key.get = Mock(return_value=purchase.product)
 
-    def list(self):
-        """ Call list endpoint.
-        """
+            # Net total value
+            purchase.cost = x['cost']
+            purchase.quantity = x ['quantity']
 
-        response = self.testapp.post(
-            '/_ah/spi/PurchaseService.list',
-            content_type='application/json')
+            # Append to list
+            purchasesList.append(purchase)
+        
+        # Mock list method
+        purchaseModel.list = MagicMock(return_value=purchasesList)    
+        
+        # Call report_customers_by_product method
+        result = purchaseModel.get_stats_by_products()
 
-        self.assertEqual(response.status, '200 OK')
+        # Must have lenght == 3
+        self.assertEqual(len(result), 3)
 
-        return protojson.decode_message(PurchaseCollectionMessage, response.body)
+        # Verify quantity
+        self.assertEqual(15, result[0]['sum_quantity'])
+        self.assertEqual(60, result[1]['sum_quantity'])
+        self.assertEqual(1, result[2]['sum_quantity'])
 
-    def delete(self, id, expect_errors=False):
-        """ Call delete endpoint.
-        """
-        response = self.testapp.post('/_ah/spi/PurchaseService.delete',
-                                     protojson.encode_message(
-                                         PurchaseKeyMessage(id=id)), content_type='application/json',
-                                     expect_errors=expect_errors)
+        # Verify sum cost
+        self.assertEqual(20, result[0]['sum_cost'])
+        self.assertEqual(12, result[1]['sum_cost'])
+        self.assertEqual(1, result[2]['sum_cost'])        
 
-        if not expect_errors:
-            self.assertEqual(response.status, '200 OK')
+        # Verify sum net profit
+        self.assertEqual(10, result[0]['avg_cost'])
+        self.assertEqual(6, result[1]['avg_cost'])
+        self.assertEqual(1, result[2]['avg_cost'])  
 
-    def testSave(self):
-        """ Save purchase.
-        """
-        request = PurchasePostMessage(
-            supplier=None,
-            product=None,
-            quantity=1,
-            purchase_date=datetime.datetime.now(),
-            payment_date=datetime.datetime.now(),
-            cost=1.0,
-            total_cost=1.0,
-            exchange_dollar=1.0,
-            cost_dollar=1.0,
-            total_cost_dollar=1.0,
-            shipping_cost=1.0,
-            track_code='TEST',
-            invoice='TEST',
-            received_date=datetime.datetime.now(),
-            purchase_link='http://something.com')
-
-        purchase = self.save(request)
-
-        self.assertIsNotNone(purchase)
-        self.assertIsNotNone(purchase.id)
-
-        purchase = self.save(request)
-
-        self.assertIsNotNone(purchase)
-        self.assertIsNotNone(purchase.id)
-
-        return purchase
-
-    def testList(self):
-        """ List all purchases.
-        """
-
-        self.testSave()
-
-        list = self.list()
-
-        self.assertIsNotNone(list)
-        self.assertIsNotNone(list.items)
-        self.assertTrue(len(list.items) > 0)
-
-    def testDelete(self):
-        """ Delete the purchase.
-        """
-        purchase = self.testSave()
-
-        list = self.list()
-
-        self.assertIsNotNone(list)
-        self.assertIsNotNone(list.items)
-        self.assertTrue(len(list.items) == 1)
-        self.delete(purchase.id)
-
-        list = self.list()
-
-        self.assertIsNotNone(list)
-        self.assertIsNotNone(list.items)
-        self.assertTrue(len(list.items) == 0)
-
-        self.assertRaises(NotFoundEntityException, self.delete(
-            id=purchase.id, expect_errors=True))
+        # Verify sum net profit
+        self.assertEqual(10.33, round(result[0]['weighted_avg_cost'], 2))
+        self.assertEqual(7, result[1]['weighted_avg_cost'])
+        self.assertEqual(1, result[2]['weighted_avg_cost'])    

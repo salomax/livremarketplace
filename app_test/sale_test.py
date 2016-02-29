@@ -38,8 +38,92 @@ from google.appengine.api import apiproxy_stub_map
 
 class SaleTestCase(TestCase):
 
+    def test_sales_statistics_by_products(self):
+        """ Unit test to get sales statistics by products.
+        """
+
+        # Sales list
+        salesList = []
+        
+        # Mock sale model and products models
+        salesMock = [{
+            'id': 1,
+            'product_id': 1,
+            'net_value': 5,
+            'quantity': 7
+        }, {
+            'id': 2,
+            'product_id': 2,
+            'net_value': 3,
+            'quantity': 20
+        }, {
+            'id': 3,
+            'product_id': 1,
+            'net_value': 15,
+            'quantity': 8
+        }, {
+            'id': 4,
+            'product_id': 3,
+            'net_value': 1,
+            'quantity': 1
+        }, {
+            'id': 5,
+            'product_id': 2,
+            'net_value': 9,
+            'quantity': 40
+        }]
+
+        # Iterate sales mock
+        for x in salesMock:
+            
+            # Create sale mock
+            sale = Mock(spec_set=saleModel.SaleModel())
+            sale.key = Mock(spec_set=ndb.Key('SaleModel', x['id']))
+
+            # Create product mock
+            sale.product = Mock(spec_set=ndb.Key('ProductModel', x['product_id']))
+            sale.product.id = Mock(return_value=x['product_id'])
+            sale.product.get = Mock(return_value=sale.product)
+
+            # Net total value
+            sale.net_total = x['net_value']
+            sale.quantity = x ['quantity']
+
+            # Append to list
+            salesList.append(sale)
+        
+        # Mock list method
+        saleModel.list = MagicMock(return_value=salesList)    
+        
+        # Call report_customers_by_product method
+        result = saleModel.get_stats_by_products()
+
+        # Must have lenght == 3
+        self.assertEqual(len(result), 3)
+
+        # Verify quantity
+        self.assertEqual(15, result[0]['sum_quantity'])
+        self.assertEqual(60, result[1]['sum_quantity'])
+        self.assertEqual(1, result[2]['sum_quantity'])
+
+        # Verify sum net profit
+        self.assertEqual(20, result[0]['sum_net_profit'])
+        self.assertEqual(12, result[1]['sum_net_profit'])
+        self.assertEqual(1, result[2]['sum_net_profit'])        
+
+        # Verify sum net profit
+        self.assertEqual(1.29, round(result[0]['avg_net_profit'], 2))
+        self.assertEqual(0.19, round(result[1]['avg_net_profit'], 2))
+        self.assertEqual(1, result[2]['avg_net_profit'])  
+
+        # Verify sum net profit
+        self.assertEqual(1.33, round(result[0]['weighted_avg_net_profit'], 2))
+        self.assertEqual(0.20, round(result[1]['weighted_avg_net_profit'], 2))
+        self.assertEqual(1, result[2]['weighted_avg_net_profit'])          
+
+
     def test_report_customers_by_products(self):
-        """ Unit test to customers grouped by product report. 
+        """ Unit test to customers grouped by product report.
         """
         # Mock sale model and products models
         salesList = []
@@ -91,7 +175,7 @@ class SaleTestCase(TestCase):
         self.assertEqual(result[2]['product'].key.id(), 3)
 
     def test_report_products_by_customers(self):
-        """ Unit test to products grouped by customers report. 
+        """ Unit test to products grouped by customers report.
         """
         # Mock sale model and products models
         salesList = []

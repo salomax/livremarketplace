@@ -18,12 +18,15 @@
 import logging
 import datetime
 import dateutil.relativedelta
+
 from app import user
 from app import util
 from app.marketplace import models as marketplace
 from app.sale import models as salesModel
 from app.customer import models as customersModel
 from app.purchase import models as purchasesModel
+from app.exceptions import NotFoundEntityException
+
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
 
@@ -64,16 +67,59 @@ def calculate_count_sales():
 
 
 def calculate_profit_margin():
-    """Calcula o valor médio da margem de lucro
+    """ Calculate total profit margin.
     """
 
+    # get sales stats
+    saleStats = salesModel.get_stats_by_products()
+
+    # get purchases stats
+    purchaseStats = purchasesModel.get_stats_by_products()
+
+    # The profit margin is the weighted avg
+    # from sales, where quantity as weight and
+    # (weighted avg net profit - weighted avg unit cost)
+    # as the number to calculate avg
+    #
+    # For instance, if you have 80% sales wich
+    # specific product, it will be considered more than
+    # the other 20%.
+
+    sum_net_profit = 0.0
+    quantity = 0
+    for sale in saleStats:
+
+        # Search purchase by product
+        purchase = [x for x in purchaseStats if x['product'].key.id()
+                    == sale['product'].key.id()][0]
+
+        if purchase is None:
+            raise NotFoundEntityException(message='messages.product.notfound')
+
+        # Calculate the diference between net (sale value minus tax)
+        # minus product cost
+        sum_net_profit = (sale['weighted_avg_net_profit'] -
+                          purchase['weighted_avg_cost']) * sale['sum_quantity']
+
+        quantity = quantity + sale['sum_quantity']
+
+    # Avoid division by zero
+    if quantity == 0:
+        return .0
+
+    # Calculate the profit = weighted avg([sale value - tax] - [purchase
+    # cost]) / quantity sold
+    profit = sum_net_profit / float(quantity)
+
+    # Get revenue
     revenue = calculate_total_revenue()
-    net_profit = calculate_total_net_profit()
 
-    if revenue == 0 or net_profit == 0:
-        return 0.0
+    # Avoid division by zero
+    if revenue == 0:
+        return .0
 
-    return net_profit / revenue
+    # Return % profit over revenue
+    return profit / revenue
 
 
 def calculate_total_revenue():
