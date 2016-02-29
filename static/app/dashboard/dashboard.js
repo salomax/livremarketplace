@@ -420,28 +420,28 @@
     $('h3.revenue span.value').addClass(LOADING_CLASS);
     $.dashboard.api.revenue().then(
       function(response) { 
-        $('h3.revenue span.value').removeClass().text(response.result.value);
+        $('h3.revenue span.value').removeClass().text($.number(response.result.value));
       });  
 
     // Obter valor de faturamento
     $('h3.net_profit span.value').addClass(LOADING_CLASS);
     $.dashboard.api.netProfit().then(
       function(response) { 
-        $('h3.net_profit span.value').removeClass().text(response.result.value);
+        $('h3.net_profit span.value').removeClass().text($.number(response.result.value));
       }); 
 
     // Obter valor de faturamento
     $('h3.profit_margin span.value').addClass(LOADING_CLASS);
     $.dashboard.api.profitMargin().then(
       function(response) { 
-        $('h3.profit_margin span.value').removeClass().text((response.result.value * 100).toPrecision(2));
+        $('h3.profit_margin span.value').removeClass().text($.number(response.result.value * 100, 1));
       }); 
 
     // Obter o ticket médio
     $('h3.average_ticket span.value').addClass(LOADING_CLASS);
     $.dashboard.api.averageTicket().then(
       function(response) { 
-        $('h3.average_ticket span.value').removeClass().text(response.result.value);
+        $('h3.average_ticket span.value').removeClass().text($.number(response.result.value, 2));
       }); 
 
     // Obter count de vendas
