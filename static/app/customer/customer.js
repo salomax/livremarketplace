@@ -296,110 +296,101 @@
 
         }, // Fim loadTable
 
+        loadPage : function() {
 
-    };
+            // Aplicar i18n
+            $('span.tab_list').text(messages.customer.tab.list);
+            $('span.tab_save').text(messages.customer.tab.save);
+            $('h3.customer_save_title').text(messages.customer.save.title);
+            $('span.new-item').text(messages.action.new_item);
+            $('small.customer_save_subtitle').text(messages.customer.save.subtitle);
+            $('label.name').text(messages.customer.name);
+            $('input[name="name"]').attr('placeholder', messages.customer.form.name.placeholder);
+            $('label.email').text(messages.customer.email);
+            $('input[name="email"]').attr('placeholder', messages.customer.form.email.placeholder);
+            $('label.phone').text(messages.customer.phone);
+            $('input[name="phone"]').attr('placeholder', messages.customer.form.phone.placeholder);
+            $('label.location').text(messages.customer.location);
+            $('input[name="location"]').attr('placeholder', messages.customer.form.location.placeholder);
+            $('button.save').text(messages.action.save);
 
+            $('button.new-item').bind('click', function() {
+                $('form.customer-form').trigger('reset');
+            });
 
-}(jQuery);
+            // Carregar a lista de clientes
+            $.customer.view.loadTable();
 
+            // Criar a validação do formulário
+            $('form.customer-form').validate({ // initialize the plugin
+                rules: {
+                    name: {
+                        required: true,
+                        minlength: 3
+                    },
+                    email : {
+                        email: true
+                    }
+                },
+                messages: {
+                    name: messages.customer.form.name.required,
+                    email: messages.customer.form.email.valid
+                },
 
-/**
- * Ação ao carregar a página.
- */
-! function($) {
+                /**
+                 * Ação ao submeter o formulário.
+                 */
+                submitHandler: function(form, event) {
+                    // não submete form
+                    event.preventDefault();
 
-    // Aplicar i18n
-    $('span.tab_list').text(messages.customer.tab.list);
-    $('span.tab_save').text(messages.customer.tab.save);
-    $('h3.customer_save_title').text(messages.customer.save.title);
-    $('span.new-item').text(messages.action.new_item);
-    $('small.customer_save_subtitle').text(messages.customer.save.subtitle);
+                    // Convert form to JSON Object
+                    var data = $(form).serializeObject();
 
-    $('label.name').text(messages.customer.name);
-    $('input[name="name"]').attr('placeholder', messages.customer.form.name.placeholder);
-    $('label.email').text(messages.customer.email);
-    $('input[name="email"]').attr('placeholder', messages.customer.form.email.placeholder);
-    $('label.phone').text(messages.customer.phone);
-    $('input[name="phone"]').attr('placeholder', messages.customer.form.phone.placeholder);
-    $('label.location').text(messages.customer.location);
-    $('input[name="location"]').attr('placeholder', messages.customer.form.location.placeholder);
+                    // Submeter ao endpoint
+                    $.customer.api.save(data).then(function(_data) {
 
-    $('button.save').text(messages.action.save);
+                        // Zerar o form qdo houver sucesso
+                        $(form).trigger('reset');
 
-    $('button.new-item').bind('click', function() {
-        $('form.customer-form').trigger('reset');
-    });
+                        // Atualizar lista
+                        var row = $('table.table-customers').bootstrapTable(
+                            'getRowByUniqueId', _data.result.id);
 
-    // Carregar a lista de clientes
-    $.customer.view.loadTable();
+                        // Insere se não existe ou atualiza caso já esteja inserida
+                        if (row == null) {
+                            $('table.table-customers').bootstrapTable('insertRow', {
+                                index: 0,
+                                row: _data.result
+                            });
+                        } else {
 
-    // Criar a validação do formulário
-    $('form.customer-form').validate({ // initialize the plugin
-        rules: {
-            name: {
-                required: true,
-                minlength: 3
-            },
-            email : {
-                email: true
-            }
-        },
-        messages: {
-            name: messages.customer.form.name.required,
-            email: messages.customer.form.email.valid
-        },
+                            $('table.table-customers').bootstrapTable('updateByUniqueId', {
+                                id: _data.result.id,
+                                row: _data.result
+                            });
+                        }
 
-        /**
-         * Ação ao submeter o formulário.
-         */
-        submitHandler: function(form, event) {
-            // não submete form
-            event.preventDefault();
-
-            // Convert form to JSON Object
-            var data = $(form).serializeObject();
-
-            // Submeter ao endpoint
-            $.customer.api.save(data).then(function(_data) {
-
-                // Zerar o form qdo houver sucesso
-                $(form).trigger('reset');
-
-                // Atualizar lista
-                var row = $('table.table-customers').bootstrapTable(
-                    'getRowByUniqueId', _data.result.id);
-
-                // Insere se não existe ou atualiza caso já esteja inserida
-                if (row == null) {
-                    $('table.table-customers').bootstrapTable('insertRow', {
-                        index: 0,
-                        row: _data.result
                     });
-                } else {
 
-                    $('table.table-customers').bootstrapTable('updateByUniqueId', {
-                        id: _data.result.id,
-                        row: _data.result
-                    });
                 }
 
-            });
-
-        }
-
-    }); // Fim validate
+            }); // Fim validate
 
 
-    $('.nav-tabs-custom').on('shown.bs.tab',
-        function(e) {
+            $('.nav-tabs-custom').on('shown.bs.tab',
+                function(e) {
 
-            if ($(e.target).attr('href') != '#tab_2') return;
+                    if ($(e.target).attr('href') != '#tab_2') return;
 
-            $('.map-canvas').maps({
-            	autocomplete : $('input[name="location"]')
-            });
+                    $('.map-canvas').maps({
+                    	autocomplete : $('input[name="location"]')
+                    });
 
-        });
+                });
 
+        } // Fim load page
+
+    }; // Fim $.customer.view
 
 }(jQuery);

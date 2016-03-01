@@ -111,7 +111,10 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 						title : messages.menu.customer.title,
 						subtitle : messages.menu.customer.subtitle,
 						html : '/customer/customer.html', 
-						script : '/customer/customer.js'
+						script : '/customer/customer.js',
+						callback : function() {
+							$.customer.view.loadPage();
+						}
 					}	
  					];
  		},
@@ -188,7 +191,12 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 				$('section.content').html(response);
 
 				// Inserir script
-				$.getScript(menu.script);
+				$.getScript(menu.script).done(function() {
+					// If menu.callback() is present
+					if (menu.callback) {
+						menu.callback($);
+					}					
+				});				
 
 				// Aplicar máscaras (inputmask)
 				$('input[data-inputmask]').inputmask();

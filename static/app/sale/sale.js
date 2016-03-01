@@ -293,7 +293,7 @@
 /**
  * Ação ao carregar a página.
  */
-! function($) {
+loadPage = function($) {
 
     // Aplicar i18n
     $('span.tab_list').text(messages.sale.tab.list);
