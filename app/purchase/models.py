@@ -278,4 +278,6 @@ def get_stats_by_products():
             'weighted_avg_cost': weighted_avg_cost
         })
 
+    print stat_purchase_products
+
     return stat_purchase_products

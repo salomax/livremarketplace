@@ -73,9 +73,11 @@ def calculate_profit_margin():
     """ Calculate total profit margin.
     """
 
+    logging.debug('Listing sales')
     # get sales stats
     saleStats = salesModel.get_stats_by_products()
 
+    logging.debug('Listing purchases')
     # get purchases stats
     purchaseStats = purchasesModel.get_stats_by_products()
 
@@ -88,28 +90,32 @@ def calculate_profit_margin():
     # specific product, it will be considered more than
     # the other 20%.
 
+    logging.debug('Calculating net profit')
     sum_net_profit = 0.0
     quantity = 0
     for sale in saleStats:
 
         # Search purchase by product
-        purchase = [x for x in purchaseStats if x['product'].key.id()
-                    == sale['product'].key.id()][0]
+        purchases = [x for x in purchaseStats if x['product'].key.id()
+                    == sale['product'].key.id()]
 
-        if purchase is None:
-            raise NotFoundEntityException(message='messages.product.notfound')
+        if len(purchases) == 1:
+            purchase = purchases[0]
+            # Calculate the diference between net (sale value minus tax)
+            # minus product cost
+            sum_net_profit = (sale['weighted_avg_net_profit'] -
+                              purchase['weighted_avg_cost']
+                              ) * sale['sum_quantity']
 
-        # Calculate the diference between net (sale value minus tax)
-        # minus product cost
-        sum_net_profit = (sale['weighted_avg_net_profit'] -
-                          purchase['weighted_avg_cost']) * sale['sum_quantity']
-
-        quantity = quantity + sale['sum_quantity']
+            quantity = quantity + sale['sum_quantity']
+        else:
+            logging.warning("Product %s didn't find!", sale['product'].name)
 
     # Avoid division by zero
     if quantity == 0:
         return .0
 
+    logging.debug('Calculating profit margin percent')
     # Calculate the profit = weighted avg([sale value - tax] - [purchase
     # cost]) / quantity sold
     profit = sum_net_profit / float(quantity)
@@ -121,8 +127,13 @@ def calculate_profit_margin():
     if revenue == 0:
         return .0
 
-    # Return % profit over revenue
-    return profit / revenue
+    logging.debug(
+        'Calculating profit margin. profit %d over revenue %d', profit, revenue)
+    # % profit over revenue
+    profit_margin = profit / revenue
+
+    # Return
+    return profit_margin
 
 
 def calculate_total_revenue():

@@ -372,7 +372,7 @@
                     element: 'cash_flow-chart',
                     resize: true,
                     data: response.result.items,
-                    barColors: ['green', 'red', 'blue'],
+                    barColors: ['#00A65A', '#F39C12', '#0073B7'],
                     xkey: 'period',
                     ykeys: ['sales', 'purchases', 'balance'],
                     labels: [messages.sale.title, messages.purchase.title, messages.dashboard.balance.title],
