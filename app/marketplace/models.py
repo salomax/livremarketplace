@@ -20,6 +20,7 @@ import logging
 from app import user
 from google.appengine.ext import ndb
 
+from google.appengine.api import memcache
 
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
@@ -35,27 +36,14 @@ class MarketplaceModel(ndb.Model):
 
 
 def get_marketplace():
-    """Método retorna um marketplace para o usuário logado.
-       Caso o mesmo não exista, um novo é criado.
+    """ Get active user marketplace.
     """
 
     # Identificando usuário da requisição
     email = user.get_current_user().email()
 
-    # Selecionando key do usuário
-    user_key = user.user_key(email)
-
-    # Selecionando a marketplace (loja) do usuário
-    marketplaceModel = MarketplaceModel.query(ancestor=user_key).get()
-
-    # Caso ainda não exista, uma nova marketplace (loja) é criada para o usuário
-    if marketplaceModel is None:
-        marketplaceModel = put(email=email, name='Nova Loja', user_key=user_key)
-
-    logging.debug(marketplaceModel)
-
-    # Criando mensagem de retorno para o endpoint
-    return marketplaceModel
+    # Return user active marketplace by email
+    return get(email)
 
 
 def get(email):
@@ -63,19 +51,36 @@ def get(email):
        Caso o mesmo não exista, um novo é criado.
     """
 
-    # Selecionando key do usuário
+    # Set memcache key
+    memcache_key = 'email.marktplace.%s' % email
+
+    # Verify if user marktplace is cached
+    marketplace_cached = memcache.get(memcache_key)
+
+    # and return cached marketplace
+    if marketplace_cached is not None:
+        logging.debug("Marketplace cached for %s user. Return it.", email)
+        return marketplace_cached
+
+    # else, query or add new one...
+
+    # Create user key as parent
     user_key = user.user_key(email)
 
-    # Selecionando a marketplace (loja) do usuário
+    # Select user marketplace
     marketplaceModel = MarketplaceModel.query(ancestor=user_key).get()
 
-    # Caso ainda não exista, uma nova marketplace (loja) é criada para o usuário
+    # If not present, create new one
     if marketplaceModel is None:
         marketplaceModel = put(email=email, name='Nova Loja', user_key=user_key)
+        logging.debug("Marketplace create sucessfully for %s user", email)
 
-    logging.debug(marketplaceModel)
+    # Add to memcache
+    memcache.add(key=memcache_key, value=marketplaceModel, time=3600 * 24)
 
-    # Criando mensagem de retorno para o endpoint
+    logging.debug("Marketplace cached for %s user", email)
+
+    # Return marketplace
     return marketplaceModel
 
 
