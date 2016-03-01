@@ -122,7 +122,7 @@ class DashboardService(remote.Service):
 
     ID_RESOURCE = endpoints.ResourceContainer(
         message_types.VoidMessage,
-        count=messages.IntegerField(1, variant=messages.Variant.INT32))
+        count=messages.IntegerField(1, variant=messages.Variant.INT64))
 
     @endpoints.method(ID_RESOURCE,
                       CashFlowCollectionMessage,
