@@ -59,6 +59,9 @@ class CashFlowGetMessage(messages.Message):
     # Balance (Sales - Purchases)
     balance = messages.FloatField(4, required=False)
 
+    # Accumulated Balance (Sales - Purchases)
+    accumulated_balance = messages.FloatField(5, required=False)
+
 
 class CashFlowCollectionMessage(messages.Message):
     """Coleção de fluxo de caixa."""

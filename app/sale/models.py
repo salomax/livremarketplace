@@ -277,6 +277,8 @@ def get_stats_by_products():
     # Get all sales
     sales = list()
 
+    logging.debug("Listed %d sales to get its stats", len(sales))
+
     # Init result variable
     stats_sales_products = []
 
@@ -330,5 +332,7 @@ def get_stats_by_products():
             'avg_net_profit': avg_net_profit,
             'weighted_avg_net_profit': weighted_avg_net_profit
         })
+
+    logging.debug("Sales stasts grouped by products sucessfully")
 
     return stats_sales_products

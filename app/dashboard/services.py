@@ -147,7 +147,8 @@ class DashboardService(remote.Service):
                     period=model['period'],
                     purchases=model['purchases'],
                     sales=model['sales'],
-                    balance=model['balance']))
+                    balance=model['balance'],
+                    accumulated_balance=model['accumulated_balance']))
 
         # Retornando clientes
         return CashFlowCollectionMessage(items=items)

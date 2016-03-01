@@ -92,33 +92,23 @@ def calculate_profit_margin():
 
     logging.debug('Calculating net profit')
     sum_net_profit = 0.0
-    quantity = 0
     for sale in saleStats:
 
         # Search purchase by product
         purchases = [x for x in purchaseStats if x['product'].key.id()
-                    == sale['product'].key.id()]
+                     == sale['product'].key.id()]
 
         if len(purchases) == 1:
             purchase = purchases[0]
+
             # Calculate the diference between net (sale value minus tax)
             # minus product cost
-            sum_net_profit = (sale['weighted_avg_net_profit'] -
-                              purchase['weighted_avg_cost']
-                              ) * sale['sum_quantity']
+            sum_net_profit = sum_net_profit + (sale['weighted_avg_net_profit'] -
+                                               purchase['weighted_avg_cost']
+                                               ) * sale['sum_quantity']
 
-            quantity = quantity + sale['sum_quantity']
         else:
             logging.warning("Product %s didn't find!", sale['product'].name)
-
-    # Avoid division by zero
-    if quantity == 0:
-        return .0
-
-    logging.debug('Calculating profit margin percent')
-    # Calculate the profit = weighted avg([sale value - tax] - [purchase
-    # cost]) / quantity sold
-    profit = sum_net_profit / float(quantity)
 
     # Get revenue
     revenue = calculate_total_revenue()
@@ -128,9 +118,10 @@ def calculate_profit_margin():
         return .0
 
     logging.debug(
-        'Calculating profit margin. profit %d over revenue %d', profit, revenue)
+        'Calculating profit margin. profit %d over revenue %d', 
+        sum_net_profit, revenue)
     # % profit over revenue
-    profit_margin = profit / revenue
+    profit_margin = sum_net_profit / revenue
 
     # Return
     return profit_margin
@@ -202,9 +193,12 @@ def cash_flow(n):
             if same_period(sale.sale_date, i['period']):
                 i['sales'] = round(i['sales'] + sale.amount, 2)
 
-    # Calculate balance
+    # Calculate balance and accumulated balance
+    accumulated_balance = 0.0
     for month in list:
         month['balance'] = round(month['sales'] - month['purchases'], 2)
+        accumulated_balance = accumulated_balance + month['balance']
+        month['accumulated_balance'] = round(accumulated_balance, 2)
 
     # Retornando
     return list
@@ -226,7 +220,8 @@ def list_monthly(n):
         timeMap.append({"period": datetime.datetime(year, month, 1),
                         "purchases": 0.0,
                         "sales": 0.0,
-                        "balance": 0.0})
+                        "balance": 0.0,
+                        "accumulated_balance": 0.0})
 
         month = month - 1
 

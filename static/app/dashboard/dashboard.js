@@ -372,10 +372,13 @@
                     element: 'cash_flow-chart',
                     resize: true,
                     data: response.result.items,
-                    barColors: ['#00A65A', '#F39C12', '#0073B7'],
+                    barColors: ['#00A65A', '#F39C12', '#0073B7', '#605CA8'],
                     xkey: 'period',
-                    ykeys: ['sales', 'purchases', 'balance'],
-                    labels: [messages.sale.title, messages.purchase.title, messages.dashboard.balance.title],
+                    ykeys: ['sales', 'purchases', 'balance', 'accumulated_balance'],
+                    labels: [messages.sale.title, 
+                             messages.purchase.title, 
+                             messages.dashboard.balance.title,
+                             messages.dashboard.accumulated_balance.title],
                     xLabelFormat : function(x) { return moment(x.label).format('MMM YYYY'); }
                 });
 
