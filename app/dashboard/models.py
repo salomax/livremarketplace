@@ -18,6 +18,9 @@
 import logging
 import datetime
 import dateutil.relativedelta
+from dateutil.relativedelta import relativedelta
+
+from operator import itemgetter
 
 from app import user
 from app import util
@@ -171,7 +174,7 @@ def cash_flow(n):
     for purchase in purchases:
         for i in list:
             if same_period(purchase.payment_date, i['period']):
-                i['purchases'] = i['purchases'] + purchase.total_cost
+                i['purchases'] = round(i['purchases'] + purchase.total_cost, 2)
 
     # Obtendo query das vendas
     salesQuery = salesModel.get_sales_query()
@@ -186,7 +189,11 @@ def cash_flow(n):
     for sale in sales:
         for i in list:
             if same_period(sale.sale_date, i['period']):
-                i['sales'] = i['sales'] + sale.amount
+                i['sales'] = round(i['sales'] + sale.amount, 2)
+
+    # Calculate balance
+    for month in list:
+        month['balance'] = round(month['sales'] - month['purchases'], 2)
 
     # Retornando
     return list
@@ -196,23 +203,27 @@ def list_monthly(n):
     """Criando lista dos últimos "n" meses.
     """
 
-    now = datetime.datetime.now()
+    offset = 1
+
+    now = datetime.datetime.now() + relativedelta(months=offset)
     timeMap = []
     year = now.year
     month = now.month
 
-    for x in range(n):
+    for x in range(n + offset):
 
         timeMap.append({"period": datetime.datetime(year, month, 1),
                         "purchases": 0.0,
-                        "sales": 0.0})
+                        "sales": 0.0,
+                        "balance": 0.0})
+
         month = month - 1
 
         if month < 1:
             year = year - 1
             month = 12
 
-    return timeMap
+    return timeMap[::-1]
 
 
 def same_period(date1, date2):

@@ -146,7 +146,8 @@ class DashboardService(remote.Service):
                 CashFlowGetMessage(
                     period=model['period'],
                     purchases=model['purchases'],
-                    sales=model['sales']))
+                    sales=model['sales'],
+                    balance=model['balance']))
 
         # Retornando clientes
         return CashFlowCollectionMessage(items=items)

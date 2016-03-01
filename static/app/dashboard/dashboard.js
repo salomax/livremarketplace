@@ -365,16 +365,18 @@
                     }]
                 });
 
+                console.log(response.result.items);
+
                 // Criar gráfico
-                Morris.Line({
+                Morris.Bar({
                     element: 'cash_flow-chart',
                     resize: true,
                     data: response.result.items,
-                    lineColors: ['green', 'red'],
+                    barColors: ['green', 'red', 'blue'],
                     xkey: 'period',
-                    ykeys: ['sales', 'purchases'],
-                    labels: [messages.sale.title, messages.purchase.title],
-                    xLabelFormat : function(x) { return moment(x).format('MMM YYYY')}
+                    ykeys: ['sales', 'purchases', 'balance'],
+                    labels: [messages.sale.title, messages.purchase.title, messages.dashboard.balance.title],
+                    xLabelFormat : function(x) { return moment(x.label).format('MMM YYYY'); }
                 });
 
             });

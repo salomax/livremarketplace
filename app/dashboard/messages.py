@@ -47,14 +47,17 @@ class CashFlowGetMessage(messages.Message):
        representando o fluxo de caixa
     """
 
-    # período
+    # Period
     period = message_types.DateTimeField(1, required=True)
 
-    # compras
+    # Purchases
     purchases = messages.FloatField(2, required=False)
 
-    # vendas
+    # Sales
     sales = messages.FloatField(3, required=False)
+
+    # Balance (Sales - Purchases)
+    balance = messages.FloatField(4, required=False)
 
 
 class CashFlowCollectionMessage(messages.Message):
