@@ -251,12 +251,16 @@
                 striped: true
             });
 
+            $('table').fadeIn();
+
         }, // Fim bindTable
 
         /**
          * Método destinado à carregar a tabela com os fornecedors.
          */
         loadTable: function() {
+
+            $('table').fadeOut();            
 
             // atualizar barra de progresso
             $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
@@ -296,110 +300,108 @@
 
         }, // Fim loadTable
 
-
-    };
-
-
-}(jQuery);
-
-
-/**
- * Ação ao carregar a página.
- */
-! function($) {
-
-    // Aplicar i18n
-    $('span.tab_list').text(messages.supplier.tab.list);
-    $('span.tab_save').text(messages.supplier.tab.save);
-    $('h3.supplier_save_title').text(messages.supplier.save.title);
-    $('span.new-item').text(messages.action.new_item);
-    $('small.supplier_save_subtitle').text(messages.supplier.save.subtitle);
-
-    $('label.name').text(messages.supplier.name);
-    $('input[name="name"]').attr('placeholder', messages.supplier.form.name.placeholder);
-    $('label.email').text(messages.supplier.email);
-    $('input[name="email"]').attr('placeholder', messages.supplier.form.email.placeholder);
-    $('label.phone').text(messages.supplier.phone);
-    $('input[name="phone"]').attr('placeholder', messages.supplier.form.phone.placeholder);
-    $('label.location').text(messages.supplier.location);
-    $('input[name="location"]').attr('placeholder', messages.supplier.form.location.placeholder);
-
-    $('button.save').text(messages.action.save);
-
-    $('button.new-item').bind('click', function() {
-        $('form.supplier-form').trigger('reset');
-    });
-
-    // Carregar a lista de fornecedors
-    $.supplier.view.loadTable();
-
-    // Criar a validação do formulário
-    $('form.supplier-form').validate({ // initialize the plugin
-        rules: {
-            name: {
-                required: true,
-                minlength: 3
-            },
-            email : {
-                email: true
-            }
-        },
-        messages: {
-            name: messages.supplier.form.name.required,
-            email: messages.supplier.form.email.valid
-        },
-
         /**
-         * Ação ao submeter o formulário.
+         * Load page event.
          */
-        submitHandler: function(form, event) {
-            // não submete form
-            event.preventDefault();
+         loadPage : function() {
 
-            // Convert form to JSON Object
-            var data = $(form).serializeObject();
+            // Aplicar i18n
+            $('span.tab_list').text(messages.supplier.tab.list);
+            $('span.tab_save').text(messages.supplier.tab.save);
+            $('h3.supplier_save_title').text(messages.supplier.save.title);
+            $('span.new-item').text(messages.action.new_item);
+            $('small.supplier_save_subtitle').text(messages.supplier.save.subtitle);
 
-            // Submeter ao endpoint
-            $.supplier.api.save(data).then(function(_data) {
+            $('label.name').text(messages.supplier.name);
+            $('input[name="name"]').attr('placeholder', messages.supplier.form.name.placeholder);
+            $('label.email').text(messages.supplier.email);
+            $('input[name="email"]').attr('placeholder', messages.supplier.form.email.placeholder);
+            $('label.phone').text(messages.supplier.phone);
+            $('input[name="phone"]').attr('placeholder', messages.supplier.form.phone.placeholder);
+            $('label.location').text(messages.supplier.location);
+            $('input[name="location"]').attr('placeholder', messages.supplier.form.location.placeholder);
 
-                // Zerar o form qdo houver sucesso
-                $(form).trigger('reset');
+            $('button.save').text(messages.action.save);  
+                      
+            $('button.new-item').bind('click', function() {
+                $('form.supplier-form').trigger('reset');
+            });
 
-                // Atualizar lista
-                var row = $('table.table-suppliers').bootstrapTable(
-                    'getRowByUniqueId', _data.result.id);
+            // Carregar a lista de fornecedors
+            $.supplier.view.loadTable();
 
-                // Insere se não existe ou atualiza caso já esteja inserida
-                if (row == null) {
-                    $('table.table-suppliers').bootstrapTable('insertRow', {
-                        index: 0,
-                        row: _data.result
+            // Criar a validação do formulário
+            $('form.supplier-form').validate({ // initialize the plugin
+                rules: {
+                    name: {
+                        required: true,
+                        minlength: 3
+                    },
+                    email : {
+                        email: true
+                    }
+                },
+                messages: {
+                    name: messages.supplier.form.name.required,
+                    email: messages.supplier.form.email.valid
+                },
+
+                /**
+                 * Ação ao submeter o formulário.
+                 */
+                submitHandler: function(form, event) {
+                    // não submete form
+                    event.preventDefault();
+
+                    // Convert form to JSON Object
+                    var data = $(form).serializeObject();
+
+                    // Submeter ao endpoint
+                    $.supplier.api.save(data).then(function(_data) {
+
+                        // Zerar o form qdo houver sucesso
+                        $(form).trigger('reset');
+
+                        // Atualizar lista
+                        var row = $('table.table-suppliers').bootstrapTable(
+                            'getRowByUniqueId', _data.result.id);
+
+                        // Insere se não existe ou atualiza caso já esteja inserida
+                        if (row == null) {
+                            $('table.table-suppliers').bootstrapTable('insertRow', {
+                                index: 0,
+                                row: _data.result
+                            });
+                        } else {
+
+                            $('table.table-suppliers').bootstrapTable('updateByUniqueId', {
+                                id: _data.result.id,
+                                row: _data.result
+                            });
+                        }
+
                     });
-                } else {
 
-                    $('table.table-suppliers').bootstrapTable('updateByUniqueId', {
-                        id: _data.result.id,
-                        row: _data.result
-                    });
                 }
 
-            });
-
-        }
-
-    }); // Fim validate
+            }); // Fim validate
 
 
-    $('.nav-tabs-custom').on('shown.bs.tab',
-        function(e) {
+            $('.nav-tabs-custom').on('shown.bs.tab',
+                function(e) {
 
-            if ($(e.target).attr('href') != '#tab_2') return;
+                    if ($(e.target).attr('href') != '#tab_2') return;
 
-            $('.map-canvas').maps({
-            	autocomplete : $('input[name="location"]')
-            });
+                    $('.map-canvas').maps({
+                        autocomplete : $('input[name="location"]')
+                    });
 
-        });
+                });
+
+         }
+
+
+    };
 
 
 }(jQuery);

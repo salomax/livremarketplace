@@ -71,7 +71,7 @@ def update_index(customer):
 
 
 def remove_index(_id):
-    get_autocomplete_index().remove(str(_id))
+    get_autocomplete_index().delete(str(_id))
 
 
 def get(id):
@@ -129,10 +129,7 @@ def search(customer):
     """Pesquisa dos clientes cadastrados na loja.
     """
 
-    # Listando os clientes cadastrados
-    items = list()
-
-    logging.debug("Realizando a pesquisa indexada de clientes")
+    logging.debug("Searching customers, using index")
 
     # Realizando a pesquisa
     search_results = get_autocomplete_index().search(search_api.Query(
@@ -142,7 +139,15 @@ def search(customer):
     # Convertendo docs para model
     results = []
     for doc in search_results:
-        results.append(get(int(doc.doc_id)))
+        customer = get(int(doc.doc_id))
+
+        if customer is not None:
+            results.append(customer)
+        else:
+            remove_index(doc.doc_id)
+            logging.warning(
+                'Index %s is not up-to-date to doc %s and it has removed!',
+                CUSTOMER_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
 
     # Retornando resultado
     return results
@@ -212,5 +217,9 @@ def delete(id):
     logging.debug("cliente encontrado com sucesso")
 
     customer.key.delete()
+
+    remove_index(id)
+    logging.debug("Índice atualizado com sucesso para o cliente %s",
+                  id)
 
     logging.debug("cliente removido com sucesso")

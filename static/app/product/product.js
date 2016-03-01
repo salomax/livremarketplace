@@ -43,40 +43,16 @@
 		 */
 		search : function(_data) {
 
-			// Criar controle promise
-			var deferred = $.Deferred();
-
-			// fn sucesso
-			var success = function(response) {
-
-				// Executar fn sucesso pelo promise
-				deferred.resolve(response);
-
-			} // Fim fn sucesso
-
-			// fn error
-			var error = function(reason) {
-
-				// apresentar mensagem ao usuário
-				$('.modal-dialog-message').modalDialog({
-						title : messages.product.search.dialog.title,
-						message : messages.product.search.dialog.errormessage
-					}).danger();
-
-				console.log (reason.result.error.message);
-
-				// Executar fn erro pelo promise
-				resolve.reject();
-			} // Fim fn error
-
-			// Load API e executar serviço
-			gapi.client.load('product', 'v1', function() {
-				var request = gapi.client.product.search(_data);
-				request.then(success, error);
-			}, API_ROOT);
-
-			// retornar promise
-			return deferred.promise();
+            // Execute product delete endpoint 
+            return $.api.request({
+                path : '/customer/v1/search',
+                method : 'POST',
+                body : _data,
+                dialogError : {
+					title : messages.product.search.dialog.title,
+					message : messages.product.search.dialog.errormessage
+                }
+            });  
 
 		}, // Fim search
 
@@ -85,54 +61,22 @@
 		 */
 		save : function(_data) {
 
-			// atualizar barra de progresso
-			$('.progress-bar-form').progress(50, messages.progressbar.waitingserver);
+            // Execute custumers delete endpoint 
+            return $.api.request({
+                path : '/customer/v1/save',
+                method : 'POST',
+                body : _data,
+                progressBar : $('.progress-bar-form'),
+                dialogSuccess : {
+					title : messages.product.save.dialog.title,
+					message : messages.product.save.dialog.success 
+                },
+                dialogError : {
+					title : messages.product.save.dialog.title,
+					message : messages.product.save.dialog.errormessage
+                }
+            });
 
-			// criar controle promise
-			var deferred = $.Deferred();
-
-			// fn sucesso
-			var success = function(response) {
-
-				// atualizar barra de progresso
-				$('.progress-bar-form').progress(100, messages.progressbar.done);
-
-				// apresentar mensagem ao usuário
-				$('.modal-dialog-message').modalDialog({
-						title : messages.product.save.dialog.title,
-						message : messages.product.save.dialog.success 
-					}).success();
-
-				// resolve promise
-				deferred.resolve(response);
-			}; 
-
-			// fn erro
-			var failure = function(reason) {
-
-				// atualizar barra de progresso
-				$('.progress-bar-form').progress(100, messages.progressbar.done);
-
-				// apresentar mensagem ao usuário
-				$('.modal-dialog-message').modalDialog({
-						title : messages.product.save.dialog.title,
-						message : messages.product.save.dialog.errormessage
-					}).danger();
-
-				console.log(reason.result.error.message);
-
-				// promisse
-				resolve.reject();
-			};
-
-			// Load API e  executar serviço
-			gapi.client.load('product', 'v1', function() {
-					var request = gapi.client.product.save(_data);
-					request.then(success, failure);
-				}, API_ROOT);
-
-			// retornar promise
-			return deferred.promise();
 		}, // Fim save
 
 		/**
@@ -140,55 +84,24 @@
 		 */
 		delete : function(_id) {
 
-			// atualizar barra de progresso
-			$('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
+            // Execute custumers delete endpoint 
+            return $.api.request({
+                path : '/customer/v1/' + _id,
+                method : 'DELETE',
+                progressBar : $('.progress-bar-table'),
+                dialogError : {
+					title : messages.product.delete.dialog.title,
+					message : messages.product.delete.dialog.success
+                }
+            });
 
-			// Criar controle promise
-			var deferred = $.Deferred();
+		}, // Fim delete
 
-			// fn sucesso
-			var success = function(response) {
-
-				// atualizar barra de progresso
-				$('.progress-bar-table').progress(100, messages.progressbar.done);
-
-				// apresentar mensagem ao usuário
-				$('.modal-dialog-message').modalDialog({
-						title : messages.product.delete.dialog.title,
-						message : messages.product.delete.dialog.success
-					}).success();
-
-				// Executar promise
-				deferred.resolve();
-			};
-
-			// fn erro
-			var failure = function(reason) {
-
-				// atualizar barra de progresso
-				$('.progress-bar-table').progress(100, messages.progressbar.done);
-
-				// apresentar mensagem ao usuário
-				$('.modal-dialog-message').modalDialog({
-						title : messages.product.delete.dialog.title,
-						message : messages.product.delete.dialog.errormessage
-					}).danger();
-
-				console.log(reason.result.error.message);
-
-				// Executar promise
-				resolve.reject();
-			};
-
-			// Load API e  executar serviço
-			gapi.client.load('product', 'v1', function() {
-				var request = gapi.client.product.delete({id:_id});
-				request.then(success, failure);
-			}, API_ROOT);
-
-			// retornar promise
-			return deferred.promise();
-		} // Fim delete
+        list : function(options) {
+            return $.api.request($.util.mergeObjects({
+                path : '/product/v1/list'
+            }, options));    
+        }
 
 	}; // Fim API
 
@@ -253,6 +166,7 @@
 				search : true,
 				striped : true
 			});
+			$('table').fadeIn();
 
 		}, // Fim bindTable
 
@@ -261,114 +175,102 @@
 		 */ 
 		loadTable : function() {
 
-			// atualizar barra de progresso
-			$('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
+			$('table').fadeOut();
 
-			// Load API e  executar serviço
-			gapi.client.load('product', 'v1', function() {
-				var request = gapi.client.product.list();
-				request.then(
-					function(response) {
+            // Execute custumers list endpoint 
+            var request = $.product.api.list({
+                progressBar : $('.progress-bar-table'),
+                dialogError : {
+                    title : messages.product.list.dialog.title,
+                    message : messages.product.list.dialog.errormessage
+                }
+            }).then(
+                function(response) {
 
-						// atualizar barra de progresso
-						$('.progress-bar-table').progress(75, messages.progressbar.building);
+                    // Create table with response result
+                    $.product.view.bindTable(response.result);
 
-						// Atachar a lista de compras na tabela
-						$.product.view.bindTable(response.result);
-
-						// atualizar barra de progresso					
-						$('.progress-bar-table').progress(100, messages.progressbar.done);
-
-					}, function(reason) {
-
-						// atualizar barra de progresso					
-						$('.progress-bar-table').progress(100, messages.progressbar.done);
-
-						// apresentar mensagem ao usuário
-						$('.modal-dialog-message').modalDialog({
-								title : messages.product.list.dialog.title,
-								message : messages.product.list.dialog.errormessage
-							}).danger();
-
-						console.log(reason.result.error.message);
-
-					});
-
-			}, API_ROOT);
+                });
 
 		}, // Fim loadTable
 
+		loadPage : function() {
 
-	};
+			// Carregar a lista de produtos
+			$.product.view.loadTable();
 
+		    // Aplicar i18n
+		    $('span.tab_list').text(messages.product.tab.list);
+		    $('span.tab_save').text(messages.product.tab.save);
+		    $('h3.product_save_title').text(messages.product.save.title);
+		    $('span.new-item').text(messages.action.new_item);
+		    $('small.product_save_subtitle').text(messages.product.save.subtitle);
+		    $('label.name').text(messages.product.name);
+		    $('input[name="name"]').attr('placeholder', messages.product.form.name.placeholder);
+		    $('label.code').text(messages.product.code);
+		    $('input[name="code"]').attr('placeholder', messages.product.form.code.placeholder);
+		    
+		    $('button.save').text(messages.action.save);
 
-}(jQuery);
+			// Criar a validação do formulário
+			$('form.product-form').validate({ // initialize the plugin
+			    rules: {
+			        	name : {
+			        	required: true,
+						minlength: 3
+			        },
+			        code : {
+						required: true,
+						minlength: 3
+			        }
+			    },
+			    messages : {
+			    	name : messages.product.form.name.required,
+			    	code : messages.product.form.code.required
+			    },
 
+			    /**
+			     * Ação ao submeter o formulário.
+			     */
+			    submitHandler: function(form, event) {
+			    	// não submete form
+			    	event.preventDefault();
 
-/**
- * Ação ao carregar a página.
- */
-!function($) {
+			    	// Convert form to JSON Object
+			    	var data = $(form).serializeObject();
 
-	// Carregar a lista de produtos
-	$.product.view.loadTable();
+			    	// Submeter ao endpoint
+				    $.product.api.save(data).then(function(_data) {
 
-	// Criar a validação do formulário
-	$('form.product-form').validate({ // initialize the plugin
-	    rules: {
-	        	name : {
-	        	required: true,
-				minlength: 3
-	        },
-	        code : {
-				required: true,
-				minlength: 3
-	        }
-	    },
-	    messages : {
-	    	name : messages.product.form.name.required,
-	    	code : messages.product.form.code.required
-	    },
+				    	// Zerar o form qdo houver sucesso
+				    	$(form).trigger('reset');
 
-	    /**
-	     * Ação ao submeter o formulário.
-	     */
-	    submitHandler: function(form, event) {
-	    	// não submete form
-	    	event.preventDefault();
+				    	// Atualizar lista
+						var row = $('table.table-products').bootstrapTable(
+							'getRowByUniqueId', _data.result.id);
 
-	    	// Convert form to JSON Object
-	    	var data = $(form).serializeObject();
+						// Insere se não existe ou atualiza caso já esteja inserida
+						if (row == null) {
+					    	$('table.table-products').bootstrapTable('insertRow', {
+				                index: 0,
+				                row: _data.result
+				            });
+						} else {
 
-	    	// Submeter ao endpoint
-		    $.product.api.save(data).then(function(_data) {
+					    	$('table.table-products').bootstrapTable('updateByUniqueId', {
+				                id: _data.result.id,
+				                row: _data.result
+				            });
+						}
 
-		    	// Zerar o form qdo houver sucesso
-		    	$(form).trigger('reset');
+				    });
 
-		    	// Atualizar lista
-				var row = $('table.table-products').bootstrapTable(
-					'getRowByUniqueId', _data.result.id);
-
-				// Insere se não existe ou atualiza caso já esteja inserida
-				if (row == null) {
-			    	$('table.table-products').bootstrapTable('insertRow', {
-		                index: 0,
-		                row: _data.result
-		            });
-				} else {
-
-			    	$('table.table-products').bootstrapTable('updateByUniqueId', {
-		                id: _data.result.id,
-		                row: _data.result
-		            });
 				}
 
-		    });
+			}); // Fim validate
 
-		}
+		} // Fim loadPage()
 
-	}); // Fim validate
-
+	} // Fim $.product.view
 
 }(jQuery);

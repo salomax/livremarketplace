@@ -24,9 +24,6 @@
  */
 var API_ROOT = '//' + document.location.host + '/_ah/api';
 
-// Key for Google Maps concerns
-var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
-
 /**
  * Funções para serem carregadas no load da página main.
  */
@@ -49,7 +46,117 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 		    	$.menu.build();	
 		    }
 		});
-	}
+	};
+
+	/**
+	 * Object to view functions.
+	 */
+	$.view = {
+		/**
+		 * Methods update a progress bar.
+		 */
+		progressBar : function(options) {
+			return {
+				update : function(percent, messsage) {
+					if (options && options.progressBar) {
+						options.progressBar.progress(percent, messsage);
+					}
+				}
+			};
+		}
+	};
+
+	/**
+	 * Util functions.
+	 */
+	$.util = {
+
+		/**
+		 * Merge two javascript objects into one.
+		 */
+		mergeObjects : function(obj1, obj2) {
+			for (var attrname in obj2) { 
+				obj1[attrname] = obj2[attrname]; 
+			}
+			return obj1;
+		}
+
+	};
+
+	// API object encapsulates Google API calls.
+	$.api = {
+
+		/**
+		 * Request google api. 
+		 * Return promisse.
+		 */
+		request : function(options) {
+
+            // Create promise
+            var deferred = $.Deferred(function(def) {
+
+	            // fn success
+	            var success = function(response) {
+
+	                // update progress bar
+	                $.view.progressBar(options).update(100, messages.progressbar.done);
+
+	                // show success dialog
+	                if (options.dialogSuccess) {
+		                $('.modal-dialog-message').modalDialog({
+		                    title: options.dialogSuccess.title,
+		                    message: options.dialogSuccess.message
+		                }).success();	                	
+	                }
+
+	                // Resolve promise
+	                def.resolve(response);
+	            };
+
+	            // fn error
+	            var failure = function(reason) {
+
+	                // update progress bar
+	                $.view.progressBar(options).update(100, messages.progressbar.done);
+
+	                // build default message
+	                if (!options.dialogError) {
+	                	title = messages.dialog.title
+	                	message = messages.dialog.failure.message
+	                } else {
+	                	title = options.dialogError.title
+	                	message = options.dialogError.message
+	                }
+
+	               // show error dialog
+	                $('.modal-dialog-message').modalDialog({
+	                    title: title,
+	                    message: message
+	                }).danger();
+
+	                console.log(reason.result.error.message);
+
+	                // Reject promise
+	                resolve.reject(reason);
+	            };
+
+	            // Set root
+	            options.root = API_ROOT;
+
+	            // update progress bar
+				$.view.progressBar(options).update(50, messages.progressbar.waitingserver);
+
+	            // Execute request gapi client
+	            request = gapi.client.request(options).then(success, failure);
+
+            });
+	
+            // return promise
+            return deferred.promise();
+		}
+
+
+	};
 
 }(jQuery);
 
@@ -97,14 +204,20 @@ var BROWSER_GOOGLE_MAPS_KEY = 'AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c'
 						title : messages.menu.product.title,
 						subtitle : messages.menu.product.subtitle,
 						html : '/product/product.html', 
-						script : '/product/product.js'
+						script : '/product/product.js',
+						callback : function() {
+							$.product.view.loadPage();
+						}
 					},
 					{
 						icon : 'ion-ios-people',
 						title : messages.menu.supplier.title,
 						subtitle : messages.menu.supplier.subtitle,
 						html : '/supplier/supplier.html', 
-						script : '/supplier/supplier.js'
+						script : '/supplier/supplier.js',
+						callback : function() {
+							$.supplier.view.loadPage();
+						}
 					},					
 					{
 						icon : 'ion-happy-outline',
@@ -498,10 +611,10 @@ $.fn.progress = function(percent, message) {
 	// verificar se conclui o processo
 	if (percent == 100) {
 		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
-		$(this).fadeOut(200);
+		$(this).slideUp();
 	} else {
 		// Mostrar progress
-		$(this).show();
+		$(this).slideDown();
 		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
 	}
 };
