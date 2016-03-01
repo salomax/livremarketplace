@@ -107,7 +107,7 @@ purchase = {
 				pagination : true,
 				search : true,
 				detailView : true,
-				striped : true,
+				// striped : true,
 		        icons: {
 		            paginationSwitchDown: 'glyphicon-collapse-down icon-chevron-down',
 		            paginationSwitchUp: 'glyphicon-collapse-up icon-chevron-up',

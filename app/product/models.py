@@ -84,7 +84,7 @@ def get(id):
 
     if product is None:
         raise NotFoundEntityException(message='messages.product.notfound')
-        
+
     logging.debug("Produto encontrado com sucesso")
 
     return product
@@ -111,24 +111,29 @@ def list():
 
 
 def search(product):
-    """Pesquisa dos produtos cadastrados na loja.
+    """ Seaching product by some text.
     """
-
-    # Listando os produtos cadastrados
-    items = list()
 
     logging.debug("Realizando a pesquisa indexada de produtos")
 
-    # Realizando a pesquisa
+    # get results from index
     search_results = get_autocomplete_index().search(search_api.Query(
         query_string="code:{code} OR name:{name}".format(
             code=product.code, name=product.name),
         options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
 
-    # Convertendo docs para model
+    # Getting models
     results = []
     for doc in search_results:
-        results.append(get(int(doc.doc_id)))
+        product = get(int(doc.doc_id))
+
+        if supplier is not None:
+            results.append(product)
+        else:
+            remove_index(doc.doc_id)
+            logging.warning(
+                'Index %s is not up-to-date to doc %s and it has removed!',
+                PRODUCT_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
 
     # Retornando resultado
     return results

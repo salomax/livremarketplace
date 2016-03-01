@@ -45,7 +45,7 @@
 
             // Execute product delete endpoint 
             return $.api.request({
-                path : '/customer/v1/search',
+                path : '/product/v1/search',
                 method : 'POST',
                 body : _data,
                 dialogError : {
@@ -63,7 +63,7 @@
 
             // Execute custumers delete endpoint 
             return $.api.request({
-                path : '/customer/v1/save',
+                path : '/product/v1/save',
                 method : 'POST',
                 body : _data,
                 progressBar : $('.progress-bar-form'),
@@ -86,7 +86,7 @@
 
             // Execute custumers delete endpoint 
             return $.api.request({
-                path : '/customer/v1/' + _id,
+                path : '/product/v1/' + _id,
                 method : 'DELETE',
                 progressBar : $('.progress-bar-table'),
                 dialogError : {
@@ -134,12 +134,13 @@
 					{
 						field : 'name',
 						title : messages.product.name,
-						searchable : true
+						searchable : true,
+                        'class' : 'col-sm-9'                        
 					},{
 						title : '',
 						align : 'center',
 						searchable : false,
-						'class' : 'col-sm-2',
+						'class' : 'col-sm-3',
 						formatter : $.common.view.tableactionbuttons,
 						events : {
 							'click button.delete' : function(e, value, row, index) {
@@ -164,7 +165,7 @@
 				data : _data.items,
 				pagination : true,
 				search : true,
-				striped : true
+				// striped : true
 			});
 			$('table').fadeIn();
 
@@ -174,8 +175,6 @@
 		 * Método destinado à carregar a tabela com os produtos.
 		 */ 
 		loadTable : function() {
-
-			$('table').fadeOut();
 
             // Execute custumers list endpoint 
             var request = $.product.api.list({

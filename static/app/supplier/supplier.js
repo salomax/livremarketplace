@@ -248,7 +248,7 @@
                 data: _data.items,
                 pagination: true,
                 search: true,
-                striped: true
+                // striped: true
             });
 
             $('table').fadeIn();

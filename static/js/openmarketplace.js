@@ -282,6 +282,8 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 		 */
 		openMenu : function(menu) {
 
+			$('section.content').hide();
+
 			// Definir o icon
 			$('i.icon-title').attr('class', 'icon-title ion ' + menu.icon);
 
@@ -319,6 +321,8 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 				$('input.datepicker').datepicker({
 					language: 'pt-BR'
 				});
+				
+				$('section.content').fadeIn('slow');
 
 			});
 
@@ -638,10 +642,10 @@ $.fn.progress = function(percent, message) {
 		tableactionbuttons : function(value, row, index) {
 				return  [
 						'<div class="btn-group">',
-						'<button class="btn btn-secundary btn-sm update" data-title="Edit" data-toggle="modal" data-target="#edit">',
+						'<button class="btn btn-link btn-sm update" data-title="Edit" data-toggle="modal" data-target="#edit">',
 						'<span class="glyphicon glyphicon-pencil"></span>',
 						'</button>',
-						'<button class="btn btn-danger btn-sm delete" data-title="Delete" data-toggle="modal" data-target="#delete">',
+						'<button class="btn btn-link btn-sm delete" data-title="Delete" data-toggle="modal" data-target="#delete">',
 						'<span class="glyphicon glyphicon-trash"></span>',
 						'</button>',
 						'</div>'].join('');

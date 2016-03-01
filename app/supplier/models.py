@@ -70,7 +70,7 @@ def update_index(supplier):
 
 
 def remove_index(_id):
-    get_autocomplete_index().remove(str(_id))
+    get_autocomplete_index().delete(str(_id))
 
 
 def get(id):
@@ -115,9 +115,6 @@ def search(supplier):
     """Pesquisa dos fornecedores cadastrados na loja.
     """
 
-    # Listando os fornecedores cadastrados
-    items = list()
-
     logging.debug("Realizando a pesquisa indexada de fornecedores")
 
     # Realizando a pesquisa
@@ -128,7 +125,15 @@ def search(supplier):
     # Convertendo docs para model
     results = []
     for doc in search_results:
-        results.append(get(int(doc.doc_id)))
+        supplier = get(int(doc.doc_id))
+
+        if supplier is not None:
+            results.append(supplier)
+        else:
+            remove_index(doc.doc_id)
+            logging.warning(
+                'Index %s is not up-to-date to doc %s and it has removed!',
+                SUPPLIER_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
 
     # Retornando resultado
     return results
