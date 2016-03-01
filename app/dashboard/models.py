@@ -69,8 +69,8 @@ def calculate_count_sales():
     return salesModel.get_sales_query().count()
 
 
-def calculate_profit_margin():
-    """ Calculate total profit margin.
+def calculate_total_net_profit():
+    """ Calculate total profit.
     """
 
     logging.debug('Listing sales')
@@ -110,6 +110,15 @@ def calculate_profit_margin():
         else:
             logging.warning("Product %s didn't find!", sale['product'].name)
 
+    # Return
+    return sum_net_profit
+
+def calculate_profit_margin():
+    """ Calculate total profit margin.
+    """
+
+    logging.debug('Calculatie profit margin')
+   
     # Get revenue
     revenue = calculate_total_revenue()
 
@@ -117,11 +126,15 @@ def calculate_profit_margin():
     if revenue == 0:
         return .0
 
+    # Get net total value
+    profit = calculate_total_net_profit()
+
     logging.debug(
         'Calculating profit margin. profit %d over revenue %d', 
-        sum_net_profit, revenue)
+        profit, revenue)
+
     # % profit over revenue
-    profit_margin = sum_net_profit / revenue
+    profit_margin = profit / revenue
 
     # Return
     return profit_margin
@@ -138,19 +151,6 @@ def calculate_total_revenue():
         total_revenue = total_revenue + sale.amount
 
     return total_revenue
-
-
-def calculate_total_net_profit():
-    """Calcula o lucro líquido total.
-    """
-
-    sales = salesModel.list()
-
-    total_net_profit = 0.0
-    for sale in sales:
-        total_net_profit = total_net_profit + sale.net_total
-
-    return total_net_profit
 
 
 def cash_flow(n):
