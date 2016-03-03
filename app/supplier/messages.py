@@ -34,57 +34,46 @@ class SupplierKeyMessage(messages.Message):
 
 
 class SupplierGetMessage(messages.Message):
-    """Mensagem GET do Fornecedor a ser trafegada pelo endpoint.
+    """ Get message.
     """
 
-    # Id
     id = messages.IntegerField(1)
 
-    # Nome
     name = messages.StringField(2, required=True)
 
-    # Email de contato do fornecedor
     email = messages.StringField(3, required=False)
 
-    # Telefone de contato do fornecedor
     phone = messages.StringField(4, required=False)
 
-    # Localização
     location = messages.StringField(5, required=False)
 
-    # Data criação
     created_date = message_types.DateTimeField(6, required=True)
 
 
 class SupplierPostMessage(messages.Message):
-    """Mensagem POST do Fornecedor a ser trafegada pelo endpoint.
+    """ POST message.
     """
 
-    # Id
     id = messages.IntegerField(1)
 
-    # Nome
     name = messages.StringField(2, required=True)
 
-    # Email de contato do fornecedor
     email = messages.StringField(3, required=False)
 
-    # Telefone de contato do fornecedor
     phone = messages.StringField(4, required=False)
 
-    # Localização
     location = messages.StringField(5, required=False)
 
 
 class SupplierSearchMessage(messages.Message):
-    """Mensagem POST do Fornecedor de pesquisa a ser trafegada pelo endpoint.
+    """ Message to search.
     """
 
-    # Nome
     name = messages.StringField(2, required=True)
 
 
 class SupplierCollectionMessage(messages.Message):
-    """Coleção de fornecedores."""
+    """ Supplier collections.
+    """
 
     items = messages.MessageField(SupplierGetMessage, 1, repeated=True)

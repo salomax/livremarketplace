@@ -43,25 +43,26 @@ def get_autocomplete_index():
 
 
 class ProductModel(ndb.Model):
-    """Entidade representa um produto comercializado pela loja"""
+    """ Product model.
+    """
 
-    # Código de referência do Produto
     code = ndb.StringProperty(required=True)
 
-    # Nome do Produto
     name = ndb.StringProperty(required=True)
 
-    # Data criação
     created_date = ndb.DateTimeProperty(auto_now_add=True)
 
 
 def update_index(product):
+
     name = ','.join(util.tokenize_autocomplete(product.name))
     code = ','.join(util.tokenize_autocomplete(product.code))
+
     document = search_api.Document(
         doc_id=str(product.key.id()),
         fields=[search_api.TextField(name='code', value=code),
                 search_api.TextField(name='name', value=name)])
+
     get_autocomplete_index().put(document)
 
 
@@ -70,51 +71,34 @@ def delete_index(_id):
 
 
 def get(id):
-    """Selecionar um produto cadastrado pelo id.
+    """ Get product by id.
     """
 
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o produto pelo pai e id
     product = ndb.Key('ProductModel', int(
         id), parent=marketplaceModel.key).get()
 
     if product is None:
         raise NotFoundEntityException(message='messages.product.notfound')
 
-    logging.debug("Produto encontrado com sucesso")
-
     return product
 
 
 def list():
-    """Listar os produtos cadastrados na loja do usuário.
+    """ List all products.
     """
-
-    logging.debug("Listando os produtos cadastrados")
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    # Realizando query, listando os produtos
     products = ProductModel.query(ancestor=marketplaceModel.key).order(
         ProductModel.name).fetch()
 
-    logging.debug("Foram selecionado(s) %d produtos(s)",
-                  len(products))
-
-    # Retornando
     return products
 
 
 def search(product):
     """ Seaching product by some text.
     """
-
-    logging.debug("Realizando a pesquisa indexada de produtos")
 
     # get results from index
     search_results = get_autocomplete_index().search(search_api.Query(
@@ -127,7 +111,7 @@ def search(product):
     for doc in search_results:
         product = get(int(doc.doc_id))
 
-        if supplier is not None:
+        if product is not None:
             results.append(product)
         else:
             remove_index(doc.doc_id)
@@ -135,24 +119,14 @@ def search(product):
                 'Index %s is not up-to-date to doc %s and it has removed!',
                 PRODUCT_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
 
-    # Retornando resultado
     return results
 
 
 @ndb.transactional
 def put(product):
-    """Inclui ou atualiza um produto.
+    """ Add or update product.
     """
-
-    logging.debug("Persistindo um produto na loja")
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
-
-    logging.debug("Loja encontrada com sucesso")
-
-    logging.debug(
-        "Criando model para o produto ou selecionando o existente para atualizá-lo")
 
     if product.id is not None:
         productModel = ndb.Key('ProductModel', int(product.id),
@@ -160,49 +134,29 @@ def put(product):
     else:
         productModel = ProductModel(parent=marketplaceModel.key)
 
-    # Criando model
     productModel.code = product.code
     productModel.name = product.name
 
-    # Persistindo produto
-    logging.debug("Persistindo produto...")
-
     productModel.put()
 
-    logging.debug("Persistido produto %d com sucesso na loja %s",
-                  productModel.key.id(), marketplaceModel.name)
-
-    # Atualizando índice
     update_index(productModel)
-    logging.debug("Índice atualizado com sucesso para o produto %s",
-                  productModel.key.id())
 
-    # Retornando produto cadastrado com o id
     return productModel
 
 
 @ndb.transactional
 def delete(id):
-    """Remove um produto cadastrado.
+    """ Remove a product.
     """
 
-    logging.debug("Removendo o produto %d persistido na loja", id)
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o produto pelo pai e id
     product = ndb.Key('ProductModel', int(
         id), parent=marketplaceModel.key).get()
 
     if product is None:
         raise NotFoundEntityException(message='messages.product.notfound')
 
-    logging.debug("Produto encontrado com sucesso")
-
     product.key.delete()
-    delete_index(id)
 
-    logging.debug("Produto removido com sucesso")
+    delete_index(id)

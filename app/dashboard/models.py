@@ -40,32 +40,42 @@ __license__ = "Apache 2.0"
 
 
 def calculate_average_ticket():
+    """ Calculate average ticket sale.
+    """
 
+    # Get all sales
     sales = salesModel.list()
 
+    # Init vars
     total_revenue = 0
     count = 0
+
+    # For each sale, sum amounts
     for sale in sales:
         total_revenue = total_revenue + sale.amount
         count = count + 1
 
+    # Avoid division by zero
     if total_revenue == 0 or count == 0:
         return 0.0
 
+    # Calculate average
     return total_revenue / count
 
 
 def calculate_count_customers():
-    """Retornar a quantidade total de clientes.
+    """ Count how many customers there are.
     """
 
+    # Return count
     return customersModel.get_customer_query().count()
 
 
 def calculate_count_sales():
-    """Retornar a quantidade total de vendas.
+    """ Count how many sales there are.
     """
 
+    # Return count
     return salesModel.get_sales_query().count()
 
 
@@ -113,12 +123,13 @@ def calculate_total_net_profit():
     # Return
     return sum_net_profit
 
+
 def calculate_profit_margin():
     """ Calculate total profit margin.
     """
 
     logging.debug('Calculatie profit margin')
-   
+
     # Get revenue
     revenue = calculate_total_revenue()
 
@@ -130,7 +141,7 @@ def calculate_profit_margin():
     profit = calculate_total_net_profit()
 
     logging.debug(
-        'Calculating profit margin. profit %d over revenue %d', 
+        'Calculating profit margin. profit %d over revenue %d',
         profit, revenue)
 
     # % profit over revenue
@@ -141,53 +152,59 @@ def calculate_profit_margin():
 
 
 def calculate_total_revenue():
-    """Calcula o faturamento total.
+    """ Calculate total revenue.
     """
 
+    # Get all sales
     sales = salesModel.list()
 
+    # Init vars
     total_revenue = 0.0
+
+    # For each sale, sum amounts
     for sale in sales:
         total_revenue = total_revenue + sale.amount
 
+    # Return
     return total_revenue
 
 
 def cash_flow(n):
-    """Obtêm os totais de compra e venda mensal dos últimos 'n' meses.
+    """ Get cash flow.
     """
-    # Criando dict para os últimos 'n' meses
+
+    # Create dict for last 'n' months
     list = list_monthly(n)
 
-    # Obtendo a data mínima para filtro na query
+    # Get min date to query filter
     date = datetime.datetime.now() - dateutil.relativedelta.relativedelta(
         months=n)
 
-    # Obter a query das compras
+    # Get purchases query
     queryPurchases = purchasesModel.get_query_purchase()
 
-    # Realizando query, listando as compras
+    # Get purchases by date filter
     purchases = queryPurchases.filter(
         purchasesModel.PurchaseModel.purchase_date > date).fetch(
         projection=[purchasesModel.PurchaseModel.total_cost,
                     purchasesModel.PurchaseModel.payment_date])
 
-    # Realizando o agrupamento com somatória
+    # Group by period
     for purchase in purchases:
         for i in list:
             if same_period(purchase.payment_date, i['period']):
                 i['purchases'] = round(i['purchases'] + purchase.total_cost, 2)
 
-    # Obtendo query das vendas
+    # Get sales query
     salesQuery = salesModel.get_sales_query()
 
-    # Realizando query, listando as vendas
+    # Get sales by date filter
     sales = salesQuery.filter(
         salesModel.SaleModel.sale_date > date).fetch(
         projection=[salesModel.SaleModel.amount,
                     salesModel.SaleModel.sale_date])
 
-    # Realizando o agrupamento com somatória
+    # Group by period
     for sale in sales:
         for i in list:
             if same_period(sale.sale_date, i['period']):
@@ -200,42 +217,50 @@ def cash_flow(n):
         accumulated_balance = accumulated_balance + month['balance']
         month['accumulated_balance'] = round(accumulated_balance, 2)
 
-    # Retornando
+    # return list
     return list
 
 
 def list_monthly(n):
-    """Criando lista dos últimos "n" meses.
+    """ Create dict for last 'n' months to cash flow.
     """
 
+    # Month in advance
     offset = 1
-
+    
+    # Init vars
     now = datetime.datetime.now() + relativedelta(months=offset)
     timeMap = []
     year = now.year
     month = now.month
 
+    # Create for each month
     for x in range(n + offset):
 
+        # Create dict
         timeMap.append({"period": datetime.datetime(year, month, 1),
                         "purchases": 0.0,
                         "sales": 0.0,
                         "balance": 0.0,
                         "accumulated_balance": 0.0})
 
+        # Add month
         month = month - 1
 
+        # Handle month < 1, year back
         if month < 1:
             year = year - 1
             month = 12
 
+    # Return
     return timeMap[::-1]
 
 
 def same_period(date1, date2):
-    """ Verifica se é o mesmo período (ano e mês)
+    """ Check if date1 is same year and month than 2.
     """
 
+    # Check year and month
     if date1.year == date2.year and date1.month == date2.month:
         return True
     else:

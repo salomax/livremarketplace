@@ -41,24 +41,23 @@ def get_autocomplete_index():
 
 
 class SupplierModel(ndb.Model):
-    """Entidade representa um fornecedor da loja"""
+    """ Supplier model.
+    """
 
-    # Nome do fornecedor
+    # Name
     name = ndb.StringProperty(required=True)
 
-    # Email de contato do fornecedor
+    # Email
     email = ndb.StringProperty(required=False)
 
-    # Telefone de contato do fornecedor
+    # Phone
     phone = ndb.StringProperty(required=False)
 
-    # Localização
+    # Location
     location = ndb.StringProperty(required=False)
 
-    # Data criação
+    # Insert date
     created_date = ndb.DateTimeProperty(auto_now_add=True)
-
-# http://stackoverflow.com/questions/12899083/partial-matching-gae-search-api
 
 
 def update_index(supplier):
@@ -74,55 +73,37 @@ def remove_index(_id):
 
 
 def get(id):
-    """Selecionar um fornecedor cadastrado pelo id.
+    """ Select supplier by id.
     """
 
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o fornecedor pelo pai e id
     supplier = ndb.Key('SupplierModel', int(
         id), parent=marketplaceModel.key).get()
-
-    logging.debug("Fornecedor encontrado com sucesso")
 
     return supplier
 
 
 def list():
-    """Listar os fornecedores cadastrados na loja do usuário.
+    """ List suppliers.
     """
 
-    logging.debug("Listando os fornecedores cadastrados")
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    # Realizando query, listando os fornecedores
     suppliers = SupplierModel.query(ancestor=marketplaceModel.key).order(
         SupplierModel.name).fetch()
 
-    logging.debug("Foram selecionado(s) %d fornecedores(s) cadastrados",
-                  len(suppliers))
-
-    # Retornando
     return suppliers
 
 
 def search(supplier):
-    """Pesquisa dos fornecedores cadastrados na loja.
+    """ Search supplier by name.
     """
 
-    logging.debug("Realizando a pesquisa indexada de fornecedores")
-
-    # Realizando a pesquisa
     search_results = get_autocomplete_index().search(search_api.Query(
         query_string="name:{name}".format(name=supplier.name),
         options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
 
-    # Convertendo docs para model
     results = []
     for doc in search_results:
         supplier = get(int(doc.doc_id))
@@ -135,7 +116,6 @@ def search(supplier):
                 'Index %s is not up-to-date to doc %s and it has removed!',
                 SUPPLIER_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
 
-    # Retornando resultado
     return results
 
 
@@ -144,15 +124,7 @@ def save(supplier):
     """Inclui ou atualiza um fornecedor.
     """
 
-    logging.debug("Persistindo um fornecedor na loja")
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
-
-    logging.debug("Loja encontrada com sucesso")
-
-    logging.debug(
-        "Criando model para o fornecedor ou selecionando o existente")
 
     if supplier.id is not None:
         supplierModel = ndb.Key('SupplierModel', int(supplier.id),
@@ -160,50 +132,39 @@ def save(supplier):
     else:
         supplierModel = SupplierModel(parent=marketplaceModel.key)
 
-    # Criando model
     supplierModel.name = supplier.name
     supplierModel.email = supplier.email
     supplierModel.phone = supplier.phone
     supplierModel.location = supplier.location
 
-    # Persistindo fornecedor
-    logging.debug("Persistindo fornecedor...")
-
     supplierModel.put()
 
-    logging.debug("Persistido fornecedor %d com sucesso na loja %s",
-                  supplierModel.key.id(), marketplaceModel.name)
-
-    # Atualizando índice
-    update_index(supplierModel)
-    logging.debug("Índice atualizado com sucesso para o fornecedor %s",
+    logging.debug("Supplier %d persisted successfully!",
                   supplierModel.key.id())
 
-    # Retornando fornecedor cadastrado com o id
+    update_index(supplierModel)
+
+    logging.debug("Index updated to supplier %s",
+                  supplierModel.key.id())
+
     return supplierModel
 
 
 @ndb.transactional
 def delete(id):
-    """Remove um fornecedor cadastrado.
+    """ Remove supplier by id.
     """
 
-    logging.debug("Removendo o fornecedor %d persistido na loja", id)
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o fornecedor pelo pai e id
     supplier = ndb.Key('SupplierModel', int(
         id), parent=marketplaceModel.key).get()
 
     if supplier is None:
         raise NotFoundEntityException(message='messages.supplier.notfound')
 
-    logging.debug("Fornecedor encontrado com sucesso")
+    logging.debug("Supplier removed")
 
     supplier.key.delete()
 
-    logging.debug("Fornecedor removido com sucesso")
+    logging.debug("Supplier index removed")

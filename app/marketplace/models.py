@@ -47,8 +47,7 @@ def get_marketplace():
 
 
 def get(email):
-    """Método retorna um marketplace para o usuário informado através do email.
-       Caso o mesmo não exista, um novo é criado.
+    """ Get marketplace model by user email.
     """
 
     # Set memcache key
@@ -85,32 +84,22 @@ def get(email):
 
 
 def put(email, name, user_key=None):
-    """Método atualiza um marketplace para o usuário informado através do email.
+    """ Save a marketplace in the Datastore.
     """
 
-    # Selecionando key do usuário
     if user_key is None:
         user_key = user.user_key(email)
 
-    logging.debug(
-        'Criando/atualizando marketplace (loja) para o usuário %s', email)
-
-    # Selecionando a marketplace (loja) do usuário
     marketplaceModel = MarketplaceModel.query(ancestor=user_key).get()
 
-    # Caso exista, obter o atual
     if marketplaceModel is None:
         marketplaceModel = MarketplaceModel(parent=user_key)
 
-    # Atualizar o nome
     marketplaceModel.name = name
 
-    logging.debug('Persistindo no Datastore...')
-
-    # Persistir a entity
     marketplaceModel.put()
 
-    logging.debug('Persistido com sucesso!')
+    logging.debug(
+        ' Created successfuly marketplace to user %s', email)
 
-    # Retornando marketplace (loja) persistida
     return marketplaceModel

@@ -39,97 +39,70 @@ __license__ = "Apache 2.0"
 
 
 class SaleModel(ndb.Model):
-    """Entidade representa uma venda realizada.
+    """ Sale model.
     """
 
-    # Cliente
     customer = ndb.KeyProperty(
         kind='CustomerModel', indexed=True, required=True)
 
-    # Produto
     product = ndb.KeyProperty(
         kind='ProductModel', indexed=True, required=True)
 
-    # Quantidade
     quantity = ndb.IntegerProperty(required=True, default=1)
 
-    # Data Venda
     sale_date = ndb.DateTimeProperty(
         required=True, default=datetime.datetime.today())
 
-    # Valor Total
     amount = ndb.FloatProperty(required=True)
 
-    # Tarifa Venda
+    # Marketplace fare
     fare = ndb.FloatProperty(required=False)
 
-    # Total Líquido
     net_total = ndb.FloatProperty(required=True)
 
-    # Cód Rastreamento
     track_code = ndb.StringProperty(indexed=False)
 
-    # Data criação
     created_date = ndb.DateTimeProperty(auto_now_add=True)
 
 
 def get(id):
-    """Selecionar uma venda pelo id.
+    """ Get sale by id.
     """
 
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    # Realizando query, selecionando a venda pelo pai e id
     sale = ndb.Key('SaleModel', int(id), parent=marketplaceModel.key).get()
 
     if sale is None:
-        raise IndexError("Venda não encontrada!")
-
-    logging.debug("Venda encontrado com sucesso")
+        raise NotFoundEntityException("messages.sale.notfound")
 
     return customer
 
 
 def get_sales_query():
-    """ Retorna a query.
+    """ get sales model query.
     """
 
-    logging.debug("Listando os clientes cadastrados")
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    # Retorna query
     return SaleModel.query(ancestor=marketplaceModel.key)
 
 
 def list():
-    """Listar as vendas realizadas.
+    """ List all sales.
     """
-    # Realizando query, listando os clientes
+
     sales = get_sales_query().fetch()
 
-    logging.debug("Foram selecionada(s) %d venda(s)", len(sales))
-
-    # Retornando
     return sales
 
 
 @ndb.transactional
 def save(sale):
-    """Incluir ou atualizar uma venda.
+    """ Add or remove a sale.
     """
 
-    logging.debug("Persistindo uma venda na loja")
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
-
-    logging.debug("Loja encontrada com sucesso")
-
-    logging.debug(
-        "Criando model para o cliente ou selecionando o existente")
 
     if sale.id is not None:
         saleModel = ndb.Key('SaleModel', int(sale.id),
@@ -137,20 +110,16 @@ def save(sale):
     else:
         saleModel = SaleModel(parent=marketplaceModel.key)
 
-    # Selecionando produto
     productModel = ndb.Key('ProductModel', int(sale.product.id),
                            parent=marketplaceModel.key)
     if productModel is None:
-        raise IndexError("Produto com o id %d não encontrado!",
-                         sale.product.id)
+        raise NotFoundEntityException("messages.product.notfound")
 
-    # Selecionando cliente
     customerModel = ndb.Key('CustomerModel', int(sale.customer.id),
                             parent=marketplaceModel.key)
 
     if customerModel is None:
-        raise IndexError("Cliente com o id %d não encontrado!",
-                         sale.customer.id)
+        raise NotFoundEntityException("messages.customer.notfound")
 
     saleModel.product = productModel
     saleModel.customer = customerModel
@@ -161,40 +130,27 @@ def save(sale):
     saleModel.net_total = sale.net_total
     saleModel.track_code = sale.track_code
 
-    logging.debug("Persistindo venda...")
-
     saleModel.put()
 
-    logging.debug("Persistida venda %d com sucesso na loja %s",
-                  saleModel.key.id(), marketplaceModel.name)
+    logging.debug("Sale %d registered successfully!",
+                  saleModel.key.id())
 
-    # Retornando cliente cadastrado com o id
     return saleModel
 
 
 @ndb.transactional
 def delete(id):
-    """Remove uma venda realizada.
+    """ Remove a sale.
     """
 
-    logging.debug("Removendo a venda %d persistida na loja", id)
-
-    # Obtendo marketplace como parent
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o cliente pelo pai e id
     sale = ndb.Key('SaleModel', int(id), parent=marketplaceModel.key).get()
 
     if sale is None:
-        raise IndexError("Venda não encontrada!")
-
-    logging.debug("Venda encontrada com sucesso")
+        raise NotFoundEntityException("messages.sales.notfound")
 
     sale.key.delete()
-
-    logging.debug("Venda removida com sucesso")
 
 
 def report_customers_by_products():

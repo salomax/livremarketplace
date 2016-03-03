@@ -46,10 +46,10 @@ __license__ = "Apache 2.0"
                # you must always include the email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class CustomerService(remote.Service):
-    """Serviço destinado ao gerenciamento dos clientes da loja.
+    """ Service for management customers.
     """
 
-    # Resource Container para POSTs
+    # POST Resource Containers
     Customer_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(
         CustomerPostMessage)
     Customer_Search_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(
@@ -64,17 +64,13 @@ class CustomerService(remote.Service):
                       path='{id}',
                       name='get')
     def get(self, request):
-        """Retornar o cliente cadastrado a partir de um id.
+        """ Get customer by id.
         """
 
-        logging.debug('Executando endpoint para obter o clientes cadastrado')
-
-        # Obter a lista de clientes cadastrados
+        # Get customer by id
         customerModel = models.get(request.id)
 
-        logging.debug('Cliente selecionado com sucesso, retornando endpoint')
-
-        # Retornando cliente
+        # Return
         return CustomerGetMessage(
             id=customerModel.key.id(),
             name=customerModel.name,
@@ -88,16 +84,13 @@ class CustomerService(remote.Service):
                       http_method='GET',
                       name='list')
     def list(self, unused_request):
-        """Retornar a lista de clientes cadastrados.
+        """ Get all customers.
         """
 
-        logging.debug(
-            'Executando endpoint para obter a lista de clientes cadastrados')
-
-        # Obter a lista de clientes cadastrados
+        # Get list
         customers = models.list()
 
-        # Declarando lista e convertendo model para message
+        # Transport model to message
         items = []
         for customerModel in customers:
             items.append(
@@ -109,7 +102,7 @@ class CustomerService(remote.Service):
                     location=customerModel.location,
                     created_date=customerModel.created_date))
 
-        # Retornando clientes
+        # Return
         return CustomerCollectionMessage(items=items)
 
     @endpoints.method(Customer_Search_MESSAGE_RESOURCE_CONTAINER,
@@ -117,14 +110,12 @@ class CustomerService(remote.Service):
                       http_method='POST',
                       name='search')
     def search(self, request):
-        """Realiza uma pesquisa dos clientes cadastrados.
+        """ Search a customer by partial name.
         """
-        logging.debug('Executando endpoint de pesquisa de clientes')
-
-        # Obter a lista de clientes cadastrados
+        # Search
         customers = models.search(request)
 
-        # Declarando lista e convertendo model para message
+        # Transport model to message
         items = []
         for customerModel in customers:
             items.append(
@@ -136,7 +127,7 @@ class CustomerService(remote.Service):
                     location=customerModel.location,
                     created_date=customerModel.created_date))
 
-        # Retornando clientes
+        # Return
         return CustomerCollectionMessage(items=items)
 
     @endpoints.method(Customer_MESSAGE_RESOURCE_CONTAINER,
@@ -144,15 +135,13 @@ class CustomerService(remote.Service):
                       http_method='POST',
                       name='save')
     def save(self, request):
-        """Inclui ou atualiza um cliente.
+        """ Add or update a customer.
         """
 
-        logging.debug('Executando endpoint para incluir/atualizar um cliente')
-
-        # Cadastrar/atualizar a compra de um cliente
+        # Save model
         customerModel = models.save(request)
 
-        # Retornando compra persistida
+        # Transport model to message
         return CustomerGetMessage(
             id=customerModel.key.id(),
             name=customerModel.name,
@@ -167,10 +156,11 @@ class CustomerService(remote.Service):
                       http_method='DELETE',
                       name='delete')
     def delete(self, request):
-        """Remove um cliente cadastrado.
+        """ Delete customer by id.
         """
 
-        # Removendo Customer
+        # Delete customer by id
         models.delete(request.id)
 
+        # Return void
         return message_types.VoidMessage()

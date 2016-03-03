@@ -46,7 +46,7 @@ __license__ = "Apache 2.0"
                # email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class PurchaseService(remote.Service):
-    """Serviço destinado ao gerenciamento das compras de produtos no estoque.
+    """ Service for management of purchases to the stock.
     """
 
     @endpoints.method(message_types.VoidMessage,
@@ -54,16 +54,11 @@ class PurchaseService(remote.Service):
                       http_method='GET',
                       name='list')
     def list(self, unused_request):
-        """Retornar a lista de compras realizadas pelo usuário.
+        """ Return the purchases list.
         """
 
-        logging.debug(
-            'Executando endpoint para obter uma compra de produto no estoque')
-
-        # Obter lista de compras cadastradas para a loja
         purchases = models.list()
 
-        # Declarando lista e convertendo model para message
         items = []
         for purchaseModel in purchases:
             items.append(
@@ -95,7 +90,6 @@ class PurchaseService(remote.Service):
                     purchase_link=purchaseModel.purchase_link,
                     created_date=purchaseModel.created_date))
 
-        # Retornando compras
         return PurchaseCollectionMessage(items=items)
 
     # Resource Container para POSTs
@@ -107,16 +101,11 @@ class PurchaseService(remote.Service):
                       http_method='PUT',
                       name='put')
     def put(self, request):
-        """Inclui ou atualiza a loja do usuário.
+        """ Add or update a purchase
         """
 
-        logging.debug(
-            'Executando endpoint para incluir/atualizar uma compra')
-
-        # Cadastrar/atualizar a compra de um produto
         purchaseModel = models.put(request)
 
-        # Retornando compra persistida
         return PurchaseGetMessage(
             id=purchaseModel.key.id(),
             supplier=supplier.SupplierGetMessage(
@@ -155,10 +144,9 @@ class PurchaseService(remote.Service):
                       http_method='DELETE',
                       name='delete')
     def delete(self, request):
-        """Remove uma compra relaizada.
+        """ Remove a purchase.
         """
 
-        # Removendo purchase
         models.delete(request.id)
 
         return message_types.VoidMessage()

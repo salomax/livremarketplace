@@ -42,8 +42,6 @@ class StockItemModel(OpenMarketplaceModel):
     """ Stock item datastore entity.
     """
 
-    # https://cloud.google.com/appengine/docs/python/ndb/properties
-
     # Product
     product = ndb.KeyProperty(kind=product.ProductModel, required=True)
 

@@ -27,52 +27,46 @@ __license__ = "Apache 2.0"
 
 
 class ProductKeyMessage(messages.Message):
-    """Mensagem GET do Produto a ser trafegada pelo endpoint"""
-
-    # Id
+    """ GET message for key product.
+    """
     id = messages.IntegerField(1)
 
 
 class ProductGetMessage(messages.Message):
-    """Mensagem GET do Produto a ser trafegada pelo endpoint"""
+    """ GET message for product.
+    """
 
-    # Id
     id = messages.IntegerField(1)
 
-    # Código de referência
     code = messages.StringField(2, required=True)
 
-    # Nome
     name = messages.StringField(3, required=True)
 
-    # Data criação
     created_date = message_types.DateTimeField(4, required=True)
 
 
 class ProductPostMessage(messages.Message):
-    """Mensagem POST do Produto a ser trafegada pelo endpoint"""
+    """ POST message for product. 
+    """
 
-    # Id
     id = messages.IntegerField(1)
 
-    # Código de referência
     code = messages.StringField(2, required=True)
 
-    # Nome
     name = messages.StringField(3, required=True)
 
 
 class ProductSearchMessage(messages.Message):
-    """Mensagem POST do Produto de pesquisa a ser trafegada pelo endpoint"""
+    """ POST message for search product.
+    """
 
-    # Código de referência
     code = messages.StringField(1, required=False)
 
-    # Nome
     name = messages.StringField(2, required=False)
 
 
 class ProductCollectionMessage(messages.Message):
-    """Coleção de produtos."""
+    """ Products collection.
+    """
 
     items = messages.MessageField(ProductGetMessage, 1, repeated=True)

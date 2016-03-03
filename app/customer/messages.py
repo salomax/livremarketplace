@@ -26,62 +26,67 @@ __license__ = "Apache 2.0"
 
 
 class CustomerKeyMessage(messages.Message):
-    """Cliente da loja. Mensagem GET a ser trafegada pelo endpoint"""
+    """ Endpoint message to customer key.
+    """
 
     # Id
     id = messages.IntegerField(1)
 
 
 class CustomerGetMessage(messages.Message):
-    """Cliente da loja. Mensagem GET a ser trafegada pelo endpoint"""
+    """ Endpoint messageto get a customer.
+    """
 
     # Id
     id = messages.IntegerField(1)
 
-    # Nome
+    # Name
     name = messages.StringField(2, required=True)
 
-    # Email de contato do cliente
+    # Email
     email = messages.StringField(3, required=False)
 
-    # Telefone de contato do cliente
+    # Phone
     phone = messages.StringField(4, required=False)
 
-    # Localização
+    # Location
     location = messages.StringField(5, required=False)
 
-    # Data criação
+    # Insert date
     created_date = message_types.DateTimeField(6, required=True)
 
 
 class CustomerPostMessage(messages.Message):
-    """Cliente da loja. Mensagem POST a ser trafegada pelo endpoint"""
+    """ Endpoint message to post a customer.
+    """
 
     # Id
     id = messages.IntegerField(1)
 
-    # Nome
+    # Name
     name = messages.StringField(2, required=True)
 
-    # Email de contato do cliente
+    # Email
     email = messages.StringField(3, required=False)
 
-    # Telefone de contato do cliente
+    # Phone
     phone = messages.StringField(4, required=False)
 
-    # Localização
+    # Location
     location = messages.StringField(5, required=False)
 
 
 class CustomerSearchMessage(messages.Message):
-    """Cliente da loja. Mensagem POST de pesquisa a ser trafegada pelo endpoint
+    """ Endpoint message to search a customer by name.
     """
 
-    # Nome
-    name = messages.StringField(2, required=True)
+    # Name
+    name = messages.StringField(1)
 
 
 class CustomerCollectionMessage(messages.Message):
-    """Coleção de clientes."""
+    """ Endpoint message to get a customers collection.
+    """
 
+    # Collection
     items = messages.MessageField(CustomerGetMessage, 1, repeated=True)

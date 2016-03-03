@@ -28,84 +28,64 @@ __license__ = "Apache 2.0"
 
 
 class SaleKeyMessage(messages.Message):
-    """Venda. Mensagem GET a ser trafegada pelo endpoint.
+    """ Get message for sale key.
     """
 
-    # Id
     id = messages.IntegerField(1)
 
 
 class SaleGetMessage(messages.Message):
-    """Venda. Mensagem GET a ser trafegada pelo endpoint.
+    """ Get message for sale.
     """
 
-    # Id
     id = messages.IntegerField(1)
 
-    # Cliente
     customer = messages.MessageField(
         customer.CustomerGetMessage, 2, required=True)
 
-    # Produto
     product = messages.MessageField(product.ProductGetMessage, 3, required=True)
 
-    # Quantidade
     quantity = messages.IntegerField(4, required=True)
 
-    # Data Venda
     sale_date = message_types.DateTimeField(5, required=True)
 
-    # Valor Total
     amount = messages.FloatField(6)
 
-    # Tarifa Venda
     fare = messages.FloatField(7)
 
-    # Total Líquido
     net_total = messages.FloatField(8)
 
-    # Cód Rastreamento
     track_code = messages.StringField(9)
 
-    # Data criação
     created_date = message_types.DateTimeField(10, required=True)
 
 
 class SalePostMessage(messages.Message):
-    """Venda. Mensagem POST a ser trafegada pelo endpoint.
+    """ POST message for sale.
     """
 
-    # Id
     id = messages.IntegerField(1)
 
-    # Cliente
     customer = messages.MessageField(
         customer.CustomerKeyMessage, 2, required=True)
 
-    # Produto
     product = messages.MessageField(product.ProductKeyMessage, 3, required=True)
 
-    # Quantidade
     quantity = messages.IntegerField(4, required=True)
 
-    # Data Venda
     sale_date = message_types.DateTimeField(5, required=True)
 
-    # Valor Total
     amount = messages.FloatField(6)
 
-    # Tarifa Venda
     fare = messages.FloatField(7)
 
-    # Total Líquido
     net_total = messages.FloatField(8)
 
-    # Cód Rastreamento
     track_code = messages.StringField(9)
 
 
 class SaleCollectionMessage(messages.Message):
-    """Coleção de vendas.
+    """ Sales collection.
     """
 
     items = messages.MessageField(SaleGetMessage, 1, repeated=True)

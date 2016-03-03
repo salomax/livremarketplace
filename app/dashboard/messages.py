@@ -25,26 +25,23 @@ __license__ = "Apache 2.0"
 
 
 class IntGetMessage(messages.Message):
-    """Mensagem GET a ser trafegada pelo endpoint
-       representando um valor do tipo ponto flutuante.
+    """ Endpoint message to transport int values.
     """
 
-    # Valor
+    # Integer value
     value = messages.IntegerField(1, required=True)
 
 
 class FloatGetMessage(messages.Message):
-    """Mensagem GET a ser trafegada pelo endpoint
-       representando um valor do tipo ponto flutuante.
+    """ Endpoint message to transport float values.
     """
 
-    # Valor
+    # Float value
     value = messages.FloatField(1, required=True)
 
 
 class CashFlowGetMessage(messages.Message):
-    """Mensagem GET a ser trafegada pelo endpoint
-       representando o fluxo de caixa
+    """ Endpoint message to cash flow report
     """
 
     # Period
@@ -64,6 +61,8 @@ class CashFlowGetMessage(messages.Message):
 
 
 class CashFlowCollectionMessage(messages.Message):
-    """Coleção de fluxo de caixa."""
+    """ Cash flow collection message.
+    """
 
+    # Collection
     items = messages.MessageField(CashFlowGetMessage, 1, repeated=True)

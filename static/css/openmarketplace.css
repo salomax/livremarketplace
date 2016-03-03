@@ -16,12 +16,16 @@ body {
 }
 body {
 	color: #666;
-    background-color: #fff;
-    background: url('/img/background.jpg');
-    background-repeat: no-repeat;
-	background-attachment: fixed;
-    background-position: center; 
+    background-color: #222d32;
 }
+
+body.background-city {
+    background: url('/img/background.jpg') !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    background-position: center !important;
+}
+
 .wrapper {
     min-height: 100%;
     position: static;
@@ -96,9 +100,20 @@ body {
 .main-footer {
     background: #fff;
     padding: 15px;
-    color: #444;
-    border-top: 1px solid #d2d6de
+    color: #666;
+    text-align: center;
+    border-top: 1px solid #d2d6de;
 }
+.main-footer i {
+    font-size: 30px;
+    color: #d2d6de; 
+    padding: 5px;   
+}
+
+.main-footer i:hover {
+    color: #303F9F;    
+}
+
 .fixed .main-header,
 .fixed .main-sidebar,
 .fixed .left-side {

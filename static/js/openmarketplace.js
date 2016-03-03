@@ -46,6 +46,7 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 		    	$.menu.build();	
 		    }
 		});
+
 	};
 
 	/**

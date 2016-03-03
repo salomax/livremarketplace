@@ -19,14 +19,17 @@
 import logging
 import endpoints
 import oauth
+from httplib2 import Http
+
 from google.appengine.api import users
 from google.appengine.ext import ndb
+from oauth2client.appengine import AppAssertionCredentials
+
 from protorpc import remote
 from protorpc import messages
 from protorpc import message_types
-from oauth2client.appengine import AppAssertionCredentials
-from httplib2 import Http
 
+from app.exceptions import NotFoundEntityException
 
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
@@ -38,41 +41,38 @@ PLUS_ME_SCOPE = 'https://www.googleapis.com/auth/plus.me'
 
 
 class UserModel(ndb.Model):
-    """Usuário do sistema (model).
+    """ App user model.
     """
 
 
 class UserMessage(messages.Message):
-    """Usuário do sistema (message).
-    """
+
     email = messages.StringField(1)
 
 
 def get_current_user():
 
-    # Obter usuário logado
     current_user = endpoints.get_current_user()
 
-    # Validar usuário
     if current_user is None:
-        logging.error('Ao selecionar o usuário, o mesmo não foi informado.')
-        raise endpoints.NotFoundException('Usuário não informado.')
+        logging.error('Current user is None from email')
+        raise NotFoundEntityException('user.notfound')
 
-    logging.debug('Selecionado usuário %s com sucesso!', current_user.email())
+    logging.debug('User %s retrieved succesful!', current_user.email())
 
     return current_user
 
 
 def get_current_user_key():
-    """Controi um Datastore key para o UserModel entity a partir do usuário atual.
-"""
+    """ Get current user Datastore key.
+    """
 
     return user_key(get_current_user().email())
 
 
 def user_key(email):
-    """Controi um Datastore key para o UserModel entity a partir do email.
-"""
+    """ Get user Datastore key by email.
+    """
 
     return ndb.Key('UserModel', email)
 
@@ -87,7 +87,7 @@ def user_key(email):
                # email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE, PLUS_ME_SCOPE])
 class UserService(remote.Service):
-    """Serviço destinado à obter os dados do usuário.
+    """ Service handles user information.
     """
 
     @endpoints.method(message_types.VoidMessage,
@@ -95,5 +95,7 @@ class UserService(remote.Service):
                       http_method='GET',
                       name='get')
     def get(self, request):
+        """ Get user data from current user.
+        """
 
         return UserMessage(email=get_current_user().email())

@@ -46,7 +46,7 @@ __license__ = "Apache 2.0"
                # email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class SupplierService(remote.Service):
-    """Serviço destinado ao gerenciamento dos fornecedores da loja.
+    """ Service for the management of suppliers.
     """
 
     # Resource Container para POSTs
@@ -60,16 +60,11 @@ class SupplierService(remote.Service):
                       http_method='GET',
                       name='list')
     def list(self, unused_request):
-        """Retornar a lista de fornecedores cadastrados.
+        """ Return the list of suppliers.
         """
 
-        logging.debug(
-            'Executando endpoint para obter a lista de fornecedores')
-
-        # Obter a lista de fornecedores cadastrados
         suppliers = models.list()
 
-        # Declarando lista e convertendo model para message
         items = []
         for supplierModel in suppliers:
             items.append(
@@ -81,7 +76,6 @@ class SupplierService(remote.Service):
                     location=supplierModel.location,
                     created_date=supplierModel.created_date))
 
-        # Retornando fornecedores
         return SupplierCollectionMessage(items=items)
 
     @endpoints.method(Supplier_Search_MESSAGE_RESOURCE_CONTAINER,
@@ -89,14 +83,11 @@ class SupplierService(remote.Service):
                       http_method='POST',
                       name='search')
     def search(self, request):
-        """Realiza uma pesquisa dos fornecedores cadastrados.
+        """ Performs a search of suppliers.
         """
-        logging.debug('Executando endpoint de pesquisa de fornecedores')
 
-        # Obter a lista de fornecedores cadastrados
         suppliers = models.search(request)
 
-        # Declarando lista e convertendo model para message
         items = []
         for supplierModel in suppliers:
             items.append(
@@ -108,7 +99,6 @@ class SupplierService(remote.Service):
                     location=supplierModel.location,
                     created_date=supplierModel.created_date))
 
-        # Retornando fornecedores
         return SupplierCollectionMessage(items=items)
 
     @endpoints.method(Supplier_MESSAGE_RESOURCE_CONTAINER,
@@ -116,16 +106,11 @@ class SupplierService(remote.Service):
                       http_method='POST',
                       name='save')
     def save(self, request):
-        """Inclui ou atualiza um fornecedor.
+        """ Add or update a supplier.
         """
 
-        logging.debug(
-            'Executando endpoint para incluir/atualizar um fornecedor')
-
-        # Cadastrar/atualizar a compra de um fornecedor
         supplierModel = models.save(request)
 
-        # Retornando compra persistida
         return SupplierGetMessage(
             id=supplierModel.key.id(),
             name=supplierModel.name,
@@ -144,10 +129,9 @@ class SupplierService(remote.Service):
                       http_method='DELETE',
                       name='delete')
     def delete(self, request):
-        """Remove um fornecedor cadastrado.
+        """ Remove supplier.
         """
 
-        # Removendo Supplier
         models.delete(request.id)
 
         return message_types.VoidMessage()

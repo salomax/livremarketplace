@@ -46,10 +46,9 @@ __license__ = "Apache 2.0"
                # you must always include the email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class ProductService(remote.Service):
-    """Serviço destinado ao gerenciamento dos produtos comercializados
+    """ Service for management of products.
     """
 
-    # Resource Container para POSTs
     Product_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(
         ProductPostMessage)
     Product_Search_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(
@@ -60,16 +59,11 @@ class ProductService(remote.Service):
                       http_method='GET',
                       name='list')
     def list(self, unused_request):
-        """Retornar a lista de produtos cadastrados.
+        """ Return to product list.
         """
 
-        logging.debug(
-            'Executando endpoint para obter a lista dos produtos cadastrados')
-
-        # Obter a lista de produtos cadastrados
         products = models.list()
 
-        # Declarando lista e convertendo model para message
         items = []
         for ProductModel in products:
             items.append(
@@ -79,7 +73,6 @@ class ProductService(remote.Service):
                     name=ProductModel.name,
                     created_date=ProductModel.created_date))
 
-        # Retornando produtos
         return ProductCollectionMessage(items=items)
 
     @endpoints.method(Product_Search_MESSAGE_RESOURCE_CONTAINER,
@@ -87,14 +80,11 @@ class ProductService(remote.Service):
                       http_method='POST',
                       name='search')
     def search(self, request):
-        """Realiza uma pesquisa dos produtos cadastrados.
+        """ Perform a search product.
         """
-        logging.debug('Executando endpoint de pesquisa de produtos')
 
-        # Obter a lista de produtos cadastrados
         products = models.search(request)
 
-        # Declarando lista e convertendo model para message
         items = []
         for ProductModel in products:
             items.append(
@@ -104,7 +94,6 @@ class ProductService(remote.Service):
                     name=ProductModel.name,
                     created_date=ProductModel.created_date))
 
-        # Retornando produtos
         return ProductCollectionMessage(items=items)
 
     @endpoints.method(Product_MESSAGE_RESOURCE_CONTAINER,
@@ -112,15 +101,11 @@ class ProductService(remote.Service):
                       http_method='POST',
                       name='save')
     def save(self, request):
-        """Inclui ou atualiza um produto.
+        """ Add or update a product.
         """
 
-        logging.debug('Executando endpoint para incluir/atualizar um produto')
-
-        # Cadastrar/atualizar a compra de um produto
         ProductModel = models.put(request)
 
-        # Retornando compra persistida
         return ProductGetMessage(
             id=ProductModel.key.id(),
             code=ProductModel.code,
@@ -137,10 +122,9 @@ class ProductService(remote.Service):
                       http_method='DELETE',
                       name='delete')
     def delete(self, request):
-        """Remove um produto cadastrado.
+        """ remove a product.
         """
 
-        # Removendo Product
         models.delete(request.id)
 
         return message_types.VoidMessage()

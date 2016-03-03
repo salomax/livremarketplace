@@ -45,7 +45,7 @@ __license__ = "Apache 2.0"
                # if you use OAuth
                scopes=[endpoints.EMAIL_SCOPE])
 class DashboardService(remote.Service):
-    """Serviço destinado ao acompanhamento dos indicadores.
+    """ Service for the monitoring of indicators.
     """
 
     @endpoints.method(message_types.VoidMessage,
@@ -53,7 +53,7 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='count_customers')
     def count_customers(self, unused_request):
-        """Retornar a quantidade total de clientes.
+        """ Count how many customers there are.
         """
 
         count_customers = models.calculate_count_customers()
@@ -65,7 +65,7 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='count_sales')
     def count_sales(self, unused_request):
-        """Retornar a quantidade total de vendas.
+        """ Count how many sales there are.
         """
 
         count_sales = models.calculate_count_sales()
@@ -77,7 +77,7 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='average_ticket')
     def average_ticket(self, unused_request):
-        """Retornar o valor médio do ticket.
+        """ Calculate average ticket sale.
         """
 
         average_ticket = models.calculate_average_ticket()
@@ -89,7 +89,7 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='profit_margin')
     def profit_margin(self, unused_request):
-        """Retornar o valor médio da margem de lucro.
+        """ Calculate total profit.
         """
 
         profit_margin = models.calculate_profit_margin()
@@ -101,7 +101,7 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='revenue')
     def revenue(self, unused_request):
-        """Retornar o valor totalizado do faturamento.
+        """ Calculate revenue.
         """
 
         total_revenue = models.calculate_total_revenue()
@@ -113,7 +113,7 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='net_profit')
     def net_profit(self, unused_request):
-        """Retornar o valor totalizado do lucro líquido.
+        """ Calculate net profit.
         """
 
         net_profit = models.calculate_total_net_profit()
@@ -130,15 +130,11 @@ class DashboardService(remote.Service):
                       http_method='GET',
                       name='cash_flow')
     def cash_flow(self, request):
-        """Retornar os valores do fluxo de caixa sumarizados
-           mensalmente de compras x vendas.
+        """ Calculate cash flow.
         """
 
-        # Obter os valores do fluxo de caixa sumarizados mensalmente de compras
-        # x vendas
         cash_flow = models.cash_flow(request.count)
 
-        # Declarando lista e convertendo model para message
         items = []
         for model in cash_flow:
             print model
@@ -150,5 +146,4 @@ class DashboardService(remote.Service):
                     balance=model['balance'],
                     accumulated_balance=model['accumulated_balance']))
 
-        # Retornando clientes
         return CashFlowCollectionMessage(items=items)

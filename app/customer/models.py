@@ -33,82 +33,90 @@ __license__ = "Apache 2.0"
 
 
 # Index autocomplete cliente
-CUSTOMER_AUTOCOMPLETE_INDEX_NAME = 'customer_autocomplete_index'
+CUSTOMER_NAME_INDEX = 'customer_autocomplete_index'
 AUTOCOMPLETE_SEARCH_LIMIT = 5
 
-
-def get_autocomplete_index():
-    return search_api.Index(name=CUSTOMER_AUTOCOMPLETE_INDEX_NAME)
-
-
-class CustomerModel(ndb.Model):
-    """Entidade representa um cliente da loja"""
-
-    # Nome do cliente
-    name = ndb.StringProperty(required=True)
-
-    # Email de contato do cliente
-    email = ndb.StringProperty(required=False)
-
-    # Telefone de contato do cliente
-    phone = ndb.StringProperty(required=False)
-
-    # Localização
-    location = ndb.StringProperty(required=False)
-
-    # Data criação
-    created_date = ndb.DateTimeProperty(auto_now_add=True)
-
+# Index usage
 # http://stackoverflow.com/questions/12899083/partial-matching-gae-search-api
 
 
+def get_name_index():
+    """ Customer index by name.
+    """
+    return search_api.Index(name=CUSTOMER_NAME_INDEX)
+
+
+class CustomerModel(ndb.Model):
+    """ Customer model.
+    """
+
+    # Name
+    name = ndb.StringProperty(required=True)
+
+    # Email
+    email = ndb.StringProperty(required=False)
+
+    # Phone
+    phone = ndb.StringProperty(required=False)
+
+    # Location
+    location = ndb.StringProperty(required=False)
+
+    # Log date at insert moment
+    created_date = ndb.DateTimeProperty(auto_now_add=True)
+
+
 def update_index(customer):
+    """ Update index by customer id.
+    """
+
+    # Create partials
     name = ','.join(util.tokenize_autocomplete(customer.name))
+
+    # Create a doc
     document = search_api.Document(
         doc_id=str(customer.key.id()),
         fields=[search_api.TextField(name='name', value=name)])
-    get_autocomplete_index().put(document)
+
+    # Add doc to index
+    get_name_index().put(document)
 
 
 def remove_index(_id):
-    get_autocomplete_index().delete(str(_id))
-
-
-def get(id):
-    """Selecionar um cliente cadastrado pelo id.
+    """  Remove index by id.
     """
-    # Obtendo marketplace como parent
-    marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o cliente pelo pai e id
-    customer = ndb.Key('CustomerModel', int(
-        id), parent=marketplaceModel.key).get()
-
-    logging.debug("Cliente encontrado com sucesso")
-
-    return customer
+    # Delete
+    get_name_index().delete(str(_id))
 
 
 def get_customer_query():
-    """Retorna a query do CustomerModel.
+    """ Get customer model query.
     """
 
-    logging.debug("Listando os clientes cadastrados")
+    # Get user marketplace
+    marketplaceModel = marketplace.get_marketplace()
 
-    # Identificando usuário da requisição
-    email = user.get_current_user().email()
-
-    logging.debug("Obtendo a entidade da loja para o usuario %s", email)
-
-    # Obtendo marketplace como parent
-    marketplaceModel = marketplace.get(email)
-
-    # Realizando query, listando os clientes
+    # Get query, notice marketplace as parent
     query = CustomerModel.query(ancestor=marketplaceModel.key)
 
+    # Return query
     return query
+
+
+def get(id):
+    """ Get customer by its id.
+    """
+
+    # Get marketplace
+    marketplaceModel = marketplace.get_marketplace()
+
+    # Get customer by id, notice marketplace as parent
+    customer = ndb.Key('CustomerModel', int(
+        id), parent=marketplaceModel.key).get()
+
+    # Return customer
+    return customer
 
 
 def list():
@@ -126,100 +134,94 @@ def list():
 
 
 def search(customer):
-    """Pesquisa dos clientes cadastrados na loja.
+    """ Search 
     """
 
-    logging.debug("Searching customers, using index")
-
-    # Realizando a pesquisa
-    search_results = get_autocomplete_index().search(search_api.Query(
+    # Build search by name using index
+    search_results = get_name_index().search(search_api.Query(
         query_string="name:{name}".format(name=customer.name),
         options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
 
-    # Convertendo docs para model
+    # Transport results do model
     results = []
     for doc in search_results:
+
+        # Get customer model
         customer = get(int(doc.doc_id))
 
+        # Handle if not exists
         if customer is not None:
             results.append(customer)
         else:
             remove_index(doc.doc_id)
             logging.warning(
                 'Index %s is not up-to-date to doc %s and it has removed!',
-                CUSTOMER_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
+                CUSTOMER_NAME_INDEX, doc.doc_id)
 
-    # Retornando resultado
+    # Return
     return results
 
 
 @ndb.transactional
 def save(customer):
-    """Inclui ou atualiza um cliente.
+    """ Add or update a customer in datastore.
     """
 
-    logging.debug("Persistindo um cliente na loja")
-
-    # Obtendo marketplace como parent
+    # Get marketplace
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug(
-        "Criando model para o cliente ou selecionando o existente")
-
+    # Get customer model if exists
+    # or instantiate one, instead.
     if customer.id is not None:
         customerModel = ndb.Key('CustomerModel', int(customer.id),
                                 parent=marketplaceModel.key).get()
     else:
         customerModel = CustomerModel(parent=marketplaceModel.key)
 
-    # Criando model
+    # Pass values
     customerModel.name = customer.name
     customerModel.email = customer.email
     customerModel.phone = customer.phone
     customerModel.location = customer.location
 
-    # Persistindo cliente
-    logging.debug("Persistindo cliente...")
-
+    # Persist ir
     customerModel.put()
 
-    logging.debug("Persistido cliente %d com sucesso na loja %s",
+    logging.debug("Customer id %d saved success to %s",
                   customerModel.key.id(), marketplaceModel.name)
 
-    # Atualizando índice
+    # Update index
     update_index(customerModel)
-    logging.debug("Índice atualizado com sucesso para o cliente %s",
+
+    logging.debug("Index updated to customer id %s",
                   customerModel.key.id())
 
-    # Retornando cliente cadastrado com o id
+    # Return
     return customerModel
 
 
 @ndb.transactional
 def delete(id):
-    """Remove um cliente cadastrado.
+    """ Remove customer by id.
     """
 
-    logging.debug("Removendo o cliente %d persistido na loja", id)
-
-    # Obtendo marketplace como parent
+    # Get marketplace
     marketplaceModel = marketplace.get_marketplace()
 
-    logging.debug("Loja encontrada com sucesso")
-
-    # Realizando query, selecionando o cliente pelo pai e id
+    # Get customer
     customer = ndb.Key('CustomerModel', int(
         id), parent=marketplaceModel.key).get()
 
+    # Handle if not exists
     if customer is None:
         raise NotFoundEntityException(message='messages.customer.notfound')
 
-    logging.debug("cliente encontrado com sucesso")
-
+    # Remove from datastore
     customer.key.delete()
 
-    remove_index(id)
-    logging.debug("Índice atualizado com sucesso para o cliente %s",
-                  id)
+    logging.debug("Customer id %s removed success!", id)
 
-    logging.debug("cliente removido com sucesso")
+    # Update index
+    remove_index(id)
+
+    logging.debug("Index updated to customer id %s", id)

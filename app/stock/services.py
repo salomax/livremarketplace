@@ -44,7 +44,7 @@ __license__ = "Apache 2.0"
                # email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class StockService(remote.Service):
-    """ Endpoint service to manages stock.
+    """ Endpoint service to manage stock.
     """
 
     @endpoints.method(message_types.VoidMessage,
@@ -55,10 +55,8 @@ class StockService(remote.Service):
         """ Endpoint method aims to list all stock items.
         """
 
-        # List all stock items
         stockItems = models.list()
 
-        # Declarando lista e convertendo model para message
         items = []
         for stockItem in stockItems:
             product = stockItem.product.get()
@@ -72,7 +70,6 @@ class StockService(remote.Service):
                 ),
                     quantity=stockItem.quantity))
 
-        # Retornando compras
         return StockCollectionMessage(items=items)
 
     @endpoints.method(message_types.VoidMessage,
@@ -83,10 +80,8 @@ class StockService(remote.Service):
         """ Endpoint method aims to list all stock items.
         """
 
-        # List all stock items
         stockItems = models.listLog()
 
-        # Declarando lista e convertendo model para message
         items = []
         for stockItem in stockItems:
             product = stockItem.product.get()
@@ -101,5 +96,4 @@ class StockService(remote.Service):
                     quantity=stockItem.quantity,
                     created_date=stockItem.created_date))
 
-        # Retornando compras
         return StockCollectionMessage(items=items)

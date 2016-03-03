@@ -42,7 +42,7 @@ __license__ = "Apache 2.0"
                # you must always include the email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class MarketplaceService(remote.Service):
-    """Serviço destinado ao gerenciamento da loja.
+    """ Service aims to manage the user marketplaces.
     """
 
     @endpoints.method(message_types.VoidMessage,
@@ -50,40 +50,29 @@ class MarketplaceService(remote.Service):
                       http_method='GET',
                       name='get')
     def get(self, unused_request):
-        """Retornar a loja do usuário.
+        """ Get current user marketplace.
         """
 
-        logging.debug(
-            'Executando endpoint para obter a marketplace (loja) do usuário')
-
-        # obter marketplaces (lojas) do usuário
         marketplaceModel = models.get(user.get_current_user().email())
 
-        # retorna a marketplace (loja) do usuário
         return messages.MarketplaceGetMessage(
             name=marketplaceModel.name,
             created_date=marketplaceModel.created_date)
 
-    # Resource Container para POSTs
     MARKETPLACE_MESSAGE_RESOURCE_CONTAINER = endpoints.ResourceContainer(
         messages.MarketplacePostMessage)
 
     @endpoints.method(MARKETPLACE_MESSAGE_RESOURCE_CONTAINER,
                       messages.MarketplaceGetMessage,
                       http_method='POST',
-                      name='put')
-    def put(self, request):
-        """Atualizar a loja do usuário.
+                      name='save')
+    def save(self, request):
+        """ Add or update a marketplace to current user.
         """
 
-        logging.debug(
-            'Executando endpoint para atualizar loja do usuário')
-
-        # Atualizar marketplace (loja) do usuário
         marketplaceModel = models.put(
             email=user.get_current_user().email(), name=request.name)
 
-        # retorna a marketplace (loja) do usuário
         return messages.MarketplaceGetMessage(
             name=marketplaceModel.name,
             created_date=marketplaceModel.created_date)

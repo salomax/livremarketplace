@@ -47,7 +47,7 @@ __license__ = "Apache 2.0"
                # email scope if you use OAuth.
                scopes=[endpoints.EMAIL_SCOPE])
 class SaleService(remote.Service):
-    """Serviço destinado ao gerenciamento das vendas.
+    """ Service for management of sales.
     """
 
     # Resource Container para POSTs
@@ -59,16 +59,11 @@ class SaleService(remote.Service):
                       http_method='GET',
                       name='list')
     def list(self, unused_request):
-        """Retornar a lista de clientes cadastrados.
+        """ Return to the list of clients.
         """
 
-        logging.debug(
-            'Executando endpoint para obter a lista de clientes cadastrados')
-
-        # Obter a lista de clientes cadastrados
         sales = models.list()
 
-        # Declarando lista e convertendo model para message
         items = []
         for saleModel in sales:
 
@@ -102,7 +97,6 @@ class SaleService(remote.Service):
                     track_code=saleModel.track_code,
                     created_date=saleModel.created_date))
 
-        # Retornando clientes
         return SaleCollectionMessage(items=items)
 
     @endpoints.method(Sale_MESSAGE_RESOURCE_CONTAINER,
@@ -110,12 +104,8 @@ class SaleService(remote.Service):
                       http_method='POST',
                       name='save')
     def save(self, request):
-        """Inclui ou atualiza uma venda.
+        """ Add or update a sale
         """
-
-        logging.debug('Executando endpoint para incluir/atualizar uma venda')
-
-        # Cadastrar/atualizar a compra de um cliente
         saleModel = models.save(request)
 
         # Get entities children 
@@ -157,10 +147,9 @@ class SaleService(remote.Service):
                       http_method='DELETE',
                       name='delete')
     def delete(self, request):
-        """Remove um cliente cadastrado.
+        """ Remove a sale
         """
 
-        # Removendo Sale
         models.delete(request.id)
 
         return message_types.VoidMessage()
