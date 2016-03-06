@@ -38,6 +38,13 @@
      */
     $.customer.api = {
 
+        SERVICE_NAME : 'product',
+        VERSION : 'v1',
+
+        service : function(method) {
+            return ['/', $.customer.api.SERVICE_NAME, '/', $.customer.api.VERSION, '/', method].join(''); 
+        },
+
         /* 
          * Método destinado à pesquisar pelo nome ou código os clientes cadastrados.
          */
@@ -45,7 +52,7 @@
 
             // Execute customers delete endpoint 
             return $.api.request({
-                path : '/customer/v1/search',
+                path : $.customer.api.service('search'),
                 method : 'POST',
                 body : _data,
                 dialogError : {
@@ -63,7 +70,7 @@
 
             // Execute custumers delete endpoint 
             return $.api.request({
-                path : '/customer/v1/save',
+                path : $.customer.api.service('save'),
                 method : 'POST',
                 body : _data,
                 progressBar : $('.progress-bar-form'),
@@ -86,7 +93,7 @@
 
             // Execute custumers delete endpoint 
             return $.api.request({
-                path : '/customer/v1/' + _id,
+                path : $.customer.api.service(_id),
                 method : 'DELETE',
                 progressBar : $('.progress-bar-table'),
                 dialogSuccess : {
@@ -103,7 +110,7 @@
 
         list : function(options) {
             return $.api.request($.util.mergeObjects({
-                path : '/customer/v1/list'
+                path : $.customer.api.service('list')
             }, options));    
         }
 

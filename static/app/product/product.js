@@ -38,6 +38,13 @@
 	 */
 	$.product.api = {
 
+        SERVICE_NAME : 'product',
+        VERSION : 'v1',
+
+        service : function(method) {
+            return ['/', $.product.api.SERVICE_NAME, '/', $.product.api.VERSION, '/', method].join(''); 
+        },
+
 		/* 
 		 * Método destinado à pesquisar pelo nome ou código os produtos cadastrados.
 		 */
@@ -45,7 +52,7 @@
 
             // Execute product delete endpoint 
             return $.api.request({
-                path : '/product/v1/search',
+                path : $.product.api.service('search'),
                 method : 'POST',
                 body : _data,
                 dialogError : {
@@ -63,7 +70,7 @@
 
             // Execute custumers delete endpoint 
             return $.api.request({
-                path : '/product/v1/save',
+                path : $.product.api.service('save'),
                 method : 'POST',
                 body : _data,
                 progressBar : $('.progress-bar-form'),
@@ -86,7 +93,7 @@
 
             // Execute custumers delete endpoint 
             return $.api.request({
-                path : '/product/v1/' + _id,
+                path : $.product.api.service(_id),
                 method : 'DELETE',
                 progressBar : $('.progress-bar-table'),
                 dialogError : {
@@ -99,7 +106,7 @@
 
         list : function(options) {
             return $.api.request($.util.mergeObjects({
-                path : '/product/v1/list'
+                path : $.product.api.service('list')
             }, options));    
         }
 

@@ -228,7 +228,7 @@
                 pageList: [15],
                 data: _data.items,
                 pagination: true,
-                search: true,
+                search: false,
                 // striped: true
             });
 

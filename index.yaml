@@ -54,6 +54,12 @@ indexes:
   - name: sale_date
   - name: amount
 
+- kind: SaleModel
+  ancestor: yes
+  properties:
+  - name: sale_date
+    direction: desc
+
 - kind: SupplierModel
   ancestor: yes
   properties:

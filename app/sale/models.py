@@ -92,7 +92,8 @@ def list():
     """ List all sales.
     """
 
-    sales = get_sales_query().fetch()
+    sales = get_sales_query().order(
+        -SaleModel.sale_date).fetch()
 
     return sales
 

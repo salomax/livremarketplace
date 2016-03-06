@@ -183,7 +183,7 @@
 					pageList : [15],
 					data : _data.items,
 					pagination : true,
-					search : true,
+					search : false,
 					detailView : true,
 					// striped : true,
 			        icons: {
