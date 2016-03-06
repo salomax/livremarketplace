@@ -170,13 +170,17 @@ def save(customer):
     # Get marketplace
     marketplaceModel = marketplace.get_marketplace()
 
+    logging.debug("Get user marketplace")
+
     # Get customer model if exists
     # or instantiate one, instead.
     if customer.id is not None:
-        customerModel = ndb.Key('CustomerModel', int(customer.id),
-                                parent=marketplaceModel.key).get()
+        customerModel = CustomerModel(id=int(customer.id),
+                                parent=marketplaceModel.key)
     else:
         customerModel = CustomerModel(parent=marketplaceModel.key)
+    
+    logging.debug("Customer model created")
 
     # Pass values
     customerModel.name = customer.name

@@ -22,8 +22,8 @@ import models
 from messages import PurchasePostMessage
 from messages import PurchaseGetMessage
 from messages import PurchaseCollectionMessage
-from app.product import messages as product
-from app.supplier import messages as supplier
+from app.product import messages as productMessages
+from app.supplier import messages as supplierMessages
 from app import user
 from app import oauth
 from protorpc import remote
@@ -61,19 +61,21 @@ class PurchaseService(remote.Service):
 
         items = []
         for purchaseModel in purchases:
+            product = purchaseModel.product.get()
+            supplier = purchaseModel.supplier.get()
             items.append(
                 PurchaseGetMessage(
                     id=purchaseModel.key.id(),
-                    supplier=supplier.SupplierGetMessage(
-                        id=purchaseModel.supplier.key.id(),
-                        name=purchaseModel.supplier.name,
-                        created_date=purchaseModel.supplier.created_date
+                    supplier=supplierMessages.SupplierGetMessage(
+                        id=supplier.key.id(),
+                        name=supplier.name,
+                        created_date=supplier.created_date
                     ),
-                    product=product.ProductGetMessage(
-                        id=purchaseModel.product.key.id(),
-                        code=purchaseModel.product.code,
-                        name=purchaseModel.product.name,
-                        created_date=purchaseModel.product.created_date
+                    product=productMessages.ProductGetMessage(
+                        id=product.key.id(),
+                        code=product.code,
+                        name=product.name,
+                        created_date=product.created_date
                     ),
                     quantity=purchaseModel.quantity,
                     purchase_date=purchaseModel.purchase_date,
@@ -98,26 +100,29 @@ class PurchaseService(remote.Service):
 
     @endpoints.method(PURCHASE_MESSAGE_RESOURCE_CONTAINER,
                       PurchaseGetMessage,
-                      http_method='PUT',
-                      name='put')
-    def put(self, request):
+                      http_method='POST',
+                      name='save')
+    def save(self, request):
         """ Add or update a purchase
         """
 
-        purchaseModel = models.put(request)
+        purchaseModel = models.save(request)
+
+        product = purchaseModel.product.get()
+        supplier = purchaseModel.supplier.get()
 
         return PurchaseGetMessage(
             id=purchaseModel.key.id(),
-            supplier=supplier.SupplierGetMessage(
-                id=purchaseModel.supplier.key.id(),
-                name=purchaseModel.supplier.name,
-                created_date=purchaseModel.supplier.created_date
+            supplier=supplierMessages.SupplierGetMessage(
+                id=supplier.key.id(),
+                name=supplier.name,
+                created_date=supplier.created_date
             ),
-            product=product.ProductGetMessage(
-                id=purchaseModel.product.key.id(),
-                code=purchaseModel.product.code,
-                name=purchaseModel.product.name,
-                created_date=purchaseModel.product.created_date
+            product=productMessages.ProductGetMessage(
+                id=product.key.id(),
+                code=product.code,
+                name=product.name,
+                created_date=product.created_date
             ),
             quantity=purchaseModel.quantity,
             purchase_date=purchaseModel.purchase_date,

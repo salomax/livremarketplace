@@ -18,10 +18,14 @@
 
 import logging
 import datetime
+
 from app import user
 from app import util
+
 from app.exceptions import NotFoundEntityException
+from app.exceptions import IntegrityViolationException
 from app.marketplace import models as marketplace
+
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
 
@@ -100,11 +104,15 @@ def search(supplier):
     """ Search supplier by name.
     """
 
+    results = []
+
+    if not supplier.name:
+        return results
+
     search_results = get_autocomplete_index().search(search_api.Query(
         query_string="name:{name}".format(name=supplier.name),
         options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
 
-    results = []
     for doc in search_results:
         supplier = get(int(doc.doc_id))
 
@@ -124,29 +132,45 @@ def save(supplier):
     """Inclui ou atualiza um fornecedor.
     """
 
+    # Get parent
     marketplaceModel = marketplace.get_marketplace()
 
+    logging.debug("Get user marketplace")
+
     if supplier.id is not None:
-        supplierModel = ndb.Key('SupplierModel', int(supplier.id),
-                                parent=marketplaceModel.key).get()
+
+        # Create supplier with id
+        supplierModel = SupplierModel(
+            id=int(supplier.id), parent=marketplaceModel.key)
+
     else:
+
+        # Create supplier with random unique id
         supplierModel = SupplierModel(parent=marketplaceModel.key)
 
+    logging.debug("Supplier model created")
+
+    # Set attributes
     supplierModel.name = supplier.name
     supplierModel.email = supplier.email
     supplierModel.phone = supplier.phone
     supplierModel.location = supplier.location
 
+    logging.debug("Set attributes ok")
+
+    # Perstite it
     supplierModel.put()
 
-    logging.debug("Supplier %d persisted successfully!",
+    logging.debug("Supplier %d persisted successfully",
                   supplierModel.key.id())
 
+    # Update index
     update_index(supplierModel)
 
     logging.debug("Index updated to supplier %s",
                   supplierModel.key.id())
 
+    # Return it
     return supplierModel
 
 
@@ -155,16 +179,32 @@ def delete(id):
     """ Remove supplier by id.
     """
 
+    logging.debug("Removing supplier %d", id)
+
     marketplaceModel = marketplace.get_marketplace()
 
-    supplier = ndb.Key('SupplierModel', int(
-        id), parent=marketplaceModel.key).get()
+    supplierKey = ndb.Key('SupplierModel', int(
+        id), parent=marketplaceModel.key)
 
-    if supplier is None:
+    if supplierKey is None:
         raise NotFoundEntityException(message='messages.supplier.notfound')
 
-    logging.debug("Supplier removed")
+    logging.debug("Supplier %d found it!", id)
 
-    supplier.key.delete()
+    # Are there purchases um this supplier,
+    # if true, is not possible to delete
+    from app.purchase import models as purchase
+    if purchase.has_purchases_by_supplier(supplierKey) == True:
+        raise IntegrityViolationException(
+            message='messages.supplier.purchasesintegrityviolation')
 
-    logging.debug("Supplier index removed")
+    logging.debug("Check constraint validation OK")
+
+    # Delete supplier
+    supplierKey.delete()
+
+    logging.debug("Supplier removed successfully")
+
+    remove_index(id)
+
+    logging.debug("Supplier index updated successfully")

@@ -29,12 +29,15 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
  */
  !function($) {
 
+ 	$.locale = 'pt-BR';
+
  	$.main = {};
 
  	$.main.load = function() {
 
  		// Definir o locale padrão brasileiro para os plugins.
-		moment.locale('pt-br'); 
+		moment.locale($.locale); 
+
 		$.i18n.properties({
 		    name:'messages', 
 		    path:'bundle/', 
@@ -188,7 +191,10 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 						title : messages.menu.purchase.title,
 						subtitle : messages.menu.purchase.subtitle,
 						html : '/purchase/purchase.html', 
-						script : '/purchase/purchase.js'
+						script : '/purchase/purchase.js',
+						callback : function() {
+							$.purchase.view.loadPage();
+						}
 					}, 
 					{
 						icon : 'ion-social-usd',
@@ -317,12 +323,16 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 				// Aplicar máscaras (inputmask)
 				$('input[data-inputmask]').inputmask();
 
-				// Aplicar datepicker
-				//Date range picker
+				// Apply datepicker
 				$('input.datepicker').datepicker({
-					language: 'pt-BR'
+					language: $.locale,
+					autoclose: true
 				});
-				
+				// http://stackoverflow.com/questions/21882279/set-default-date-bootstrap-datepicker
+				$('input.datepicker').datepicker('setDate', new Date());
+				$('input.datepicker').datepicker('update');
+				$('input.datepicker').val('');
+
 				$('section.content').fadeIn('slow');
 
 			});
@@ -538,19 +548,23 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 $.fn.populate = function(data) {
 	var _form = $(this);
 	$.each(json2html_name_list(data), function(key, value) {
-	    var $ctrl = $('[name="'+key+'"]', _form);  
-	    switch($ctrl.attr("type")) {  
-	        case "text" :   
-	        case "hidden":  
-	        	$ctrl.val(value);   
-	        break;   
-	        case "radio" : case "checkbox":   
-	        $ctrl.each(function(){
-	           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
-	        break;  
-	        default:
-	        $ctrl.val(value); 
-	    }  
+	    var $ctrl = $('[name="' + key + '"]', _form);  
+	    if ($ctrl.is("input")) {
+		    switch($ctrl.attr("type")) {  
+		        case "text" :   
+		        case "hidden":  
+		        	$ctrl.val(value);   
+		        break;   
+		        case "radio" : case "checkbox":   
+		        $ctrl.each(function(){
+		           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
+		        break;  
+		        default:
+		        $ctrl.val(value); 
+		    }  
+	    } else if ($ctrl.is("select")) {
+	    	$ctrl.trigger('initSelect', [data[key.split("[")[0]]]);
+	    }
     });  
 }
 json2html_name_list = function (json, result, parent){
@@ -622,6 +636,68 @@ $.fn.progress = function(percent, message) {
 		$(this).slideDown();
 		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
 	}
+};
+
+$.fn.$elect = function(selectOptions) {
+
+	// Init validation
+	if (!selectOptions || !selectOptions.search || !selectOptions.formatData) {
+		console.warning('$elect initialized inappropriately');
+		return;
+	}
+
+	// Get select element
+	$ctrl = $(this);
+
+	// workround to update data in select2
+	// https://github.com/select2/select2/issues/2830#issuecomment-74971872
+	$ctrl.bind('initSelect', function(event, _data) {
+			_this = $(this);
+			options = {
+			  data : [],
+			  // placeholder: (selectOptions.placeholder? selectOptions.placeholder : ''),
+			  // allowClear: true,
+			  ajax: {
+			  	transport : function (params, success, failure) {
+			  		if (!params.data.term) return;
+			  		selectOptions.search(params.data.term)
+			  		.then(function(response) {
+						success(response);
+					});	
+			  	},
+			  	processResults: function(response) {
+			  		if (!selectOptions.getItems(response)) return [];
+					return {
+	                    results: $.map(selectOptions.getItems(response), function(item) {
+	                        return selectOptions.formatData(item);
+	                    })
+	                };
+			    }
+			  },
+			  width: '100%',
+			  templateResult: function(data) {
+			  	if (data.loading) {
+			  		return messages.select.search;
+			  	}
+			  	return data.text;
+			  }
+			};
+			if (_data) {
+				options = $.util.mergeObjects(options, {
+					data : [selectOptions.formatData(_data)]
+				})
+			}
+			_this.select2(options);	
+	});
+
+	// Reset selects
+	$ctrl.closest("form").bind('reset', function() {
+		$('select').select2("val", "");
+	});
+
+	// Init
+	$ctrl.trigger('initSelect');
+
 };
 
 /**

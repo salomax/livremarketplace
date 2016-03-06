@@ -52,10 +52,13 @@
 .skin-blue .content-header {
     background: transparent
 }
-.skin-blue .wrapper,
+.wrapper {
+    background-color: transparent;    
+}
+.skin-blue ,
 .skin-blue .main-sidebar,
 .skin-blue .left-side {
-    background-color: #222d32
+    background-color: #222d32;
 }
 .skin-blue .user-panel>.info,
 .skin-blue .user-panel>.info>a {

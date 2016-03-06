@@ -82,7 +82,6 @@ class ProductService(remote.Service):
     def search(self, request):
         """ Perform a search product.
         """
-
         products = models.search(request)
 
         items = []
@@ -104,7 +103,7 @@ class ProductService(remote.Service):
         """ Add or update a product.
         """
 
-        ProductModel = models.put(request)
+        ProductModel = models.save(request)
 
         return ProductGetMessage(
             id=ProductModel.key.id(),

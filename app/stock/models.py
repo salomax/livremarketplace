@@ -66,7 +66,7 @@ def update_stock(item, calculates):
     query = StockItemModel().get_query()
 
     # Filter by product
-    stock = query.filter(StockItemModel.product == item.product.key).get()
+    stock = query.filter(StockItemModel.product == item.product).get()
 
     # If it does not exists create new one...
     if stock is None:
@@ -76,7 +76,7 @@ def update_stock(item, calculates):
 
         # Create stock item
         stock = StockItemModel(parent=marketplaceModel.key,
-                               product=item.product.key)
+                               product=item.product)
 
     # Calculate the quantity
     stock.quantity = stock.quantity + calculates(item.quantity)
@@ -91,7 +91,7 @@ def update_stock(item, calculates):
 
     # Add stock log
     stockLog = StockLogModel(parent=stock.key,
-                             product=item.product.key,
+                             product=item.product,
                              quantity=calculates(item.quantity))
 
     # Update datastore

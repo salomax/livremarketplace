@@ -21,6 +21,7 @@ import datetime
 from app import user
 from app import util
 from app.exceptions import NotFoundEntityException
+from app.exceptions import IntegrityViolationException
 from app.marketplace import models as marketplace
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
@@ -34,12 +35,12 @@ __license__ = "Apache 2.0"
 
 # Index autocomplete produto
 # http://stackoverflow.com/questions/12899083/partial-matching-gae-search-api
-PRODUCT_AUTOCOMPLETE_INDEX_NAME = 'product_autocomplete_index'
+PRODUCT_INDEX_NAME = 'product_autocomplete_index'
 AUTOCOMPLETE_SEARCH_LIMIT = 5
 
 
-def get_autocomplete_index():
-    return search_api.Index(name=PRODUCT_AUTOCOMPLETE_INDEX_NAME)
+def get_index():
+    return search_api.Index(name=PRODUCT_INDEX_NAME)
 
 
 class ProductModel(ndb.Model):
@@ -63,11 +64,11 @@ def update_index(product):
         fields=[search_api.TextField(name='code', value=code),
                 search_api.TextField(name='name', value=name)])
 
-    get_autocomplete_index().put(document)
+    get_index().put(document)
 
 
 def delete_index(_id):
-    get_autocomplete_index().delete(str(_id))
+    get_index().delete(str(_id))
 
 
 def get(id):
@@ -100,47 +101,77 @@ def search(product):
     """ Seaching product by some text.
     """
 
+    results = []
+
+    # handling no terms
+    if not product.name and not product.code:
+        return results
+
     # get results from index
-    search_results = get_autocomplete_index().search(search_api.Query(
+    search_results = get_index().search(search_api.Query(
         query_string="code:{code} OR name:{name}".format(
             code=product.code, name=product.name),
         options=search_api.QueryOptions(limit=AUTOCOMPLETE_SEARCH_LIMIT)))
 
     # Getting models
-    results = []
     for doc in search_results:
-        product = get(int(doc.doc_id))
 
-        if product is not None:
+        try:
+
+            product = get(int(doc.doc_id))
+
             results.append(product)
-        else:
-            remove_index(doc.doc_id)
+
+        except NotFoundEntityException:
+
+            delete_index(doc.doc_id)
+
             logging.warning(
                 'Index %s is not up-to-date to doc %s and it has removed!',
-                PRODUCT_AUTOCOMPLETE_INDEX_NAME, doc.doc_id)
+                PRODUCT_INDEX_NAME, doc.doc_id)
 
     return results
 
 
 @ndb.transactional
-def put(product):
+def save(product):
     """ Add or update product.
     """
+
+    # Get parent
     marketplaceModel = marketplace.get_marketplace()
 
+    logging.debug("Get user marketplace")
+
     if product.id is not None:
-        productModel = ndb.Key('ProductModel', int(product.id),
-                               parent=marketplaceModel.key).get()
+
+        # Create product with id
+        productModel = ProductModel(
+            id=int(product.id), parent=marketplaceModel.key)
     else:
+
+        # Create product with random unique id
         productModel = ProductModel(parent=marketplaceModel.key)
 
+    logging.debug("Created product model")
+
+    # Set attributes
     productModel.code = product.code
     productModel.name = product.name
 
+    logging.debug("Set attributes ok")
+
+    # Perstite it
     productModel.put()
 
+    logging.debug("Product model put successfully")
+
+    # Update index
     update_index(productModel)
 
+    logging.debug("Product model index update successfully")
+
+    # Return product
     return productModel
 
 
@@ -149,14 +180,33 @@ def delete(id):
     """ Remove a product.
     """
 
+    logging.debug("Removing product %d", id)
+
     marketplaceModel = marketplace.get_marketplace()
 
-    product = ndb.Key('ProductModel', int(
-        id), parent=marketplaceModel.key).get()
+    productKey = ndb.Key('ProductModel', int(
+        id), parent=marketplaceModel.key)
 
-    if product is None:
+    if productKey is None:
         raise NotFoundEntityException(message='messages.product.notfound')
 
-    product.key.delete()
+    logging.debug("Product %d found it!", id)
 
+    # Are there purchases um this supplier,
+    # if true, is not possible to delete
+    from app.purchase import models as purchase
+    if purchase.has_purchases_by_product(productKey) == True:
+        raise IntegrityViolationException(
+            message='messages.product.purchasesintegrityviolation')
+
+    logging.debug("Check constraint validation OK")
+
+    # Delete product
+    productKey.delete()
+
+    logging.debug("Product removed successfully")
+
+    # Remove from index
     delete_index(id)
+
+    logging.debug("Produc index updated successfully")

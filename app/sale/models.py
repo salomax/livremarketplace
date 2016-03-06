@@ -102,25 +102,44 @@ def save(sale):
     """ Add or remove a sale.
     """
 
+    # Get parent
     marketplaceModel = marketplace.get_marketplace()
 
+    logging.debug("Get user marketplace")
+
     if sale.id is not None:
-        saleModel = ndb.Key('SaleModel', int(sale.id),
-                            parent=marketplaceModel.key).get()
+
+        # Create sale with id
+        saleModel = SaleModel(id=int(sale.id),
+                            parent=marketplaceModel.key)
+
     else:
+
+        # Create sale with random unique id
         saleModel = SaleModel(parent=marketplaceModel.key)
 
+    
+    logging.debug("Sale model created")
+
+    # Get product
     productModel = ndb.Key('ProductModel', int(sale.product.id),
                            parent=marketplaceModel.key)
+
     if productModel is None:
         raise NotFoundEntityException("messages.product.notfound")
 
+    logging.debug("Get product child entity ok")
+
+    # Get customer
     customerModel = ndb.Key('CustomerModel', int(sale.customer.id),
                             parent=marketplaceModel.key)
 
     if customerModel is None:
         raise NotFoundEntityException("messages.customer.notfound")
 
+    logging.debug("Get customer child entity ok")
+
+    # Set attributes
     saleModel.product = productModel
     saleModel.customer = customerModel
     saleModel.quantity = sale.quantity
@@ -130,11 +149,13 @@ def save(sale):
     saleModel.net_total = sale.net_total
     saleModel.track_code = sale.track_code
 
+    # Persiste it
     saleModel.put()
 
     logging.debug("Sale %d registered successfully!",
                   saleModel.key.id())
 
+    # Return it
     return saleModel
 
 

@@ -29,6 +29,7 @@ from app.stock import models as stock
 from google.appengine.ext import ndb
 
 from app.exceptions import NotFoundEntityException
+from app.exceptions import IllegalStateException
 
 __author__ = "Marcos Salomão"
 __email__ = "salomao.marcos@gmail.com"
@@ -40,11 +41,11 @@ class PurchaseModel(ndb.Model):
     """ Purchase model.
     """
 
-    supplier = ndb.LocalStructuredProperty(
-        supplier.SupplierModel, keep_keys=True, required=True, repeated=False)
+    supplier = ndb.KeyProperty(
+        kind='SupplierModel', indexed=True, required=True)
 
-    product = ndb.LocalStructuredProperty(
-        product.ProductModel, keep_keys=True, required=True, repeated=False)
+    product = ndb.KeyProperty(
+        kind='ProductModel', indexed=True, required=True)
 
     quantity = ndb.IntegerProperty(required=True, default=1)
 
@@ -86,7 +87,23 @@ def get_query_purchase():
 
     return purchasesQuery
 
- 
+
+def has_purchases_by_product(productKey):
+    """ Check if there is any purchase with product key.
+    """
+
+    return get_query_purchase().filter(PurchaseModel.product
+                                       == productKey).get() is not None
+
+
+def has_purchases_by_supplier(supplierKey):
+    """ Check if there is any purchase with supplier key.
+    """
+
+    return get_query_purchase().filter(PurchaseModel.supplier
+                                       == supplierKey).get() is not None
+
+
 def list():
     """ List purchases.
     """
@@ -98,35 +115,58 @@ def list():
 
 
 @ndb.transactional
-def put(purchase):
+def save(purchase):
     """ Add or update for purchase.
     """
 
+    # Get parent
     marketplaceModel = marketplace.get_marketplace()
 
-    if purchase.id is not None:
-        purchaseModel = ndb.Key('PurchaseModel', int(purchase.id),
-                                parent=marketplaceModel.key).get()
+    logging.debug("Get user marketplace")
 
-        stock.remove_item_from_stock(purchaseModel)
+    if purchase.id is not None:
+
+        # Create purchase with id
+        purchaseModel = PurchaseModel(
+            id=int(purchase.id), parent=marketplaceModel.key)
+
+        try:
+            
+            # Reverse in stock
+            stock.remove_item_from_stock(purchaseModel)
+
+        except IllegalStateException as error:
+            logging.warning("Stock couldn't be reversed by error %s", error)
 
     else:
+
+        # Create supplier with random unique id
         purchaseModel = PurchaseModel(parent=marketplaceModel.key)
 
-    productModel = ndb.Key('ProductModel', int(purchase.product.id),
-                           parent=marketplaceModel.key).get()
-    if productModel is None:
+    logging.debug("Purchase model created")
+
+    # Get product
+    productKey = ndb.Key('ProductModel', int(purchase.product.id),
+                         parent=marketplaceModel.key)
+
+    if productKey is None:
         raise NotFoundEntityException("messages.product.notfound")
 
-    purchaseModel.product = productModel
+    purchaseModel.product = productKey
 
-    supplierModel = ndb.Key('SupplierModel', int(purchase.supplier.id),
-                            parent=marketplaceModel.key).get()
-    if supplierModel is None:
+    logging.debug("Get product child entity ok")
+
+    # Get supplier
+    supplierKey = ndb.Key('SupplierModel', int(purchase.supplier.id),
+                            parent=marketplaceModel.key)
+    if supplierKey is None:
         raise NotFoundEntityException("messages.supplier.notfound")
 
-    purchaseModel.supplier = supplierModel
+    purchaseModel.supplier = supplierKey
 
+    logging.debug("Get supplier child entity ok")
+
+    # Set attributes
     purchaseModel.quantity = purchase.quantity
     purchaseModel.purchase_date = purchase.purchase_date
     purchaseModel.received_date = purchase.received_date
@@ -141,11 +181,18 @@ def put(purchase):
     purchaseModel.payment_date = purchase.payment_date
     purchaseModel.purchase_link = purchase.purchase_link
 
+    # Persiste it
     purchaseModel.put()
+
+    logging.debug("Purchase %d persisted successfully",
+                  purchaseModel.key.id())
 
     # Update stock
     stock.add_item_to_stock(purchaseModel)
 
+    logging.debug("Stock updated successfully")
+
+    # Return it
     return purchaseModel
 
 
@@ -225,7 +272,5 @@ def get_stats_by_products():
             'avg_cost': avg_cost,
             'weighted_avg_cost': weighted_avg_cost
         })
-
-    print stat_purchase_products
 
     return stat_purchase_products

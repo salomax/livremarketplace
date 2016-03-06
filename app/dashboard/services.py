@@ -137,7 +137,6 @@ class DashboardService(remote.Service):
 
         items = []
         for model in cash_flow:
-            print model
             items.append(
                 CashFlowGetMessage(
                     period=model['period'],

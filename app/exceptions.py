@@ -24,7 +24,8 @@ class NotFoundEntityException(endpoints.ServiceException):
 
 class IllegalStateException(endpoints.ServiceException):
 
-    http_status = httplib.UNPROCESSABLE_ENTITY
+    http_status = httplib.BAD_REQUEST
     
+class IntegrityViolationException(endpoints.ServiceException):
 
-
+    http_status = httplib.BAD_REQUEST

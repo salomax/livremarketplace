@@ -14,8 +14,6 @@
     <link rel="stylesheet" href="/css/plugins/pace.css" />
     <!-- Bootstrap 3.3.5 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="/css/plugins/dataTables.bootstrap.css">
     <!-- Fonts -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,300,700" type="text/css">
@@ -25,6 +23,8 @@
     <link rel="stylesheet" href="/css/plugins/bootstrap-datepicker.min.css">
     <!-- Bootstrap table -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css">
+    <!-- Select2 - multi select -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet" />
     <!-- Theme style -->
     <link rel="stylesheet" href="/css/openmarketplace.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -38,7 +38,7 @@
     <![endif]-->
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini background-city">
+<body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
     <!-- General Modal -->
     <div class="modal modal-dialog-message">
@@ -88,9 +88,9 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <!-- Latest compiled and minified JavaScript -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.js"></script>
     <!-- Latest compiled and minified Locales -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/locale/bootstrap-table-pt-BR.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/locale/bootstrap-table-pt-BR.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
     $.widget.bridge('uibutton', $.ui.button);
@@ -99,8 +99,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- JQuery i18n plugin -->
     <script src="js/plugins/jquery.i18n.properties.min.js"></script>
-    <!-- DataTables -->
-    <script async src="/js/plugins/jquery.dataTables.min.js"></script>
     <!-- SlimScroll -->
     <script src="/js/plugins/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
@@ -140,6 +138,8 @@
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBltNDQD8uY9uRjEDoz8NG8LJ7QgYGIJ8c&libraries=places" async defer></script>
+    <!-- select2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/js/select2.min.js" async defer></script>
 </body>
 
 </html>

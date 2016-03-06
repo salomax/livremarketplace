@@ -1,190 +1,170 @@
 <!-- Custom Tabs -->
 <div class="nav-tabs-custom">
-	<ul class="nav nav-tabs">
-	  <li class="active"><a href="#tab_1" data-toggle="tab"><span class="fa fa-table"/> Lista de Compras</a></li>
-	  <li><a href="#tab_2" data-toggle="tab"><span class="fa fa-plus"/> Cadastro</a></li>
-	</ul>
-	<div class="tab-content">
-	  <div class="tab-pane active" id="tab_1">
-		<div class="box-body">
-
-			<div class="progress progress-bar-table collapse">
-			  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-			  </div>
-			</div>
-
-			<table class="table-purchases"></table>	
-
-		</div>
-	  </div><!-- /.tab-pane -->
-	  <div class="tab-pane" id="tab_2">
-
-	  	<form class="purchase-form">
-
-          <!-- general form elements -->
-          <div class="box box-primary">
-
-	        <!-- box-header -->
-            <div class="box-header with-border">
-              <h3 class="box-title">Dados da Compra <small>Informe os dados da compra</small></h3>
-            </div><!-- /.box-header -->
-
-			<div class="progress progress-bar-form collapse">
-			  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-			  </div>
-			</div>
-
-            <!-- form start -->
-            <form role="form">
-              <input type="text" name="id" style="display: none;" />
-
-              <div class="box-body">
-
-                <div class="form-group required">
-                  <label for="product">Produto</label>
-                  <input type="text" name="product[id]" style="display: none;" />
-                  <input type="text" class="form-control" name="product[name]" placeholder="Entre com o nome do produto">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#tab_1" data-toggle="tab"><span class="fa fa-table" /> <span class="tab_list"></span></a>
+        </li>
+        <li>
+            <a href="#tab_2" data-toggle="tab"><span class="fa fa-plus" /> <span class="tab_save"></span></a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab_1">
+            <div class="box-body">
+                <div class="progress progress-bar-table collapse">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                    </div>
                 </div>
-
-                <div class="form-group required">
-                  <label for="suppier">Fornecedor</label>
-                  <input type="text" name="supplier[id]" style="display: none;" />
-                  <input type="text" class="form-control" name="supplier[name]" placeholder="Entre com o nome do fornecedor">
+                <table class="table-purchases"></table>
+            </div>
+        </div>
+        <!-- /.tab-pane -->
+        <div class="tab-pane" id="tab_2">
+            <form class="purchase-form">
+                <!-- general form elements -->
+                <div class="box box-primary">
+                    <!-- box-header -->
+                    <div class="box-header">
+                        <h3 class="box-title purchase_save_title"><small class="purchase_save_subtitle"></small></h3>
+                        <button type="button" class="btn btn-link pull-right new-item"><span class="fa fa-plus" /> <span class="new-item"></span></button>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="progress progress-bar-form collapse">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                        </div>
+                    </div>
+                    <!-- form start -->
+                    <form role="form">
+                        <input type="text" name="id" style="display: none;" />
+                        <div class="box-body">
+                            <div class="form-group required">
+                                <label for="product" class="product"></label>
+                                <select class="product-select form-control" name="product[id]">
+                                </select>
+                                <label id="product-error" class="error" for="product[id]" style="display: none;"></label>
+                            </div>
+                            <div class="form-group required">
+                                <label for="supplier" class="supplier"></label>
+                                <select class="supplier-select form-control" name="supplier[id]">
+                                </select>
+                                <label id="supplier-error" class="error" for="supplier[id]" style="display: none;"></label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="box box-primary">
+                                        <div class="form-group required">
+                                            <label for="quantity" class="quantity"></label>
+                                            <input type="text" class="form-control" name="quantity" data-inputmask="'alias': 'numeric'">
+                                        </div>
+                                        <div class="form-group required">
+                                            <label for="purchase_date" class="purchase_date"></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control pull-right datepicker" name="purchase_date">
+                                            </div>
+                                            <!-- /.input group -->
+                                            <label id="purchase_date-error" class="error" for="purchase_date" style="display : none;"></label>
+                                        </div>
+                                        <div class="form-group required">
+                                            <label for="payment_date" class="payment_date"></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control pull-right datepicker" name="payment_date">
+                                            </div>
+                                            <label id="payment_date-error" class="error" for="payment_date" style="display : none;"></label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="received_date" class="received_date"></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control pull-right datepicker" name="received_date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="shipping_cost" class="shipping_cost"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                                                <input type="text" class="form-control" name="shipping_cost" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="track_code" class="track_code"></label>
+                                            <input type="text" class="form-control" name="track_code">
+                                        </div>
+                                    </div>
+                                    <!-- /.box -->
+                                </div>
+                                <!-- /.col-md-6 -->
+                                <div class="col-md-6">
+                                    <div class="box box-primary">
+                                        <div class="form-group required">
+                                            <label for="cost" class="cost"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                                                <input type="text" class="form-control" name="cost" placeholder="Entre com o custo por unidade" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
+                                            </div>
+                                            <label id="cost-error" class="error" style="display: none;" for="cost"></label>
+                                        </div>
+                                        <div class="form-group required">
+                                            <label for="total_cost" class="total_cost"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                                                <input type="text" class="form-control" name="total_cost" placeholder="Entre com o custo total da compra" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cost_dollar" class="cost_dollar"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                                                <input type="text" class="form-control" name="cost_dollar" placeholder="Entre com o custo por unidade em dólares (US$)" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="total_cost_dollar" class="total_cost_dollar"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                                                <input type="text" class="form-control" name="total_cost_dollar" placeholder="Entre com o custo total da compra em dólares" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exchange_dollar" class="exchange_dollar"></label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                                                <input type="text" class="form-control" name="exchange_dollar" placeholder="Entre com o valor do câmbio" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="invoice" class="invoice"></label>
+                                            <input type="text" class="form-control" name="invoice">
+                                        </div>
+                                    </div>
+                                    <!-- /.box -->
+                                </div>
+                                <!-- /.col-md-6 -->
+                            </div>
+                            <!-- /.row -->
+                            <div class="form-group">
+                                <label for="purchase_link" class="purchase_link"></label>
+                                <input type="text" class="form-control" name="purchase_link">
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary save"></button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="row">
-
-                	<div class="col-md-6">
-
-                		<div class="box box-primary">
-
-							<div class="form-group required">
-			                  <label for="quantity">Quantidade</label>
-			                  <input type="text" class="form-control" name="quantity" placeholder="Entre com a quantidade de itens comprados"
-			                  data-inputmask="'alias': 'numeric'">
-			                </div>
-
-			                <div class="form-group required">
-			                  <label for="purchase_date">Data da Compra</label>
-								<div class="input-group">
-								  <div class="input-group-addon">
-								    <i class="fa fa-calendar"></i>
-								  </div>
-				                  <input type="text" class="form-control pull-right datepicker" name="purchase_date" placeholder="Entre com a data da compra">
-								</div><!-- /.input group -->
-								<label id="purchase_date-error" class="error" for="purchase_date" style="display : none;">Data da Compra é obrigatória!</label>
-			                </div>
-
-			                <div class="form-group required">
-			                  <label for="received_date">Data do Pagamento</label>
-							  <div class="input-group">
-								  <div class="input-group-addon">
-								    <i class="fa fa-calendar"></i>
-								  </div>
-				                  <input type="text" class="form-control pull-right datepicker" name="payment_date" placeholder="Entre com a data do pagamento">
-			                	</div>
-								<label id="payment_date-error" class="error" for="payment_date" style="display : none;"></label>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="received_date">Data de Recebimento</label>
-							  <div class="input-group">
-								  <div class="input-group-addon">
-								    <i class="fa fa-calendar"></i>
-								  </div>
-				                  <input type="text" class="form-control pull-right datepicker" name="received_date" placeholder="Entre com a data do recebimento">
-			                	</div>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="shipping_cost">Custo de Postagem</label>
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-									<input type="text" class="form-control" name="shipping_cost" placeholder="Entre com o custo de postagem" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
-								</div>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="track_code">Código de Rastreamento</label>
-			                  <input type="text" class="form-control" name="track_code" placeholder="Entre com o código de rastreamento da postagem">
-			                </div>
-
-                		</div> <!-- /.box -->
-                	</div><!-- /.col-md-6 -->
-
-                	<div class="col-md-6">
-						<div class="box box-primary">
-
-			                <div class="form-group required">
-			                  <label for="cost">Custo por Unidade</label>
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-									<input type="text" class="form-control" name="cost" placeholder="Entre com o custo por unidade" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
-								</div>
-								<label id="cost-error" class="error" style="display: none;" for="cost">Custo por unidade é numérico e obrigatório!</label>
-			                </div>
-
-			                <div class="form-group required">
-			                  <label for="total_cost">Custo Total da Compra</label>
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-		 		                    <input type="text" class="form-control" name="total_cost" placeholder="Entre com o custo total da compra" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
-								</div>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="cost_dollar">Custo por Unidade (US$) </label>
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-	 			                    <input type="text" class="form-control" name="cost_dollar" placeholder="Entre com o custo por unidade em dólares (US$)" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
-								</div>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="total_cost_dollar">Custo Total da Compra (US$)</label>
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-	  			                    <input type="text" class="form-control" name="total_cost_dollar" placeholder="Entre com o custo total da compra em dólares" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
-								</div>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="exchange_dollar">Valor do Câmbio</label>
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-dollar"></i></span>
-									<input type="text" class="form-control" name="exchange_dollar" placeholder="Entre com o valor do câmbio" data-inputmask="'alias' : 'currency', 'groupSeparator' : '', 'prefix' : ''">
-								</div>
-			                </div>
-
-			                <div class="form-group">
-			                  <label for="invoice">Dados da Fatura</label>
-			                  <input type="text" class="form-control" name="invoice" placeholder="Entre com dados sobre a fatura da compra">
-			                </div>
-
-						</div><!-- /.box -->
-                	</div><!-- /.col-md-6 -->
-
-                </div><!-- /.row -->
-
-                <div class="form-group">
-                  <label for="invoice">Link da Compra</label>
-                  <input type="text" class="form-control" name="purchase_link" placeholder="Entre com o link da compra no site de origem">
-                </div>
-
-              </div><!-- /.box-body -->
-
-              <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-              </div>
+                <!-- /.box -->
             </form>
-          </div><!-- /.box -->	  		
-
-	  	</form>
-
-	  </div><!-- /.tab-pane -->
-	</div><!-- /.tab-content -->
-</div><!-- nav-tabs-custom -->
-
-
-
-
+        </div>
+        <!-- /.tab-pane -->
+    </div>
+    <!-- /.tab-content -->
+</div>
+<!-- nav-tabs-custom -->
