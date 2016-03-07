@@ -75,7 +75,10 @@
 	                title : messages.purchase.save.dialog.title,
 	                message : messages.purchase.save.dialog.errormessage
 	            }
-	        });
+	        }).then(function(response) {
+                $('form.purchase-form').populate(response.result);
+                return response;
+            });
 
 		},
 
@@ -378,9 +381,6 @@
 										]
 									})[0];
 
-				    	// Zerar o form qdo houver sucesso
-				    	$(form).trigger('reset');
-
 				    	// Atualizar lista
 						var row = $('table.table-purchases').bootstrapTable(
 							'getRowByUniqueId', _data.result.id);
@@ -442,7 +442,7 @@
 
 			// Bind calculate costs
 			$('input[name="quantity"], input[name="cost"], input[name="total_cost"], input[name="shipping_cost"]').bind(
-				'keyup', function(event) {
+				'keyup paste', function(event) {
 
 					var target = $(event.target);
 
@@ -455,7 +455,7 @@
 						case 'quantity':
 						case 'cost':
 						case 'shipping_cost':
-							total_cost.val(parseFloat(quantity.val() * cost.val()) + parseFloat(shipping_cost.val()));
+							total_cost.val(parseFloat(quantity.val() * cost.val()) + parseFloat(shipping_cost.val() ? shipping_cost.val() : '0'));
 						break;
 						case 'total_cost':
 							cost.val((total_cost.val() - shipping_cost.val()) / quantity.val());

@@ -38,7 +38,7 @@
      */
     $.customer.api = {
 
-        SERVICE_NAME : 'product',
+        SERVICE_NAME : 'customer',
         VERSION : 'v1',
 
         service : function(method) {
@@ -82,6 +82,9 @@
                     title : messages.customer.save.dialog.title,
                     message : messages.customer.save.dialog.errormessage
                 }
+            }).then(function(response) {
+                $('form.customer-form').populate(response.result);
+                return response;
             });
 
         }, // Fim save
@@ -221,10 +224,6 @@
             $('input[name="location"]').attr('placeholder', messages.customer.form.location.placeholder);
             $('button.save').text(messages.action.save);
 
-            $('button.new-item').bind('click', function() {
-                $('form.customer-form').trigger('reset');
-            });
-
             // Carregar a lista de clientes
             $.customer.view.loadTable();
 
@@ -256,9 +255,6 @@
 
                     // Submeter ao endpoint
                     $.customer.api.save(data).then(function(_data) {
-
-                        // Zerar o form qdo houver sucesso
-                        $(form).trigger('reset');
 
                         // Atualizar lista
                         var row = $('table.table-customers').bootstrapTable(

@@ -55,9 +55,6 @@
                 // atualizar barra de progresso
                 $('.progress-bar-form').progress(100, messages.progressbar.done);
 
-
-                console.log('saved' + $.i18n.prop('messages.product.save.dialog.title'));
-
                 // apresentar mensagem ao usuário
                 $('.modal-dialog-message').modalDialog({
                     title: messages.sale.save.dialog.title,
@@ -327,10 +324,6 @@ loadPage = function($) {
     
     $('button.save').text(messages.action.save);
 
-    $('button.new-item').bind('click', function() {
-        $('form.sale-form').trigger('reset');
-    });
-
     // Carregar a lista das vendas
     $.sale.view.loadTable();
 
@@ -380,9 +373,6 @@ loadPage = function($) {
 
             // Submeter ao endpoint
             $.sale.api.save(data).then(function(_data) {
-
-                // Zerar o form qdo houver sucesso
-                $(form).trigger('reset');
 
                 // Formatar os campos para a view
                 _data.result = $.dataFormatter.format({

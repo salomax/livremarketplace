@@ -82,6 +82,9 @@
 					title : messages.product.save.dialog.title,
 					message : messages.product.save.dialog.errormessage
                 }
+            }).then(function(response) {
+                $('form.product-form').populate(response.result);
+                return response;
             });
 
 		}, // Fim save
@@ -247,9 +250,6 @@
 
 			    	// Submeter ao endpoint
 				    $.product.api.save(data).then(function(_data) {
-
-				    	// Zerar o form qdo houver sucesso
-				    	$(form).trigger('reset');
 
 				    	// Atualizar lista
 						var row = $('table.table-products').bootstrapTable(

@@ -333,6 +333,16 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 				$('input.datepicker').datepicker('update');
 				$('input.datepicker').val('');
 
+				// Reset form button
+				$('button.new-item').bind('click', function() {
+				    	$(this).closest('form').trigger('reset');
+				    	$(this).closest('form').find('input').trigger('change');
+				    });
+				$('button.new-item').prop('disabled', true);
+				$('input[name="id"]').change(function() {
+					$('button.new-item').prop('disabled', ($(this).val() == ''));
+				});
+
 				$('section.content').fadeIn('slow');
 
 			});
@@ -565,6 +575,7 @@ $.fn.populate = function(data) {
 	    } else if ($ctrl.is("select")) {
 	    	$ctrl.trigger('initSelect', [data[key.split("[")[0]]]);
 	    }
+	    $ctrl.trigger('change');
     });  
 }
 json2html_name_list = function (json, result, parent){
@@ -652,6 +663,7 @@ $.fn.$elect = function(selectOptions) {
 	// workround to update data in select2
 	// https://github.com/select2/select2/issues/2830#issuecomment-74971872
 	$ctrl.bind('initSelect', function(event, _data) {
+				console.log('oi' + _data);
 			_this = $(this);
 			options = {
 			  data : [],
@@ -682,22 +694,32 @@ $.fn.$elect = function(selectOptions) {
 			  	return data.text;
 			  }
 			};
-			if (_data) {
-				options = $.util.mergeObjects(options, {
-					data : [selectOptions.formatData(_data)]
-				})
-			}
-			_this.select2(options);	
-	});
+			option = $('<option selected>teste</option>');
 
-	// Reset selects
-	$ctrl.closest("form").bind('reset', function() {
-		$('select').select2("val", "");
+			// Handling data
+			if (!_data) {
+				_data = { id: '', text: ''}
+			} else {
+				_data = selectOptions.formatData(_data);
+			}
+
+			// Apply init value
+			option.val(_data.id);
+			option.text(_data.text);
+			_this.empty().append(option);
+			
+			// Create select2
+			_this.select2(options);	
 	});
 
 	// Init
 	$ctrl.trigger('initSelect');
 
+	// Reset selects
+	$ctrl.closest("form").bind('reset', function() {
+		// Init
+		$('select').trigger('initSelect');
+	});
 };
 
 /**

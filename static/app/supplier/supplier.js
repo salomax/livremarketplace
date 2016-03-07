@@ -322,10 +322,6 @@
             $('input[name="location"]').attr('placeholder', messages.supplier.form.location.placeholder);
 
             $('button.save').text(messages.action.save);  
-                      
-            $('button.new-item').bind('click', function() {
-                $('form.supplier-form').trigger('reset');
-            });
 
             // Carregar a lista de fornecedors
             $.supplier.view.loadTable();
@@ -358,9 +354,6 @@
 
                     // Submeter ao endpoint
                     $.supplier.api.save(data).then(function(_data) {
-
-                        // Zerar o form qdo houver sucesso
-                        $(form).trigger('reset');
 
                         // Atualizar lista
                         var row = $('table.table-suppliers').bootstrapTable(
