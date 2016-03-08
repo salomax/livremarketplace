@@ -227,8 +227,8 @@ def get_stats_by_products():
     stat_purchase_products = []
 
     # Group by product
-    data = sorted(purchases, key=lambda t: t.product.key.id())
-    for k, g in groupby(data, key=lambda t: t.product.key.id()):
+    data = sorted(purchases, key=lambda t: t.product.id())
+    for k, g in groupby(data, key=lambda t: t.product.id()):
 
         # Create variables
         product = None
@@ -243,7 +243,7 @@ def get_stats_by_products():
             # product must be setted one time
             # Avoiding overhead unecessary
             if product is None:
-                product = purchase.product.key.get()
+                product = purchase.product.get()
 
             # Sum quantities
             sum_quantity = sum_quantity + purchase.quantity
