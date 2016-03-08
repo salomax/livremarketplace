@@ -90,10 +90,9 @@ class PurchaseTestCase(unittest.TestCase):
             purchase.key = Mock(spec_set=ndb.Key('PurchaseModel', x['id']))
 
             # Create product mock
-            purchase.product = Mock(spec_set=productModel.ProductModel())
-            purchase.product.key = Mock(spec_set=ndb.Key('ProductModel', x['product_id']))
-            purchase.product.key.id = Mock(return_value=x['product_id'])
-            purchase.product.key.get = Mock(return_value=purchase.product)
+            purchase.product = Mock(spec_set=ndb.Key('ProductModel', x['product_id']))
+            purchase.product.id = Mock(return_value=x['product_id'])
+            purchase.product.get = Mock(return_value=purchase.product)
 
             # Net total value
             purchase.cost = x['cost']

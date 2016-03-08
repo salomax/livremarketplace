@@ -226,7 +226,7 @@ def get_stats_by_products():
     # Init result variable
     stat_purchase_products = []
 
-    # Group by product
+    # Group by product key
     data = sorted(purchases, key=lambda t: t.product.id())
     for k, g in groupby(data, key=lambda t: t.product.id()):
 
