@@ -38,115 +38,60 @@
      */
     $.sale.api = {
 
+        SERVICE_NAME : 'sale',
+        VERSION : 'v1',
+
+        service : function(method) {
+            return ['/', $.sale.api.SERVICE_NAME, '/', $.sale.api.VERSION, '/', method].join(''); 
+        },
+
         /**
          *  Método persiste o fornecedor.
          */
         save: function(_data) {
 
-            // atualizar barra de progresso
-            $('.progress-bar-form').progress(50, messages.progressbar.waitingserver);
+            return $.api.request({
+                path : $.sale.api.service('save'),
+                method : 'POST',
+                body : _data,
+                progressBar : $('.progress-bar-form'),
+                dialogSuccess : {
+                    title : messages.sale.save.dialog.title,
+                    message : messages.sale.save.dialog.success 
+                },
+                dialogError : {
+                    title : messages.sale.save.dialog.title,
+                    message : messages.sale.save.dialog.errormessage
+                }
+            }).then(function(response) {
+                $('form.sale-form').populate(response.result);
+                return response;
+            });
 
-            // criar controle promise
-            var deferred = $.Deferred();
-
-            // fn sucesso
-            var success = function(response) {
-
-                // atualizar barra de progresso
-                $('.progress-bar-form').progress(100, messages.progressbar.done);
-
-                // apresentar mensagem ao usuário
-                $('.modal-dialog-message').modalDialog({
-                    title: messages.sale.save.dialog.title,
-                    message: messages.sale.save.dialog.success
-                }).success();
-
-                // resolve promise
-                deferred.resolve(response);
-            };
-
-            // fn erro
-            var failure = function(reason) {
-
-                // atualizar barra de progresso
-                $('.progress-bar-form').progress(100, messages.progressbar.done);
-
-                // apresentar mensagem ao usuário
-                $('.modal-dialog-message').modalDialog({
-                    title: messages.sale.save.dialog.title,
-                    message: messages.sale.save.dialog.errormessage
-                }).danger();
-
-                console.log(reason.result.error.message);
-
-                // promisse
-                resolve.reject();
-            };
-
-            // Load API e  executar serviço
-            gapi.client.load('sale', 'v1', function() {
-                var request = gapi.client.sale.save(_data);
-                request.then(success, failure);
-            }, API_ROOT);
-
-            // retornar promise
-            return deferred.promise();
-        }, // Fim save
+        }, // End save()
 
         /**
          *  Método realiza a exclusão do fornecedor.
          */
         delete: function(_id) {
 
-                // atualizar barra de progresso
-                $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
+            return $.api.request({
+                path : $.sale.api.service(_id),
+                method : 'DELETE',
+                progressBar : $('.progress-bar-table'),
+                dialogError : {
+                    title : messages.sale.delete.dialog.title,
+                    message : messages.sale.delete.dialog.success
+                }
+            });
 
-                // Criar controle promise
-                var deferred = $.Deferred();
+        }, // End delete()
 
-                // fn sucesso
-                var success = function(response) {
-
-                    // atualizar barra de progresso
-                    $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                    // apresentar mensagem ao usuário
-                    $('.modal-dialog-message').modalDialog({
-                        title: messages.sale.delete.dialog.title,
-                        message: messages.sale.delete.dialog.success
-                    }).success();
-
-                    // Executar promise
-                    deferred.resolve();
-                };
-
-                // fn erro
-                var failure = function(reason) {
-
-                    // atualizar barra de progresso
-                    $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                    // apresentar mensagem ao usuário
-                    $('.modal-dialog-message').modalDialog({
-                        title: messages.sale.delete.dialog.title,
-                        message: messages.sale.delete.dialog.errormessage
-                    }).danger();
-
-                    console.log(reason.result.error.message);
-
-                    // Executar promise
-                    resolve.reject();
-                };
-
-                // Load API e  executar serviço
-                gapi.client.load('sale', 'v1', function() {
-                    var request = gapi.client.sale.delete({ id: _id });
-                    request.then(success, failure);
-                }, API_ROOT);
-
-                // retornar promise
-                return deferred.promise();
-            } // Fim delete
+        list : function(options) {
+            return $.api.request($.util.mergeObjects({
+                path : $.sale.api.service('list')
+            }, options));    
+        } // End list()
 
     }; // Fim API
 
@@ -160,7 +105,7 @@
         /**
          * Método destinado à criar a tabela com os fornecedors.
          */
-        bindTable: function(_data) {
+        bindTable : function(_data) {
 
             // Construir tabela
             $('table.table-sales').bootstrapTable({
@@ -228,6 +173,7 @@
                 search: false,
                 // striped: true
             });
+            $('table').fadeIn();
 
         }, // Fim bindTable
 
@@ -236,257 +182,207 @@
          */
         loadTable: function() {
 
-            // atualizar barra de progresso
-            $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
-
-            // Load API e  executar serviço
-            gapi.client.load('sale', 'v1', function() {
-                var request = gapi.client.sale.list();
-                request.then(
+            $('table').fadeOut();
+            
+            // Execute custumers list endpoint 
+            var request = $.sale.api.list({
+                    progressBar : $('.progress-bar-table'),
+                    dialogError : {
+                        title : messages.sale.list.dialog.title,
+                        message : messages.sale.list.dialog.errormessage
+                    }
+                }).then(
                     function(response) {
 
-                        // atualizar barra de progresso
-                        $('.progress-bar-table').progress(75, messages.progressbar.building);
-
-                        // Formatar os campos para a view
-                        response.result.items = $.dataFormatter.format({
-                                data : response.result.items,
-                                format : [{'sale_date' : $.dataFormatter.dateFormat}]
-                            });
-
-                        // Atachar a lista de compras na tabela
+                        // Create table with response result
                         $.sale.view.bindTable(response.result);
 
-                        // atualizar barra de progresso					
-                        $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                    },
-                    function(reason) {
-
-                        // atualizar barra de progresso					
-                        $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                        // apresentar mensagem ao usuário
-                        $('.modal-dialog-message').modalDialog({
-                            title: messages.sale.list.dialog.title,
-                            message: messages.sale.list.dialog.errormessage
-                        }).danger();
-
-                        console.log(reason.result.error.message);
-
                     });
-
-            }, API_ROOT);
 
         }, // Fim loadTable
 
-
-    };
-
-
-}(jQuery);
-
-
-/**
- * Ação ao carregar a página.
- */
-loadPage = function($) {
-
-    // Aplicar i18n
-    $('span.tab_list').text(messages.sale.tab.list);
-    $('span.tab_save').text(messages.sale.tab.save);
-    $('h3.sale_save_title').text(messages.sale.save.title);
-    $('span.new-item').text(messages.action.new_item);
-    $('small.sale_save_subtitle').text(messages.sale.save.subtitle);
-
-    $('label.customer').text(messages.sale.customer);
-    $('input[name="customer[name]"]').attr('placeholder', messages.sale.form.customer.placeholder);
-
-    $('label.product').text(messages.sale.product);
-    $('input[name="product[name]"]').attr('placeholder', messages.sale.form.product.placeholder);
-
-    $('label.quantity').text(messages.sale.quantity);
-    $('input[name="quantity"]').attr('placeholder', messages.sale.form.quantity.placeholder);
-    
-    $('label.sale_date').text(messages.sale.sale_date);
-
-    $('label.track_code').text(messages.sale.track_code);
-    $('input[name="track_code"]').text(messages.sale.form.track_code.placeholder);
-
-    $('label.amount').text(messages.sale.amount);
-    $('input[name="amount"]').text(messages.sale.form.amount.placeholder);
-
-    $('label.fare').text(messages.sale.fare);
-    $('input[name="fare"]').text(messages.sale.form.fare.placeholder);
-
-    $('label.net_total').text(messages.sale.net_total);    
-    $('input[name="net_total"]').text(messages.sale.form.net_total.placeholder);
-    
-    $('button.save').text(messages.action.save);
-
-    // Carregar a lista das vendas
-    $.sale.view.loadTable();
-
-    // Criar a validação do formulário
-    $('form.sale-form').validate({ // initialize the plugin
-        rules: {
-            'customer[name]': {
-                required: true
-            },
-            'product' : {
-                required: true
-            },
-            'quantity' : {
-                required: true
-            },
-            'sale_date' : {
-                required: true
-            },
-            'amount' : {
-                required: true
-            },
-            'net_total' : {
-                required: true
-            }
-        },
-        messages: {
-            'customer[name]': messages.sale.form.customer.required,
-            'product' : messages.sale.form.product.required ,
-            'quantity' : messages.sale.form.quantity.required ,
-            'sale_date' : messages.sale.form.sale_date.required ,
-            'amount' : messages.sale.form.amount.required ,
-            'net_total' : messages.sale.form.net_total.required 
-        },
-
         /**
-         * Ação ao submeter o formulário.
+         * Ação ao carregar a página.
          */
-        submitHandler: function(form, event) {
-            // não submete form
-            event.preventDefault();
+        loadPage : function() {
 
-            // Convert form to JSON Object
-            var data = $(form).serializeObject();
+            // Aplicar i18n
+            $('span.tab_list').text(messages.sale.tab.list);
+            $('span.tab_save').text(messages.sale.tab.save);
+            $('h3.sale_save_title').text(messages.sale.save.title);
+            $('span.new-item').text(messages.action.new_item);
+            $('small.sale_save_subtitle').text(messages.sale.save.subtitle);
 
-            // Para se adequar ao padrão RFC3339 os campos data são convertidos
-            data.sale_date = $.toRFC3339(data.sale_date);
+            $('label.customer').text(messages.sale.customer);
+            $('input[name="customer[name]"]').attr('placeholder', messages.sale.form.customer.placeholder);
 
-            // Submeter ao endpoint
-            $.sale.api.save(data).then(function(_data) {
+            $('label.product').text(messages.sale.product);
+            $('input[name="product[name]"]').attr('placeholder', messages.sale.form.product.placeholder);
 
-                // Formatar os campos para a view
-                _data.result = $.dataFormatter.format({
-                        data : [_data.result],
-                        format : [{'sale_date' : $.dataFormatter.dateFormat}]
+            $('label.quantity').text(messages.sale.quantity);
+            $('input[name="quantity"]').attr('placeholder', messages.sale.form.quantity.placeholder);
+            
+            $('label.sale_date').text(messages.sale.sale_date);
+
+            $('label.track_code').text(messages.sale.track_code);
+            $('input[name="track_code"]').text(messages.sale.form.track_code.placeholder);
+
+            $('label.amount').text(messages.sale.amount);
+            $('input[name="amount"]').text(messages.sale.form.amount.placeholder);
+
+            $('label.fare').text(messages.sale.fare);
+            $('input[name="fare"]').text(messages.sale.form.fare.placeholder);
+
+            $('label.net_total').text(messages.sale.net_total);    
+            $('input[name="net_total"]').text(messages.sale.form.net_total.placeholder);
+            
+            $('button.save').text(messages.action.save);
+
+            // Carregar a lista das vendas
+            $.sale.view.loadTable();
+
+            // Criar a validação do formulário
+            $('form.sale-form').validate({ // initialize the plugin
+                rules: {
+                    'customer[name]': {
+                        required: true
+                    },
+                    'product' : {
+                        required: true
+                    },
+                    'quantity' : {
+                        required: true
+                    },
+                    'sale_date' : {
+                        required: true
+                    },
+                    'amount' : {
+                        required: true
+                    },
+                    'net_total' : {
+                        required: true
+                    }
+                },
+                messages: {
+                    'customer[name]': messages.sale.form.customer.required,
+                    'product' : messages.sale.form.product.required ,
+                    'quantity' : messages.sale.form.quantity.required ,
+                    'sale_date' : messages.sale.form.sale_date.required ,
+                    'amount' : messages.sale.form.amount.required ,
+                    'net_total' : messages.sale.form.net_total.required 
+                },
+
+                /**
+                 * Ação ao submeter o formulário.
+                 */
+                submitHandler: function(form, event) {
+                    // não submete form
+                    event.preventDefault();
+
+                    // Convert form to JSON Object
+                    var data = $(form).serializeObject();
+
+                    // Para se adequar ao padrão RFC3339 os campos data são convertidos
+                    data.sale_date = $.toRFC3339(data.sale_date);
+
+                    // Submeter ao endpoint
+                    $.sale.api.save(data).then(function(_data) {
+
+                        // Formatar os campos para a view
+                        _data.result = $.dataFormatter.format({
+                                data : [_data.result],
+                                format : [{'sale_date' : $.dataFormatter.dateFormat}]
+                            });
+
+                        // Atualizar lista
+                        var row = $('table.table-sales').bootstrapTable(
+                            'getRowByUniqueId', _data.result.id);
+
+                        // Insere se não existe ou atualiza caso já esteja inserida
+                        if (row == null) {
+                            $('table.table-sales').bootstrapTable('insertRow', {
+                                index: 0,
+                                row: _data.result
+                            });
+                        } else {
+
+                            $('table.table-sales').bootstrapTable('updateByUniqueId', {
+                                id: _data.result.id,
+                                row: _data.result
+                            });
+                        }
+
                     });
 
-                // Atualizar lista
-                var row = $('table.table-sales').bootstrapTable(
-                    'getRowByUniqueId', _data.result.id);
-
-                // Insere se não existe ou atualiza caso já esteja inserida
-                if (row == null) {
-                    $('table.table-sales').bootstrapTable('insertRow', {
-                        index: 0,
-                        row: _data.result
-                    });
-                } else {
-
-                    $('table.table-sales').bootstrapTable('updateByUniqueId', {
-                        id: _data.result.id,
-                        row: _data.result
-                    });
                 }
 
-            });
+            }); // Fim validate
 
-        }
+            // Product autocomplete
+            $.getScript('/product/product.js', function() {
+                $('.product-select').$elect({
+                    search : function(term) {
+                        return $.product.api.search({
+                                code : term, 
+                                name : term});
+                    },
+                    formatData : function(data) {
+                        return { text: '(' + data.code + ') ' + data.name, id: data.id };
+                    },
+                    getItems : function(response) {
+                        return response.result.items;
+                    },
+                    placeholder: messages.sale.form.product.placeholder
+                });
+            });            
 
-    }); // Fim validate
+            // Customer autocomplete
+            $.getScript('/customer/customer.js', function() {
+                $('.customer-select').$elect({
+                    search : function(term) {
+                        return $.customer.api.search({
+                                name : term});
+                    },
+                    formatData : function(data) {
+                        return { text: data.name, id: data.id };
+                    },
+                    getItems : function(response) {
+                        return response.result.items;
+                    },
+                    placeholder: messages.sale.form.customer.placeholder
+                });
+            });   
 
-    // Autocomplete para produtos e fornecedores
-    // Importar script de produtos
-    $.getScript('/product/product.js');
+            // Bind calculate costs
+            $('input[name="quantity"], input[name="amount"], input[name="net_total"], input[name="fare"]').bind(
+                'keyup paste', function(event) {
 
-    var productsSearchSource = function(request, response) {
-        var success = function(_data) {
-            // Aplicar resultado da pesquisa no autocomplete    
-            response($.map(_data.result.items, function (_item) {
-                            return { 
-                                label: _item.name,
-                                value: _item.code,
-                                id: _item.id
-                            }
-                        })
-            );
-        };
+                    var target = $(event.target);
 
-        // Realizar pesquisa 
-        $.product.api.search({code : request.term, name : request.term}).then(success);
-    };
+                    var quantity = $('input[name="quantity"]');
+                    var amount = $('input[name="amount"]');
+                    var net_total = $('input[name="net_total"]');
+                    var fare = $('input[name="fare"]');
 
-    $('input[name="product[name]"]').autocomplete({
+                    switch (event.target.name) {
+                        case 'quantity':
+                        case 'amount':
+                        case 'fare':
+                            net_total.val(parseFloat(amount.val() - fare.val()));
+                        break;
+                        case 'net_total':
+                            if (!amount) {
+                                amount.val(parseFloat(fare.val() + net_total.val()));
+                            } else if (amount) {
+                                fare.val(parseFloat(amount.val() - net_total.val()));
+                            }                            
+                        break;
+                    };
 
-        source: productsSearchSource,
+                });            
 
-        create: function () {
-            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
-                var code = $('<span>').addClass('badge').append(item.value)
-                return   $( "<li>" )
-                        .append(code)
-                        .append(item.label)
-                        .appendTo(ul);
-            };
-        },
+        } // End loadPage()
 
-        select: function(event, ui) {
-            event.preventDefault();
-            $('input[name="product[name]"]').val(ui.item.label);
-            $('input[name="product[id]"]').val(ui.item.id);
-            return false;
-        }
-
-    }).data("ui-autocomplete")._renderItem;
-
- // Autocomplete para produtos e fornecedores
-    // Importar script de clientes
-    $.getScript('/customer/customer.js');
-
-    var productsSearchSource = function(request, response) {
-        var success = function(_data) {
-            // Aplicar resultado da pesquisa no autocomplete    
-            response($.map(_data.result.items, function (_item) {
-                            return { 
-                                label: _item.name,
-                                id: _item.id
-                            }
-                        })
-            );
-        };
-
-        // Realizar pesquisa 
-        $.customer.api.search({code : request.term, name : request.term}).then(success);
-    };
-
-    $('input[name="customer[name]"]').autocomplete({
-
-        source: productsSearchSource,
-
-        create: function () {
-            $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
-                return   $( "<li>" )
-                        .append(item.label)
-                        .appendTo(ul);
-            };
-        },
-
-        select: function(event, ui) {
-            event.preventDefault();
-            $('input[name="customer[name]"]').val(ui.item.label);
-            $('input[name="customer[id]"]').val(ui.item.id);
-            return false;
-        }
-
-    }).data("ui-autocomplete")._renderItem;
+    } // End $.sale.view
 
 }(jQuery);

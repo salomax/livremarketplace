@@ -33,7 +33,10 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
  	$.main = {};
 
- 	$.main.load = function() {
+	/****************************************************************************
+	 * Load initial configuration and components.
+	 ****************************************************************************/
+ 	$.main.loadLocale = function() {
 
  		// Definir o locale padrão brasileiro para os plugins.
 		moment.locale($.locale); 
@@ -45,16 +48,27 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 		    checkAvailableLanguages: true,
 		    async: true,
 		    callback : function() {
+
+   	            // Sign out button
+	            $('a.sign-out').text(messages.action.sign_out);
+
 		    	// Construir menu
 		    	$.menu.build();	
+
 		    }
 		});
 
 	};
 
-	/**
+ 	$.main.load = function() {
+
+ 		$.main.loadLocale();
+
+	};
+
+	/****************************************************************************
 	 * Object to view functions.
-	 */
+	 ****************************************************************************/
 	$.view = {
 		/**
 		 * Methods update a progress bar.
@@ -70,9 +84,9 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 		}
 	};
 
-	/**
+	/****************************************************************************
 	 * Util functions.
-	 */
+	 ****************************************************************************/
 	$.util = {
 
 		/**
@@ -87,7 +101,9 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
 	};
 
-	// API object encapsulates Google API calls.
+	/***************************************************************************
+	 * API object encapsulates Google API calls.
+	 ***************************************************************************/
 	$.api = {
 
 		/**
@@ -162,13 +178,9 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
 	};
 
-}(jQuery);
-
-/**
- * Carregar menus.
- */
- !function($) {
-
+	/******************************************************************************
+	 * Carregar menus.
+	 ******************************************************************************/
  	$.menu = {
 
  		getMenus : function() {
@@ -201,7 +213,10 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 						title : messages.menu.sale.title,
 						subtitle : messages.menu.sale.subtitle,
 						html : '/sale/sale.html', 
-						script : '/sale/sale.js'
+						script : '/sale/sale.js',
+						callback : function() {							            
+							$.sale.view.loadPage();
+						}
 					}, 
 		 			{
 		 				header : messages.menu.header.registration
@@ -311,7 +326,7 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
 				// Inserir content
 				$('section.content').html(response);
-
+				
 				// Inserir script
 				$.getScript(menu.script).done(function() {
 					// If menu.callback() is present
@@ -343,6 +358,25 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 					$('button.new-item').prop('disabled', ($(this).val() == ''));
 				});
 
+				// Change enter to tab
+				$('input').on("keypress", function(e) {
+			            /* ENTER PRESSED*/
+			            if (e.keyCode == 13) {
+			                /* FOCUS ELEMENT */
+			                var inputs = $(this).parents("form").eq(0).find(":input");
+			                var idx = inputs.index(this);
+
+			                if (idx == inputs.length - 1) {
+			                    inputs[0].select()
+			                } else {
+			                    inputs[idx + 1].focus(); //  handles submit buttons
+			                    inputs[idx + 1].select();
+			                }
+			                return false;
+			            }
+			        });		
+
+				// Show content
 				$('section.content').fadeIn('slow');
 
 			});
@@ -351,13 +385,9 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
 	}; // Fim menu
 
- }(jQuery);
-
- /**
-  * Handling google maps API.
-  */
-!function($) {
-
+	/******************************************************************************
+	 * Google Maps API.
+	 ******************************************************************************/
 	/**
 	 * ìcone default.
 	 */
@@ -549,184 +579,9 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
 	};
 
-}(jQuery);
-
-/**
- * Using jQuery and JSON to populate forms
- * http://stackoverflow.com/questions/7298364/using-jquery-and-json-to-populate-forms
- */
-$.fn.populate = function(data) {
-	var _form = $(this);
-	$.each(json2html_name_list(data), function(key, value) {
-	    var $ctrl = $('[name="' + key + '"]', _form);  
-	    if ($ctrl.is("input")) {
-		    switch($ctrl.attr("type")) {  
-		        case "text" :   
-		        case "hidden":  
-		        	$ctrl.val(value);   
-		        break;   
-		        case "radio" : case "checkbox":   
-		        $ctrl.each(function(){
-		           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
-		        break;  
-		        default:
-		        $ctrl.val(value); 
-		    }  
-	    } else if ($ctrl.is("select")) {
-	    	$ctrl.trigger('initSelect', [data[key.split("[")[0]]]);
-	    }
-	    $ctrl.trigger('change');
-    });  
-}
-json2html_name_list = function (json, result, parent){
-    if(!result)result = {};
-    if(!parent)parent = '';
-    if((typeof json)!='object'){
-        result[parent] = json;
-    } else {
-        for(var key in json){
-            var value = json[key];
-            if(parent=='')var subparent = key;
-            else var subparent = parent+'['+key+']';
-            result = json2html_name_list(value, result, subparent);
-        }
-    }
-    return result;
-}
-
-/**
- * Handle modal para mensagens.
- */
-$.fn.modalDialog = function(options) {
-	// Validar
-	if (options.title && options.message) {
-		// Obter elemento
-		var _element =  $(this);
-		// Set título
-		_element.find('.modal-title').text(options.title);
-		// Set mensagem
-		_element.find('.modal-body-message').text(options.message);
-		// Retorno
-		return {
-			success : function() {
-				// Show modal
-				_element.showModalDialog('modal-success');
-			},
-			danger : function() {
-				// Show modal
-				_element.showModalDialog('modal-danger');
-			}
-		}
-	}
-};
-/**
- * Handle modal para mensagens.
- */
-$.fn.showModalDialog = function(className, options) {
-	// Show modal
-	$(this).toggleClass(className, true).modal(options);
-	// Remover class qdo fechar
-	$(this).on('hidden.bs.modal', function (e) {
-		$(this).toggleClass(className, false);
-	});
-};
-/**
- * Handle modal para mensagens.
- */
-$.fn.progress = function(percent, message) {
-	// iniciar barra de progresso
-	if (percent < 100 && $(this).find('.progress-bar').width() == 100) {
-		$(this).find('.progress-bar').width('0%').html('0%');
-	}
-	// verificar se conclui o processo
-	if (percent == 100) {
-		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
-		$(this).slideUp();
-	} else {
-		// Mostrar progress
-		$(this).slideDown();
-		$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
-	}
-};
-
-$.fn.$elect = function(selectOptions) {
-
-	// Init validation
-	if (!selectOptions || !selectOptions.search || !selectOptions.formatData) {
-		console.warning('$elect initialized inappropriately');
-		return;
-	}
-
-	// Get select element
-	$ctrl = $(this);
-
-	// workround to update data in select2
-	// https://github.com/select2/select2/issues/2830#issuecomment-74971872
-	$ctrl.bind('initSelect', function(event, _data) {
-				console.log('oi' + _data);
-			_this = $(this);
-			options = {
-			  data : [],
-			  // placeholder: (selectOptions.placeholder? selectOptions.placeholder : ''),
-			  // allowClear: true,
-			  ajax: {
-			  	transport : function (params, success, failure) {
-			  		if (!params.data.term) return;
-			  		selectOptions.search(params.data.term)
-			  		.then(function(response) {
-						success(response);
-					});	
-			  	},
-			  	processResults: function(response) {
-			  		if (!selectOptions.getItems(response)) return [];
-					return {
-	                    results: $.map(selectOptions.getItems(response), function(item) {
-	                        return selectOptions.formatData(item);
-	                    })
-	                };
-			    }
-			  },
-			  width: '100%',
-			  templateResult: function(data) {
-			  	if (data.loading) {
-			  		return messages.select.search;
-			  	}
-			  	return data.text;
-			  }
-			};
-			option = $('<option selected>teste</option>');
-
-			// Handling data
-			if (!_data) {
-				_data = { id: '', text: ''}
-			} else {
-				_data = selectOptions.formatData(_data);
-			}
-
-			// Apply init value
-			option.val(_data.id);
-			option.text(_data.text);
-			_this.empty().append(option);
-			
-			// Create select2
-			_this.select2(options);	
-	});
-
-	// Init
-	$ctrl.trigger('initSelect');
-
-	// Reset selects
-	$ctrl.closest("form").bind('reset', function() {
-		// Init
-		$('select').trigger('initSelect');
-	});
-};
-
-/**
- * Carregar todos os elementos que são genéricos 
- * ou comnuns na aplicação.
- */
-!function($) {
+	/******************************************************************************
+	 * Commons.
+	 ******************************************************************************/
 
 	// Namespace common (comunm)
 	$.common = {};
@@ -752,60 +607,232 @@ $.fn.$elect = function(selectOptions) {
 
 	}; 
 
+	/**
+	 * TODO colocar no common.
+	 * Método utilizado para se adequar ao padrão 
+	 * RFC3339 os campos data são convertidos.
+	 */
+	$.toRFC3339 = function (str) {
+		// Validação
+		if (!str || !str.length) return null;
+
+		var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
+		var date = new Date(str.replace(pattern,'$3-$2-$1'));
+
+		pad = function(n) {return n<10 ? '0'+n : n}
+
+		return date.getUTCFullYear()+'-'
+		      + pad(date.getUTCMonth()+1)+'-'
+		      + pad(date.getUTCDate())+'T'
+		      + pad(date.getUTCHours())+':'
+		      + pad(date.getUTCMinutes())+':'
+		      + pad(date.getUTCSeconds())
+	};
+
+	/**
+	 * Objeto auxiliar para formatação de dados.
+	 */
+	$.dataFormatter = {
+		// Método para definir a formatação.
+		format : function(options) {
+			// Validar informação
+			if (!(options 
+				&& options.data 
+				&& options.data instanceof Array 
+				&& options.data.length > 0)) return;
+			// Realizar formatação do array
+			data = options.data;
+			$.each(data, function(index, row) {
+				$.each(row, function(key, value) {
+					$.each(options.format, function(_index, format) {
+						if (format[key] != undefined) {
+							row[key] = format[key](value);
+						}
+					});
+				}); // Fim each
+			}); // Fim for
+			return data;
+		}, // Fim format()
+		// Formatação padrão para data.
+		dateFormat : function(value) {
+			return moment(value).format('L');
+		},
+		// Formatação padrão para data e hora.
+		dateTimeFormat : function(value) {
+			return moment(value).format('LLL');
+		}
+	};
+
+	/**
+	 * Using jQuery and JSON to populate forms
+	 * http://stackoverflow.com/questions/7298364/using-jquery-and-json-to-populate-forms
+	 */
+	$.fn.populate = function(data) {
+		var _form = $(this);
+		$.each(json2html_name_list(data), function(key, value) {
+		    var $ctrl = $('[name="' + key + '"]', _form);  
+		    if ($ctrl.is("input")) {
+			    switch($ctrl.attr("type")) {  
+			        case "text" :   
+			        case "hidden":  
+			        	$ctrl.val(value);   
+			        break;   
+			        case "radio" : case "checkbox":   
+			        $ctrl.each(function(){
+			           if($(this).attr('value') == value) {  $(this).attr("checked",value); } });   
+			        break;  
+			        default:
+			        $ctrl.val(value); 
+			    }  
+		    } else if ($ctrl.is("select")) {
+		    	$ctrl.trigger('initSelect', [data[key.split("[")[0]]]);
+		    }
+		    $ctrl.trigger('change');
+	    });  
+	};
+
+	json2html_name_list = function (json, result, parent){
+	    if(!result)result = {};
+	    if(!parent)parent = '';
+	    if((typeof json)!='object'){
+	        result[parent] = json;
+	    } else {
+	        for(var key in json){
+	            var value = json[key];
+	            if(parent=='')var subparent = key;
+	            else var subparent = parent+'['+key+']';
+	            result = json2html_name_list(value, result, subparent);
+	        }
+	    }
+	    return result;
+	};
+
+	/**
+	 * Handle modal para mensagens.
+	 */
+	$.fn.modalDialog = function(options) {
+		// Validar
+		if (options.title && options.message) {
+			// Obter elemento
+			var _element =  $(this);
+			// Set título
+			_element.find('.modal-title').text(options.title);
+			// Set mensagem
+			_element.find('.modal-body-message').text(options.message);
+			// Retorno
+			return {
+				success : function() {
+					// Show modal
+					_element.showModalDialog('modal-success');
+				},
+				danger : function() {
+					// Show modal
+					_element.showModalDialog('modal-danger');
+				}
+			}
+		}
+	};
+
+	/**
+	 * Handle modal para mensagens.
+	 */
+	$.fn.showModalDialog = function(className, options) {
+		// Show modal
+		$(this).toggleClass(className, true).modal(options);
+		// Remover class qdo fechar
+		$(this).on('hidden.bs.modal', function (e) {
+			$(this).toggleClass(className, false);
+		});
+	};
+	/**
+	 * Handle modal para mensagens.
+	 */
+	$.fn.progress = function(percent, message) {
+		// iniciar barra de progresso
+		if (percent < 100 && $(this).find('.progress-bar').width() == 100) {
+			$(this).find('.progress-bar').width('0%').html('0%');
+		}
+		// verificar se conclui o processo
+		if (percent == 100) {
+			$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
+			$(this).slideUp();
+		} else {
+			// Mostrar progress
+			$(this).slideDown();
+			$(this).find('.progress-bar').width(percent + '%').html([message, ' (', percent, ' %)'].join(''));
+		}
+	};
+
+	$.fn.$elect = function(selectOptions) {
+
+		// Init validation
+		if (!selectOptions || !selectOptions.search || !selectOptions.formatData) {
+			console.warning('$elect initialized inappropriately');
+			return;
+		}
+
+		// Get select element
+		$ctrl = $(this);
+
+		// workround to update data in select2
+		// https://github.com/select2/select2/issues/2830#issuecomment-74971872
+		$ctrl.bind('initSelect', function(event, _data) {
+				_this = $(this);
+				options = {
+				  data : [],
+				  // placeholder: (selectOptions.placeholder? selectOptions.placeholder : ''),
+				  // allowClear: true,
+				  ajax: {
+				  	transport : function (params, success, failure) {
+				  		if (!params.data.term) return;
+				  		selectOptions.search(params.data.term)
+				  		.then(function(response) {
+							success(response);
+						});	
+				  	},
+				  	processResults: function(response) {
+				  		if (!selectOptions.getItems(response)) return [];
+						return {
+		                    results: $.map(selectOptions.getItems(response), function(item) {
+		                        return selectOptions.formatData(item);
+		                    })
+		                };
+				    }
+				  },
+				  width: '100%',
+				  templateResult: function(data) {
+				  	if (data.loading) {
+				  		return messages.select.search;
+				  	}
+				  	return data.text;
+				  }
+				};
+				option = $('<option selected>teste</option>');
+
+				// Handling data
+				if (!_data) {
+					_data = { id: '', text: ''}
+				} else {
+					_data = selectOptions.formatData(_data);
+				}
+
+				// Apply init value
+				option.val(_data.id);
+				option.text(_data.text);
+				_this.empty().append(option);
+				
+				// Create select2
+				_this.select2(options);	
+		});
+
+		// Init
+		$ctrl.trigger('initSelect');
+
+		// Reset selects
+		$ctrl.closest("form").bind('reset', function() {
+			// Init
+			$('select').trigger('initSelect');
+		});
+	};
+
 }(jQuery);
-
-/**
- * TODO colocar no common.
- * Método utilizado para se adequar ao padrão 
- * RFC3339 os campos data são convertidos.
- */
-$.toRFC3339 = function (str) {
-	// Validação
-	if (!str || !str.length) return null;
-
-	var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
-	var date = new Date(str.replace(pattern,'$3-$2-$1'));
-
-	pad = function(n) {return n<10 ? '0'+n : n}
-
-	return date.getUTCFullYear()+'-'
-	      + pad(date.getUTCMonth()+1)+'-'
-	      + pad(date.getUTCDate())+'T'
-	      + pad(date.getUTCHours())+':'
-	      + pad(date.getUTCMinutes())+':'
-	      + pad(date.getUTCSeconds())
-}
-/**
- * TODO colocar no common. 
- * Objeto auxiliar para formatação de dados.
- */
-$.dataFormatter = {
-	// Método para definir a formatação.
-	format : function(options) {
-		// Validar informação
-		if (!(options 
-			&& options.data 
-			&& options.data instanceof Array 
-			&& options.data.length > 0)) return;
-		// Realizar formatação do array
-		data = options.data;
-		$.each(data, function(index, row) {
-			$.each(row, function(key, value) {
-				$.each(options.format, function(_index, format) {
-					if (format[key] != undefined) {
-						row[key] = format[key](value);
-					}
-				});
-			}); // Fim each
-		}); // Fim for
-		return data;
-	}, // Fim format()
-	// Formatação padrão para data.
-	dateFormat : function(value) {
-		return moment(value).format('L');
-	},
-	// Formatação padrão para data e hora.
-	dateTimeFormat : function(value) {
-		return moment(value).format('LLL');
-	}
-};

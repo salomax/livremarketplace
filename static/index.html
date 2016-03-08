@@ -40,47 +40,37 @@
 
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
-    <!-- General Modal -->
-    <div class="modal modal-dialog-message">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"></h4>
+
+
+        <!-- /.modal -->
+        <div id="wrapper" style="display: none;">
+            <div class="login-box">
+                <div class="login-logo">
+                    <span>open<b>Market</b>place</span>
                 </div>
-                <div class="modal-body">
-                    <p class="modal-body-message"></p>
+                <div class="login-text">
+                    <small>OpenSource ERP</small>
+                </div>
+                <!-- /.login-logo -->
+                <div class="login-box-body">
+                    <p class="login-box-msg">Sign in to start your session</p>
+                    <div class="signin-button">
+                        <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" data-longtitle="true" data-width="wide"></div>
+                    </div>
+                    <!-- /.login-box-body -->
                 </div>
             </div>
-            <!-- /.modal-content -->
+            <footer class="footer">
+                <div class="login-github">
+                    <a href="https://github.com/salomax/openMarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
+                </div>
+            </footer>
         </div>
-        <!-- /.modal-dialog -->
+        <!-- /#wrapper -->
+
     </div>
-    <!-- /.modal -->
-    <div id="wrapper" style="display: none;">
-        <div class="login-box">
-            <div class="login-logo">
-                <span>open<b>Market</b>place</span>
-            </div>
-            <div class="login-text">
-                <small>OpenSource ERP</small>
-            </div>
-            <!-- /.login-logo -->
-            <div class="login-box-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                <div class="signin-button">
-                    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" data-longtitle="true" data-width="wide"></div>
-                </div>
-                <!-- /.login-box-body -->
-            </div>
-        </div>
-        <footer class="footer">
-            <div class="login-github">
-                <a href="https://github.com/salomax/openMarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
-            </div>
-        </footer>
-    </div><!-- /#wrapper -->
-    </div><!-- ./wrapper -->
+    <!-- ./wrapper -->
+
     <!-- jQuery 2.1.4 -->
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -125,15 +115,18 @@
     <script src="/js/oauth.js"></script>
     <script type="text/javascript">
     window.paceOptions = {
-        // Disable the 'elements' source
-        elements: false,
-        // Only show the progress on regular and ajax-y page navigation,
-        // not every request
-        restartOnRequestAfter: false
-    }
+            // Disable the 'elements' source
+            elements: false,
+            // Only show the progress on regular and ajax-y page navigation,
+            // not every request
+            restartOnRequestAfter: false
+        }
     // Load page waiting message 
     $(window).load(function() {
-        $("#wrapper").fadeIn('slow');
+        $("#wrapper").fadeIn('slow', function() {
+            $.AdminLTE.pushMenu.activate($.AdminLTE.options.sidebarToggleSelector);
+            $.AdminLTE.layout.activate();
+        });
     });
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>

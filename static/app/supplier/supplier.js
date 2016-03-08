@@ -38,160 +38,81 @@
      */
     $.supplier.api = {
 
+
+        SERVICE_NAME : 'supplier',
+        VERSION : 'v1',
+
+        service : function(method) {
+            return ['/', $.supplier.api.SERVICE_NAME, '/', $.supplier.api.VERSION, '/', method].join(''); 
+        },
+
         /* 
          * Método destinado à pesquisar pelo nome ou código os fornecedors cadastrados.
          */
         search: function(_data) {
 
-            // Criar controle promise
-            var deferred = $.Deferred();
+            // Execute supplier search endpoint 
+            return $.api.request({
+                path : $.supplier.api.service('search'),
+                method : 'POST',
+                body : _data,
+                dialogError : {
+                    title : messages.supplier.search.dialog.title,
+                    message : messages.supplier.search.dialog.errormessage
+                }
+            }); 
 
-            // fn sucesso
-            var success = function(response) {
-
-                    // Executar fn sucesso pelo promise
-                    deferred.resolve(response);
-
-                } // Fim fn sucesso
-
-            // fn error
-            var error = function(reason) {
-
-                    // apresentar mensagem ao usuário
-                    $('.modal-dialog-message').modalDialog({
-                        title: messages.supplier.search.dialog.title,
-                        message: messages.supplier.search.dialog.errormessage
-                    }).danger();
-
-                    console.log(reason.result.error.message);
-
-                    // Executar fn erro pelo promise
-                    resolve.reject();
-                } // Fim fn error
-
-            // Load API e executar serviço
-            gapi.client.load('supplier', 'v1', function() {
-                var request = gapi.client.supplier.search(_data);
-                request.then(success, error);
-            }, API_ROOT);
-
-            // retornar promise
-            return deferred.promise();
-
-        }, // Fim search
+        }, // End search()
 
         /**
          *  Método persiste o fornecedor.
          */
         save: function(_data) {
 
-            // atualizar barra de progresso
-            $('.progress-bar-form').progress(50, messages.progressbar.waitingserver);
+            // Execute custumers delete endpoint 
+            return $.api.request({
+                path : $.supplier.api.service('save'),
+                method : 'POST',
+                body : _data,
+                progressBar : $('.progress-bar-form'),
+                dialogSuccess : {
+                    title : messages.supplier.save.dialog.title,
+                    message : messages.supplier.save.dialog.success 
+                },
+                dialogError : {
+                    title : messages.supplier.save.dialog.title,
+                    message : messages.supplier.save.dialog.errormessage
+                }
+            }).then(function(response) {
+                $('form.supplier-form').populate(response.result);
+                return response;
+            });
 
-            // criar controle promise
-            var deferred = $.Deferred();
-
-            // fn sucesso
-            var success = function(response) {
-
-                // atualizar barra de progresso
-                $('.progress-bar-form').progress(100, messages.progressbar.done);
-
-
-                console.log('saved' + $.i18n.prop('messages.product.save.dialog.title'));
-
-                // apresentar mensagem ao usuário
-                $('.modal-dialog-message').modalDialog({
-                    title: messages.supplier.save.dialog.title,
-                    message: messages.supplier.save.dialog.success
-                }).success();
-
-                // resolve promise
-                deferred.resolve(response);
-            };
-
-            // fn erro
-            var failure = function(reason) {
-
-                // atualizar barra de progresso
-                $('.progress-bar-form').progress(100, messages.progressbar.done);
-
-                // apresentar mensagem ao usuário
-                $('.modal-dialog-message').modalDialog({
-                    title: messages.supplier.save.dialog.title,
-                    message: messages.supplier.save.dialog.errormessage
-                }).danger();
-
-                console.log(reason.result.error.message);
-
-                // promisse
-                resolve.reject();
-            };
-
-            // Load API e  executar serviço
-            gapi.client.load('supplier', 'v1', function() {
-                var request = gapi.client.supplier.save(_data);
-                request.then(success, failure);
-            }, API_ROOT);
-
-            // retornar promise
-            return deferred.promise();
-        }, // Fim save
+        }, // End save()
 
         /**
          *  Método realiza a exclusão do fornecedor.
          */
         delete: function(_id) {
 
-                // atualizar barra de progresso
-                $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
+            // Execute custumers delete endpoint 
+            return $.api.request({
+                path : $.supplier.api.service(_id),
+                method : 'DELETE',
+                progressBar : $('.progress-bar-table'),
+                dialogError : {
+                    title : messages.supplier.delete.dialog.title,
+                    message : messages.supplier.delete.dialog.success
+                }
+            });
 
-                // Criar controle promise
-                var deferred = $.Deferred();
+        }, // End delete()
 
-                // fn sucesso
-                var success = function(response) {
-
-                    // atualizar barra de progresso
-                    $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                    // apresentar mensagem ao usuário
-                    $('.modal-dialog-message').modalDialog({
-                        title: messages.supplier.delete.dialog.title,
-                        message: messages.supplier.delete.dialog.success
-                    }).success();
-
-                    // Executar promise
-                    deferred.resolve();
-                };
-
-                // fn erro
-                var failure = function(reason) {
-
-                    // atualizar barra de progresso
-                    $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                    // apresentar mensagem ao usuário
-                    $('.modal-dialog-message').modalDialog({
-                        title: messages.supplier.delete.dialog.title,
-                        message: messages.supplier.delete.dialog.errormessage
-                    }).danger();
-
-                    console.log(reason.result.error.message);
-
-                    // Executar promise
-                    resolve.reject();
-                };
-
-                // Load API e  executar serviço
-                gapi.client.load('supplier', 'v1', function() {
-                    var request = gapi.client.supplier.delete({ id: _id });
-                    request.then(success, failure);
-                }, API_ROOT);
-
-                // retornar promise
-                return deferred.promise();
-            } // Fim delete
+        list : function(options) {
+            return $.api.request($.util.mergeObjects({
+                path : $.supplier.api.service('list')
+            }, options));    
+        } // End list()
 
     }; // Fim API
 
@@ -262,41 +183,15 @@
 
             $('table').fadeOut();            
 
-            // atualizar barra de progresso
-            $('.progress-bar-table').progress(50, messages.progressbar.waitingserver);
-
-            // Load API e  executar serviço
-            gapi.client.load('supplier', 'v1', function() {
-                var request = gapi.client.supplier.list();
-                request.then(
-                    function(response) {
-
-                        // atualizar barra de progresso
-                        $('.progress-bar-table').progress(75, messages.progressbar.building);
-
-                        // Atachar a lista de compras na tabela
-                        $.supplier.view.bindTable(response.result);
-
-                        // atualizar barra de progresso					
-                        $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                    },
-                    function(reason) {
-
-                        // atualizar barra de progresso					
-                        $('.progress-bar-table').progress(100, messages.progressbar.done);
-
-                        // apresentar mensagem ao usuário
-                        $('.modal-dialog-message').modalDialog({
-                            title: messages.supplier.list.dialog.title,
-                            message: messages.supplier.list.dialog.errormessage
-                        }).danger();
-
-                        console.log(reason.result.error.message);
-
-                    });
-
-            }, API_ROOT);
+            $.supplier.api.list({
+                progressBar : $('.progress-bar-table'),
+                dialogError : {
+                    title : messages.supplier.list.dialog.title,
+                    message : messages.supplier.list.dialog.errormessage
+                }                
+            }).then(function(response) {
+                $.supplier.view.bindTable(response.result);
+            });
 
         }, // Fim loadTable
 
@@ -395,6 +290,5 @@
 
 
     };
-
 
 }(jQuery);

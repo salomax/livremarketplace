@@ -43,33 +43,25 @@ function onSignIn(googleUser) {
 
         // Importar main html    
         $('#wrapper').html(response);
-    
-            // Carregar a página principal.
+
+        // Carregar a página principal.
         $.main.load();
 
-        // Importar script do bootstratp template vendor (AdminLTE)
-        // E atachar os componentes necessários após carregado
-        $.getScript('/js/vendor.min.js', function() {
+        // Attach dropdowns
+        $('.dropdown-toggle').dropdown();
 
-            // $('#email').text(profile.getEmail());
+        // Definir imagem do usuário
+        var image = (profile.getImageUrl() ? profile.getImageUrl() : '/img/profile.png');
+        $('img.user-image').attr('src', image);
+        $('img.user-image-lg').attr('src', image + '?sz=160');
 
-            // Attach dropdowns
-            $('.dropdown-toggle').dropdown();
+        // Definir nome do usuário
+        $('span.user-display-name').html(profile.getName());
 
-            // Definir imagem do usuário
-            var image = (profile.getImageUrl() ? profile.getImageUrl() : '/img/profile.png');
-            $('img.user-image').attr('src', image);
-            $('img.user-image-lg').attr('src', image + '?sz=160');
-
-            // Definir nome do usuário
-            $('span.user-display-name').html(profile.getName());
-
-            // Bind sign out
-            $('a.sign-out').click(function() {
+        // Sign out button
+        $('a.sign-out').click(function() {
               signOut();
             });
-
-        });
 
     }); // Fim done()
 

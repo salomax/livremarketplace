@@ -68,7 +68,7 @@
 		 */
 		save : function(_data) {
 
-            // Execute custumers delete endpoint 
+            // Execute product save endpoint 
             return $.api.request({
                 path : $.product.api.service('save'),
                 method : 'POST',
@@ -94,7 +94,7 @@
 		 */
 		delete : function(_id) {
 
-            // Execute custumers delete endpoint 
+            // Execute product delete endpoint 
             return $.api.request({
                 path : $.product.api.service(_id),
                 method : 'DELETE',
@@ -186,7 +186,9 @@
 		 */ 
 		loadTable : function() {
 
-            // Execute custumers list endpoint 
+            $('table').fadeOut();
+
+            // Execute product list endpoint 
             var request = $.product.api.list({
                 progressBar : $('.progress-bar-table'),
                 dialogError : {

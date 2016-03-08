@@ -365,8 +365,6 @@
                     }]
                 });
 
-                console.log(response.result.items);
-
                 // Criar gráfico
                 Morris.Bar({
                     element: 'cash_flow-chart',
