@@ -62,7 +62,11 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 
  	$.main.load = function() {
 
+ 		// Init locale
  		$.main.loadLocale();
+
+ 		// init layout
+ 		$.AdminLTE.initLayout();
 
 	};
 

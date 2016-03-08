@@ -22,6 +22,11 @@ body {
     background-attachment: fixed !important;
     background-position: center !important;
 }
+.index-page {
+    min-height: 100%;
+    position: static;
+    overflow: hidden;
+}
 .wrapper {
     min-height: 100%;
     position: static;
@@ -4773,3 +4778,8 @@ div.main-content.col-md-9 {
     color: #666;
     font-size: 13px;     
 }
+
+/* Workround to responsiveless iframe google maps */
+iframe[id="ssIFrame_google"] { 
+    position: fixed !important;
+};

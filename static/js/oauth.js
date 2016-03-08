@@ -42,7 +42,7 @@ function onSignIn(googleUser) {
     }).done(function(response) {
 
         // Importar main html    
-        $('#wrapper').html(response);
+        $('.wrapper').html(response);
 
         // Carregar a página principal.
         $.main.load();
