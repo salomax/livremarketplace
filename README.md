@@ -23,6 +23,12 @@ open source light ERP for e-commerces
 - Integration with Correios and Mercado Livre
 - Android and iOS clients
 
+### To next version
+
+- High [Postal service Integration Module #46] (https://github.com/salomax/openMarketplace/issues/46)
+- [Change Locale Feature #45] (https://github.com/salomax/openMarketplace/issues/45)
+- [Fix Dashboard #44] (https://github.com/salomax/openMarketplace/issues/44)
+
 ### Git
 
 	git add .
