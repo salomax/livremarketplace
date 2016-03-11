@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>openMarketplace</title>
+    <title>livremarketplace</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Google sign in -->
@@ -26,7 +26,7 @@
     <!-- Select2 - multi select -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2-rc.1/css/select2.min.css" rel="stylesheet" />
     <!-- Theme style -->
-    <link rel="stylesheet" href="/css/openmarketplace.css">
+    <link rel="stylesheet" href="/css/livremarketplace.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="/css/skins/skin-blue-light.min.css">
@@ -39,8 +39,24 @@
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
+    <!-- General Modal -->
+    <div class="modal modal-dialog-message">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-body-message"></p>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
     <div class="wrapper" style="display: none;">
-        <!-- /.modal -->
         <div class="index-page">
             <div class="login-box">
                 <div class="login-logo">
@@ -60,7 +76,7 @@
             </div>
             <footer class="footer">
                 <div class="login-github">
-                    <a href="https://github.com/salomax/openMarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
+                    <a href="https://github.com/salomax/livremarketplace" target="_blank">View in Github <img src="/img/GitHub-Mark-Light-32px.png" /></a>
                 </div>
             </footer>
         </div>
@@ -103,9 +119,9 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
     <script async defer src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script async defer src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-    <!-- openmarketplace script -->
+    <!-- livremarketplace script -->
     <script src="/js/vendor.min.js"></script>
-    <script src="/js/openmarketplace.js"></script>
+    <script src="/js/livremarketplace.js"></script>
     <!-- Oauth control -->
     <script src="https://apis.google.com/js/client.js?onload=init"></script>
     <script src="/js/oauth.js"></script>
@@ -119,10 +135,10 @@
         }
         // Load page waiting message 
     $(window).load(function() {
-        
+
         // Overwrite pace height
         $("body").height($(document).height());
-        
+
         // Fade in wrapper
         $(".wrapper").fadeIn('slow');
 

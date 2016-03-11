@@ -1,4 +1,4 @@
-application: salomax-marketplace-api
+application: livremarketplace
 version: 1
 runtime: python27
 threadsafe: true
@@ -7,7 +7,7 @@ api_version: 1
 handlers:
 # Endpoints handler: Must be /_ah/spi. Apps send requests to /_ah/api, but these are handled at /_ah/spi!!
 - url: /_ah/spi/.*
-  script: openmarketplace_api.APPLICATION
+  script: livremarketplace_api.APPLICATION
   secure: always
 
 # The following three handlers route requests to static resources: JS, CSS,
@@ -23,21 +23,31 @@ handlers:
 - url: /
   static_files: static/index.html
   upload: static/index\.html
+  secure: always  
 - url: /main
   static_files: static/app/main.html
   upload: static/app/main\.html
+  secure: always
 - url: /purchase
   static_dir: static/app/purchase
 - url: /product
+  secure: always
   static_dir: static/app/product
 - url: /supplier
   static_dir: static/app/supplier
+  secure: always
 - url: /customer
   static_dir: static/app/customer
+  secure: always
 - url: /sale
   static_dir: static/app/sale
+  secure: always
 - url: /dashboard
   static_dir: static/app/dashboard
+  secure: always
+- url: /postal
+  static_dir: static/app/postal
+  secure: always
 
 libraries:
 - name: pycrypto

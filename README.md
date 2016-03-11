@@ -1,6 +1,6 @@
-# [openMarketplace](https://salomax-marketplace.appspot.com)
-[![Build Status](https://travis-ci.org/salomax/openMarketplace.svg?branch=master)](https://travis-ci.org/salomax/openMarketplace)
-[![Code Climate](https://codeclimate.com/github/salomax/openMarketplace/badges/gpa.svg)](https://codeclimate.com/github/salomax/openMarketplace) [![Coverage Status](https://coveralls.io/repos/github/salomax/openMarketplace/badge.svg?branch=master)](https://coveralls.io/github/salomax/openMarketplace?branch=master) [![Issue Count](https://codeclimate.com/github/salomax/openMarketplace/badges/issue_count.svg)](https://codeclimate.com/github/salomax/openMarketplace) [![Gitter](https://badges.gitter.im/salomax/openMarketplace.svg)](https://gitter.im/salomax/openMarketplace?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# [livremarketplace](https://salomax-marketplace.appspot.com)
+[![Build Status](https://travis-ci.org/salomax/livremarketplace.svg?branch=master)](https://travis-ci.org/salomax/livremarketplace)
+[![Code Climate](https://codeclimate.com/github/salomax/livremarketplace/badges/gpa.svg)](https://codeclimate.com/github/salomax/livremarketplace) [![Coverage Status](https://coveralls.io/repos/github/salomax/livremarketplace/badge.svg?branch=master)](https://coveralls.io/github/salomax/livremarketplace?branch=master) [![Issue Count](https://codeclimate.com/github/salomax/livremarketplace/badges/issue_count.svg)](https://codeclimate.com/github/salomax/livremarketplace) [![Gitter](https://badges.gitter.im/salomax/livremarketplace.svg)](https://gitter.im/salomax/livremarketplace?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 open source light ERP for e-commerces
 
@@ -25,9 +25,9 @@ open source light ERP for e-commerces
 
 ### To next version
 
-- High [Postal service Integration Module #46] (https://github.com/salomax/openMarketplace/issues/46)
-- [Change Locale Feature #45] (https://github.com/salomax/openMarketplace/issues/45)
-- [Fix Dashboard #44] (https://github.com/salomax/openMarketplace/issues/44)
+- High [Postal service Integration Module #46] (https://github.com/salomax/livremarketplace/issues/46)
+- [Change Locale Feature #45] (https://github.com/salomax/livremarketplace/issues/45)
+- [Fix Dashboard #44] (https://github.com/salomax/livremarketplace/issues/44)
 
 ### Git
 
@@ -56,11 +56,11 @@ open source light ERP for e-commerces
 ### Install and Run
 
     $ pip install coverage 
-    $ coverage run --source=app openmarketplace_test.py
+    $ coverage run --source=app livremarketplace_test.py
 
 ### Create a Test Case
 
-Add module in the openmarketplace_test.py
+Add module in the livremarketplace_test.py
 
 ```python
 # Add modules to test over here
@@ -111,4 +111,4 @@ something()
 
 ## License
 
-See [LICENSE](https://github.com/salomax/openMarketplace/blob/master/LICENSE).	
+See [LICENSE](https://github.com/salomax/livremarketplace/blob/master/LICENSE).	

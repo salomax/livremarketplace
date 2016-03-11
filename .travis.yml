@@ -17,7 +17,7 @@ install:
  # - /usr/local/google_appengine/appcfg.py -A salomax-marketplace update .
 
 script:
- - coverage run --source=app openmarketplace_test.py
+ - coverage run --source=app livremarketplace_test.py
 
 after_success:
     coveralls

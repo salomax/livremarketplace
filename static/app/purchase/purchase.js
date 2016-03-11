@@ -226,7 +226,11 @@
 										return ['<a href="', value ,'" target="_blank">', value, "</a>"].join('');
 									}
 								},
-								{field : 'track_code', title : messages.purchase.track_code},
+								{field : 'track_code', title : messages.purchase.track_code,
+									formatter : function(value, row, index) {
+										return ['<span class="tracking_info" data-trackcode="', value, '">', value, "</span>"].join('');
+									}
+								},
 								{field : 'created_date', title : messages.purchase.created_date}
 								];
 
@@ -235,6 +239,11 @@
 								data : [row],
 								cardView : true,
 								striped : true
+							});
+
+							// Bind tracking code info
+							$.getScript('/postal/postal.js', function() {
+								$('span.tracking_info').bindTrackCode();
 							});
 
 							return element;

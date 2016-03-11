@@ -1,5 +1,5 @@
 /******************************************************************************
- * app.js
+ * livremarketplace.js
  *
  * Copyright 2016 Marcos Salomão
  *
@@ -722,12 +722,24 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 			// Set título
 			_element.find('.modal-title').text(options.title);
 			// Set mensagem
-			_element.find('.modal-body-message').text(options.message);
+			if ($.type(options.message) == 'string') {
+				_element.find('.modal-body-message').text(options.message);
+			} else if ($.type(options.message) == 'object') {
+				_element.find('.modal-body-message').html(options.message);
+			}
 			// Retorno
 			return {
 				success : function() {
 					// Show modal
 					_element.showModalDialog('modal-success');
+				},
+				info : function() {
+					// Show modal
+					_element.showModalDialog('modal-info');
+				},
+				default : function() {
+					// Show modal
+					_element.showModalDialog('modal-default');
 				},
 				danger : function() {
 					// Show modal

@@ -27,7 +27,7 @@ __copyright__ = "Copyright 2016, Marcos Salomão"
 __license__ = "Apache 2.0"
 
 
-class OpenMarketplaceModel(ndb.Model):
+class livremarketplaceModel(ndb.Model):
 
     def get_query(self):
 
@@ -38,7 +38,7 @@ class OpenMarketplaceModel(ndb.Model):
         return self.query(ancestor=marketplaceModel.key)
 
 
-class StockItemModel(OpenMarketplaceModel):
+class StockItemModel(livremarketplaceModel):
     """ Stock item datastore entity.
     """
 
