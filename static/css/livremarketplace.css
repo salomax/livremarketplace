@@ -96,7 +96,8 @@ body {
 .right-side {
     min-height: 100%;
     background-color: #E9E9ED;
-    z-index: 800
+    z-index: 800;
+    padding-bottom: 15px;
 }
 .main-footer {
     background: #fff;
@@ -150,8 +151,8 @@ body.hold-transition .main-header .logo {
     transition: none
 }
 .content {
-    min-height: 250px;
-    padding: 15px;
+    /*min-height: 250px;*/
+    /*padding: 15px;*/
     margin-right: auto;
     margin-left: auto;
     padding-left: 15px;
@@ -472,7 +473,7 @@ a:focus {
 .user-panel>.image>img {
     width: 100%;
     max-width: 45px;
-    height: 45px;
+    height: auto;
 }
 .user-panel>.info {
     padding: 5px 5px 5px 15px;
@@ -481,7 +482,7 @@ a:focus {
     left: 55px
 }
 .user-panel>.info>p {
-    font-weight: 600;
+    font-weight: 400;
     margin-bottom: 9px
 }
 .user-panel>.info>a {
@@ -2032,7 +2033,8 @@ a:focus {
     position: relative;
     margin: 0 0 30px 0;
     padding: 0;
-    list-style: none
+    list-style: none;
+    font-size: 12px;
 }
 .timeline:before {
     content: '';
@@ -2059,9 +2061,9 @@ a:focus {
     clear: both
 }
 .timeline>li>.timeline-item {
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+/*    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
+    border-radius: 3px;*/
     margin-top: 0;
     background: #fff;
     color: #444;
@@ -2943,14 +2945,16 @@ table.text-center th {
 }
 .widget-user .widget-user-image {
     position: absolute;
-    top: 65px;
-    left: 50%;
-    margin-left: -45px
 }
 .widget-user .widget-user-image>img {
-    width: 90px;
+    width: 60px;
     height: auto;
-    border: 3px solid #fff
+    border: 1px solid #666
+}
+.widget-user {
+    background-color: #303F9F;    
+    min-height: 30px;
+    margin-bottom: 30px;
 }
 .widget-user .box-footer {
     padding-top: 30px
@@ -3140,6 +3144,12 @@ table.text-center th {
     margin: 0;
     text-align: center;
     padding: 0 20px 20px 20px
+}
+.version-box-msg {
+    margin: 0;
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+    opacity: 0.6
 }
 .social-auth-links {
     margin: 10px 0
@@ -4779,7 +4789,44 @@ div.main-content.col-md-9 {
     font-size: 13px;     
 }
 
+.messages-errormessage {
+    margin-top: 15px;
+    padding: 5px;
+}
+
 /* Workround to responsiveless iframe google maps */
 iframe[id="ssIFrame_google"] { 
     position: fixed !important;
 };
+
+
+.modal.fade:not(.in).left .modal-dialog {
+    -webkit-transform: translate3d(-25%, 0, 0);
+    transform: translate3d(-25%, 0, 0);
+}
+.modal.fade:not(.in).right .modal-dialog {
+    -webkit-transform: translate3d(25%, 0, 0);
+    transform: translate3d(25%, 0, 0);
+}
+.modal.fade:not(.in).bottom .modal-dialog {
+    -webkit-transform: translate3d(0, 25%, 0);
+    transform: translate3d(0, 25%, 0);
+}
+
+/* Alternative Angles */
+.modal.fade:not(.in).top-left .modal-dialog {
+    -webkit-transform: translate3d(-25%, -25%, 0);
+    transform: translate3d(-25%, -25%, 0);
+}
+.modal.fade:not(.in).top-right .modal-dialog {
+    -webkit-transform: translate3d(25%, -25%, 0);
+    transform: translate3d(25%, -25%, 0);
+}
+.modal.fade:not(.in).bottom-left .modal-dialog {
+    -webkit-transform: translate3d(-25%, 25%, 0);
+    transform: translate3d(-25%, 25%, 0);
+}
+.modal.fade:not(.in).bottom-right .modal-dialog {
+    -webkit-transform: translate3d(25%, 25%, 0);
+    transform: translate3d(25%, 25%, 0);
+}

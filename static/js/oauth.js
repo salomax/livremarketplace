@@ -53,7 +53,7 @@ function onSignIn(googleUser) {
         // Definir imagem do usuário
         var image = (profile.getImageUrl() ? profile.getImageUrl() : '/img/profile.png');
         $('img.user-image').attr('src', image);
-        $('img.user-image-lg').attr('src', image + '?sz=160');
+        $('img.user-image-sidebar').attr('src', image + '?sz=160');
 
         // Definir nome do usuário
         $('span.user-display-name').html(profile.getName());

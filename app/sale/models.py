@@ -88,6 +88,22 @@ def get_sales_query():
     return SaleModel.query(ancestor=marketplaceModel.key)
 
 
+def has_sales_by_product(productKey):
+    """ Check if there is any sale with product key.
+    """
+
+    return get_query_purchase().filter(SaleModel.product
+                                       == productKey).get() is not None
+
+
+def has_sales_by_customer(customerKey):
+    """ Check if there is any sale with customer key.
+    """
+
+    return get_sales_query().filter(SaleModel.customer
+                                    == customerKey).get() is not None
+
+
 def list():
     """ List all sales.
     """
@@ -112,14 +128,13 @@ def save(sale):
 
         # Create sale with id
         saleModel = SaleModel(id=int(sale.id),
-                            parent=marketplaceModel.key)
+                              parent=marketplaceModel.key)
 
     else:
 
         # Create sale with random unique id
         saleModel = SaleModel(parent=marketplaceModel.key)
 
-    
     logging.debug("Sale model created")
 
     # Get product

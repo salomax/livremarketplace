@@ -176,10 +176,10 @@ def save(customer):
     # or instantiate one, instead.
     if customer.id is not None:
         customerModel = CustomerModel(id=int(customer.id),
-                                parent=marketplaceModel.key)
+                                      parent=marketplaceModel.key)
     else:
         customerModel = CustomerModel(parent=marketplaceModel.key)
-    
+
     logging.debug("Customer model created")
 
     # Pass values
@@ -213,15 +213,23 @@ def delete(id):
     marketplaceModel = marketplace.get_marketplace()
 
     # Get customer
-    customer = ndb.Key('CustomerModel', int(
-        id), parent=marketplaceModel.key).get()
+    customerKey = ndb.Key('CustomerModel', int(id), parent=marketplaceModel.key)
 
     # Handle if not exists
-    if customer is None:
+    if customerKey is None:
         raise NotFoundEntityException(message='messages.customer.notfound')
 
+    # Are there sales with this customer,
+    # if true, is not possible to delete
+    from app.sales import models as sales
+    if sales.has_sales_by_customer(customerKey) == True:
+        raise IntegrityViolationException(
+            message='messages.customer.salesintegrityviolation')
+
+    logging.debug("Check constraint validation OK")
+
     # Remove from datastore
-    customer.key.delete()
+    customerKey.delete()
 
     logging.debug("Customer id %s removed success!", id)
 

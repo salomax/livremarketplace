@@ -192,12 +192,19 @@ def delete(id):
 
     logging.debug("Product %d found it!", id)
 
-    # Are there purchases um this supplier,
+    # Are there purchases this product,
     # if true, is not possible to delete
     from app.purchase import models as purchase
     if purchase.has_purchases_by_product(productKey) == True:
         raise IntegrityViolationException(
             message='messages.product.purchasesintegrityviolation')
+
+    # Are there purchases this product,
+    # if true, is not possible to delete
+    from app.sale import models as sale
+    if sale.has_sales_by_product(productKey) == True:
+        raise IntegrityViolationException(
+            message='messages.product.salesintegrityviolation')
 
     logging.debug("Check constraint validation OK")
 

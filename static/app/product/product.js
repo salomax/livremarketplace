@@ -101,7 +101,7 @@
                 progressBar : $('.progress-bar-table'),
                 dialogError : {
 					title : messages.product.delete.dialog.title,
-					message : messages.product.delete.dialog.success
+					message : messages.product.delete.dialog.errormessage
                 }
             });
 

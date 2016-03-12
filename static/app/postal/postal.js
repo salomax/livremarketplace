@@ -75,7 +75,7 @@
                 var trackCode = $(this).attr('data-trackcode');
 
                 // Show message
-                $(this).after($(['<span>', messages.postal.trackinginfo.searchingalert, '</span>'].join('')));
+                $(this).after($(['<span class="label label-primary">', messages.postal.trackinginfo.searchingalert, '</span>'].join('')));
                 var _button = $(this);
 
                 // Execute endpoint

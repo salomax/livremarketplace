@@ -21,8 +21,17 @@
 
 /**
  * Constante global para link da API.
+ *
+ * Workaroung for appengine problem.
+ * https://code.google.com/p/googleappengine/issues/detail?id=9384
  */
-var API_ROOT = '//' + document.location.host + '/_ah/api';
+var PRODUCTION_HOST = 'salomax-marketplace.appspot.com';
+var DEVELOPMENT_HOST = 'localhost:8080';
+var host = PRODUCTION_HOST;
+if (document.location.host.indexOf('localhost') >= 0) {
+	host = DEVELOPMENT_HOST
+}
+var API_ROOT = '//' + host + '/_ah/api';
 
 /**
  * Funções para serem carregadas no load da página main.
@@ -155,13 +164,13 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 	               // show error dialog
 	                $('.modal-dialog-message').modalDialog({
 	                    title: title,
-	                    message: message
+	                    message: $('<div>').text(message).append($('<div class="messages-errormessage">').text($.i18n.prop(reason.result.error.message)))
 	                }).danger();
 
-	                console.log(reason.result.error.message);
+	                console.warn($.i18n.prop(reason.result.error.message));
 
 	                // Reject promise
-	                resolve.reject(reason);
+	                def.reject(reason);
 	            };
 
 	            // Set root
@@ -731,19 +740,20 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 			return {
 				success : function() {
 					// Show modal
-					_element.showModalDialog('modal-success');
+					options.setCloseTime = 2000;
+					_element.showModalDialog('modal-success', options);
 				},
 				info : function() {
 					// Show modal
-					_element.showModalDialog('modal-info');
+					_element.showModalDialog('modal-info', options);
 				},
 				default : function() {
 					// Show modal
-					_element.showModalDialog('modal-default');
+					_element.showModalDialog('modal-default', options);
 				},
 				danger : function() {
 					// Show modal
-					_element.showModalDialog('modal-danger');
+					_element.showModalDialog('modal-danger', options);
 				}
 			}
 		}
@@ -753,13 +763,28 @@ var API_ROOT = '//' + document.location.host + '/_ah/api';
 	 * Handle modal para mensagens.
 	 */
 	$.fn.showModalDialog = function(className, options) {
+
 		// Show modal
-		$(this).toggleClass(className, true).modal(options);
+		$(this).toggleClass(className, true).modal();
+ 		$('.modal-backdrop').removeClass("modal-backdrop");
+
 		// Remover class qdo fechar
 		$(this).on('hidden.bs.modal', function (e) {
 			$(this).toggleClass(className, false);
 		});
+		
+		// Set up close after time
+		if (options.setCloseTime) {
+
+			var _this = $(this);
+			setTimeout(function(){
+			  _this.modal('hide');
+			}, options.setCloseTime);
+
+		}
+
 	};
+
 	/**
 	 * Handle modal para mensagens.
 	 */
