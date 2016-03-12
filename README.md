@@ -115,25 +115,26 @@ something()
 
 For more info check [Using custom domains and ssl](https://cloud.google.com/appengine/docs/python/console/using-custom-domains-and-ssl).
 
-1. Generate key and crs
+Generate key and crs
+ 
 	$ openssl req -new -nodes -keyout yourname.key -out yourname.csr
 
-2. Send to CA the .crs generated
-3. Retrieve from CA .zip with certificate
-4. Concat
+Send to CA the .crs generated
+Retrieve from CA .zip with certificate
+Concat
 	
 	$ cat www_example_com.crt ASecureServerCA.crt ATrustCA.crt ATrustExternal.crt > concat.crt
 
-5. Generate unencrypted format
+Generate unencrypted format
 	
 	$ openssl rsa -in yourname.key -out yourname.key.pem 
 
-6. Match 
+Match 
 
 	$ openssl x509 -noout -modulus -in concat.crt | openssl md5
 	$ openssl rsa -noout -modulus -in yourname.key.pem | openssl md5
 
-7. Upload to appengine
+Upload to appengine
 
 ## License
 
