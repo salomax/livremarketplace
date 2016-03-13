@@ -10,17 +10,18 @@ open source light ERP for e-commerces
 - Python
 - Bootstrap and JQuery
 
-### Modules developed
+### Modules
 - Products
 - Suppliers
+- Customers
 - Purchases
 - Sales
 - Cash Flow
 - Dashboard with many metrics
-- Reports* (not yet implemented)
+- Reports
 
 ### ROADMAP
-- Integration with Correios and Mercado Livre
+- Integration with Correios, MercadoLivre and eBay
 - Android and iOS clients
 
 ### Release Notes
