@@ -23,11 +23,7 @@ open source light ERP for e-commerces
 - Integration with Correios and Mercado Livre
 - Android and iOS clients
 
-### To next version
-
-- High [Postal service Integration Module #46] (https://github.com/salomax/livremarketplace/issues/46)
-- [Change Locale Feature #45] (https://github.com/salomax/livremarketplace/issues/45)
-- [Fix Dashboard #44] (https://github.com/salomax/livremarketplace/issues/44)
+### Release Notes
 
 - [v0.1.0-alpha](https://github.com/salomax/livremarketplace/milestones/v0.1.0-alpha) scheduled to 03/15/2016
  
