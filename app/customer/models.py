@@ -21,6 +21,7 @@ import datetime
 from app import user
 from app import util
 from app.exceptions import NotFoundEntityException
+from app.exceptions import IntegrityViolationException
 from app.marketplace import models as marketplace
 from google.appengine.ext import ndb
 from google.appengine.api import search as search_api
@@ -221,7 +222,7 @@ def delete(id):
 
     # Are there sales with this customer,
     # if true, is not possible to delete
-    from app.sales import models as sales
+    from app.sale import models as sales
     if sales.has_sales_by_customer(customerKey) == True:
         raise IntegrityViolationException(
             message='messages.customer.salesintegrityviolation')

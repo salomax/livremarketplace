@@ -194,6 +194,14 @@
                 }).then(
                     function(response) {
 
+                        // Formatar os campos para a view
+                        response.result.items = $.dataFormatter.format({
+                                data : response.result.items,
+                                format : [
+                                    {'sale_date' : $.dataFormatter.dateFormat}
+                                ]
+                                });
+
                         // Create table with response result
                         $.sale.view.bindTable(response.result);
 
@@ -292,7 +300,7 @@
                         _data.result = $.dataFormatter.format({
                                 data : [_data.result],
                                 format : [{'sale_date' : $.dataFormatter.dateFormat}]
-                            });
+                            })[0];
 
                         // Atualizar lista
                         var row = $('table.table-sales').bootstrapTable(

@@ -301,10 +301,11 @@ var API_ROOT = '//' + host + '/_ah/api';
 		appendMenuItem : function(menu) {
 
 			var itemMenu = $('<li>').appendTo($('ul.top-menu'));
-			var link = $('<a>').attr('href', '#').appendTo(itemMenu);
+			var link = $('<a class="menu-item">').attr('href', '#').appendTo(itemMenu);
 
 			link.bind('click', function() {
 				$.menu.openMenu(menu);
+				$.AdminLTE.pushMenu.openMenu();
 			});
 
 			$('<i>').addClass('ion ' + menu.icon).appendTo(link);
@@ -681,14 +682,27 @@ var API_ROOT = '//' + host + '/_ah/api';
 	 * http://stackoverflow.com/questions/7298364/using-jquery-and-json-to-populate-forms
 	 */
 	$.fn.populate = function(data) {
+
 		var _form = $(this);
+
+		// Validate
+		if (!_form.is('form')) {
+			console.warn('Element is not a form. Nothing to populate');
+			return;
+		}
+
+		// Populate form
 		$.each(json2html_name_list(data), function(key, value) {
 		    var $ctrl = $('[name="' + key + '"]', _form);  
 		    if ($ctrl.is("input")) {
 			    switch($ctrl.attr("type")) {  
 			        case "text" :   
 			        case "hidden":  
-			        	$ctrl.val(value);   
+			        	// Convert dates
+			        	if (typeof value === 'string' && value.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/)) {
+			        		value =  $.dataFormatter.dateFormat(value);
+			        	}
+			        	$ctrl.val(value);
 			        break;   
 			        case "radio" : case "checkbox":   
 			        $ctrl.each(function(){
