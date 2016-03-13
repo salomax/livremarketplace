@@ -26,6 +26,7 @@ from app import util
 from app.product import models as productModel
 from app.customer import models as customer
 from app.marketplace import models as marketplace
+from app.purchase.models import get_query_purchase
 from app.exceptions import NotFoundEntityException
 
 from google.appengine.ext import ndb
